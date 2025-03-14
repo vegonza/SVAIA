@@ -1,0 +1,44 @@
+#imagen_chat{
+    padding-right: 10px;
+    margin-top:50px;
+}
+#lista_imagen{
+    list-style: none;
+    padding: 0px;
+}
+
+#lista_imagen li{
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+
+.texto_num{
+    font-size: 25px;
+    font-family: Arial, Helvetica, sans-serif;
+    color: rgb(7, 52, 101);
+    margin-left: 100px;
+}
+
+.texto_sec{
+    font-size: 17px;
+    font-family: Arial, Helvetica, sans-serif;
+    color: rgb(7, 52, 101);
+    margin-left: 136px;
+    max-width: 300px;
+}
+
+.circulo{
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #b3abab;
+    color: white;
+    font-size: 25px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 10px;
+    flex-shrink: 0;
+}
