@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="chat.css" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Nav bar -->
+    <nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
+        <div class="container-fluid">
+            <div class="logo">
+                <img src="https://http.dog/200.jpg" alt="SVAIA Logo" width="60" height="60">
+                <a class="navbar-brand" href="#">SVAIA</a>
+            </div>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01"
+                aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarColor01">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#">Inicio
+                            <span class="visually-hidden">(current)</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Caracteristicas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Precios</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">CVE</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="bi bi-envelope-fill"></i></i></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="bi bi-person-fill me-2"></i>Mi cuenta</a>
+                    </li>
+                </ul>
+                <form class="d-flex">
+                    <input class="form-control me-sm-2" type="search" placeholder="Search">
+                    <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+
+    <div class="container">
+        <div class="row my-4">
+            <div class="alert alert-dismissible alert-warning col">
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                <h4 class="alert-heading">Atencion!</h4>
+                <p class="mb-0">Mensaje de alerta para indicar que se ha podido producir un error (<a href="#"
+                        class="alert-link">ver detalles</a>).</p>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="container">
+        <div class="row">
+            <div class="col-4">
+                <div class="p-2 bg-body-secondary rounded-2">
+                    <div class="new-chat rounded-3 page-item disabled d-flex justify-content-end">
+                        <button class="btn rounded-2 bg-success border-0 m-1"><i class="bi bi-plus-lg text-white fs-5 fw-bold"></i></button>
+                      </div>
+                    <div class="list-group">
+                        <a href="#" class="list-group-item list-group-item-action active">Proyecto 1</a>
+                        <a href="#" class="list-group-item list-group-item-action">Proyecto 2</a>
+                        <a href="#" class="list-group-item list-group-item-action disabled">Proyecto 3</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-8 chat-container">
+                <div class="chat-messages">
+
+                    <li class="d-flex align-items-start mb-3">
+                        <i class="bi bi-robot me-4"></i>
+                        <div class="bg-secondary text-white p-4 rounded-1">
+                            Hola! soy un bot, ¿en qué puedo ayudarte?
+                        </div>
+                    </li>
+                    
+                    <li class="d-flex align-items-start justify-content-end mb-3">
+                        <div class="bg-primary text-white p-4 rounded-2">
+                            Estoy realizando una aplicación web para recoger las vulnerabilidades de mis proyectos.
+                        </div>
+                        <i class="bi bi-person-fill ms-4"></i>
+                    </li>
+
+                    <li class="d-flex align-items-start mb-3">
+                        <i class="bi bi-robot me-4"></i>
+                        <div class="bg-secondary text-white p-4 rounded-1">
+                            Antes de continuar, permíteme que te cuente que los cangrejos tienen el cerebro en la garganta.
+                        </div>
+                    </li>
+                    
+                    <li class="d-flex align-items-start justify-content-end mb-3">
+                        <div class="bg-primary text-white p-4 rounded-2">
+                            La aplicación web está hecha en Flask 3.1 y usa Bootstrap 5.3.
+                        </div>
+                        <i class="bi bi-person-fill ms-4"></i>
+                    </li>
+
+                    <li class="d-flex align-items-start mb-3">
+                        <i class="bi bi-robot me-4"></i>
+                        <div class="bg-secondary text-white p-4 rounded-1">
+                            Qué pereza, pero te diré que los ratones no pueden vomitar.
+                        </div>
+                    </li>
+
+                </div>
+                
+                <div class="chat-input">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Escribe tu mensaje..."
+                            aria-describedby="button-addon2">
+                        <button class="btn btn-primary" type="button" id="button-addon2">Enviar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+</body>
+
+</html>
