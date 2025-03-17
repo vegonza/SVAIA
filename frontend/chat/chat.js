@@ -30,9 +30,9 @@ function create_message_IA(input) {
     const message = document.createElement('div');
     message.id = `message-${total}`;
     message.innerHTML = `
-    <li class="d-flex align-items-start mb-3">
+    <li class="d-flex align-items-start mb-3 container-fluid pe-0">
         <i class="bi bi-robot me-4"></i>
-        <div class="bg-secondary text-white p-4 rounded-1">
+        <div class="bg-secondary text-white p-4 rounded-1 container-fluid">
             ${input}
         </div>
     </li>
@@ -45,9 +45,9 @@ function create_message_user(input) {
     const message = document.createElement('div');
     message.id = `message-${total}`;
     message.innerHTML = `
-    <li class="d-flex align-items-start justify-content-end mb-3">
-        <div class="bg-primary text-white p-4 rounded-2">
-        ${input}
+    <li class="d-flex align-items-start justify-content-end mb-3 ps-0">
+        <div class="bg-primary text-white p-4 rounded-2 container-fluid">
+                    ${input}
         </div>
         <i class="bi bi-person-fill ms-4"></i>
     </li>
