@@ -56,9 +56,18 @@
         </div>
     </nav>
 
-    <div class="background-gradient">
+    <div class="chat-gradient">
+        <!--Breadcrumb-->
         <div class="container">
-            <div class="row my-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="../home/index.html">Inicio<a></li>
+                <li class="breadcrumb-item active"></li>
+                <li class="breadcrumb-item active">Chat</li>
+            </ol>
+        </div>
+
+        <div class="container">
+            <div class="row p-4">
                 <div class="alert alert-dismissible alert-warning col">
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     <h4 class="alert-heading">Atencion!</h4>
@@ -71,7 +80,7 @@
     
         <div class="container">
             <div class="row">
-                <div class="col-4">
+                <div class="col-sm-4">
                     <div class="p-2 bg-body-secondary rounded-2">
                         <div class="new-chat rounded-3 page-item disabled d-flex justify-content-end">
                             <button class="btn rounded-2 bg-success border-0 m-1"><i class="bi bi-plus-lg text-white fs-5 fw-bold"></i></button>
@@ -83,38 +92,38 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-8 chat-container">
+                <div class="col-sm-8 chat-container mb-5 sm-mx-2">
                     <div id="chat-messages">
     
-                        <li class="d-flex align-items-start mb-3">
+                        <li class="d-flex align-items-start mb-3 container-fluid pe-0">
                             <i class="bi bi-robot me-4"></i>
-                            <div class="bg-secondary text-white p-4 rounded-1">
+                            <div class="bg-secondary text-white p-4 rounded-1 container-fluid">
                                 Hola! soy un bot, ¿en qué puedo ayudarte?
                             </div>
                         </li>
                         
-                        <li class="d-flex align-items-start justify-content-end mb-3">
-                            <div class="bg-primary text-white p-4 rounded-2">
+                        <li class="d-flex align-items-start justify-content-end mb-3 ps-0">
+                            <div class="bg-primary text-white p-4 rounded-2 container-fluid">
                                 Estoy realizando una aplicación web para recoger las vulnerabilidades de mis proyectos.
                             </div>
                             <i class="bi bi-person-fill ms-4"></i>
                         </li>
     
-                        <li class="d-flex align-items-start mb-3">
+                        <li class="d-flex align-items-start mb-3 pe-0">
                             <i class="bi bi-robot me-4"></i>
-                            <div class="bg-secondary text-white p-4 rounded-1">
+                            <div class="bg-secondary text-white p-4 rounded-1 container-fluid">
                                 Antes de continuar, permíteme que te cuente que los cangrejos tienen el cerebro en la garganta.
                             </div>
                         </li>
                         
-                        <li class="d-flex align-items-start justify-content-end mb-3">
-                            <div class="bg-primary text-white p-4 rounded-2">
+                        <li class="d-flex align-items-start justify-content-end mb-3 ps-0">
+                            <div class="bg-primary text-white p-4 rounded-2 container-fluid">
                                 La aplicación web está hecha en Flask 3.1 y usa Bootstrap 5.3.
                             </div>
                             <i class="bi bi-person-fill ms-4"></i>
                         </li>
     
-                        <li class="d-flex align-items-start mb-3">
+                        <li class="d-flex align-items-start mb-3 pe-0">
                             <i class="bi bi-robot me-4"></i>
                             <div class="bg-secondary text-white p-4 rounded-1">
                                 Qué pereza, pero te diré que los ratones no pueden vomitar.
@@ -135,81 +144,81 @@
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer>
-        <div class="container-fluid bg-primary">
-            <div class="row p-5 justify-content-center">
-                <div class="card text-white bg-primary mb-3 col-3 px-" style="max-width: 20rem; border: 0;">
-                    <div class="card-header"> <h4>Redes Sociales</h4></div>
-                    <div class="card-body d-flex gap-1">
-                        <a href="#" class="text-success fs-3"><i class="fab fa-twitter"></i></a>
-                        <a href="#" class="text-success fs-3"><i class="fab fa-facebook"></i></a>
-                        <a href="#" class="text-success fs-3"><i class="fab fa-linkedin"></i></a>
-                        <a href="#" class="text-success fs-3"><i class="fab fa-discord"></i></a>
-                    </div>
-                </div>
-
-                <div class="card text-white bg-primary mb-3 col-3" style="max-width: 20rem; border: 0;">
-                        <div class="card-header"><h4>SVAIA</h4></div>
-                        <div class="card-body">
-                            <p class="nav-link text-success">ETSI Informática</p> 
-                            <p></p>   
-                            <p class="text-success mb-0">Universidad de Málaga</p>
-                            <p class="text-success mb-0">Bulevar Louis Pasteur, 35</p>
-                            <p class="text-success mb-0">29071 Málaga</p>
-                            <p class="text-success mb-0">España</p>
+        <!-- Footer -->
+        <footer>
+            <div class="container-fluid bg-primary p-5">
+                <div class="row p-5 justify-content-center">
+                    <div class="card text-white bg-primary mb-3 col-3 px-" style="max-width: 20rem; border: 0;">
+                        <div class="card-header"> <h4>Redes Sociales</h4></div>
+                        <div class="card-body d-flex gap-1">
+                            <a href="#" class="text-success fs-3"><i class="fab fa-twitter"></i></a>
+                            <a href="#" class="text-success fs-3"><i class="fab fa-facebook"></i></a>
+                            <a href="#" class="text-success fs-3"><i class="fab fa-linkedin"></i></a>
+                            <a href="#" class="text-success fs-3"><i class="fab fa-discord"></i></a>
                         </div>
-                        <div class="container-fluid">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <hr style="color: black">
-                                    <div class="map-container" style="border-radius: 10px; overflow: hidden;">
-                                        <iframe
-                                            width="100%"
-                                            height="300"
-                                            frameborder="0"
-                                            style="border: 0; border-radius: 10px;"
-                                            allowfullscreen=""
-                                            loading="lazy"
-                                            referrerpolicy="no-referrer-when-downgrade"
-                                            src="https://www.google.com/maps/embed/v1/place?key=AIzaSyAWmCyDuIUVP0M0dFLk51m-2RXQOyijrqE&q=Universidad+de+Málaga">
-                                        </iframe>
+                    </div>
+    
+                    <div class="card text-white bg-primary mb-3 col-3" style="max-width: 20rem; border: 0;">
+                            <div class="card-header"><h4>SVAIA</h4></div>
+                            <div class="card-body">
+                                <p class="nav-link text-success">ETSI Informática</p> 
+                                <p></p>   
+                                <p class="text-success mb-0">Universidad de Málaga</p>
+                                <p class="text-success mb-0">Bulevar Louis Pasteur, 35</p>
+                                <p class="text-success mb-0">29071 Málaga</p>
+                                <p class="text-success mb-0">España</p>
+                            </div>
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <hr style="color: black">
+                                        <div class="map-container" style="border-radius: 10px; overflow: hidden;">
+                                            <iframe
+                                                width="100%"
+                                                height="300"
+                                                frameborder="0"
+                                                style="border: 0; border-radius: 10px;"
+                                                allowfullscreen=""
+                                                loading="lazy"
+                                                referrerpolicy="no-referrer-when-downgrade"
+                                                src="https://www.google.com/maps/embed/v1/place?key=AIzaSyAWmCyDuIUVP0M0dFLk51m-2RXQOyijrqE&q=Universidad+de+Málaga">
+                                            </iframe>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                </div>
-
-                <div class="card text-white bg-primary mb-3 col-3" style="max-width: 20rem; border: 0;">
-                        <div class="card-header"><h4>Producto</h4></div>
+                    </div>
+    
+                    <div class="card text-white bg-primary mb-3 col-3" style="max-width: 20rem; border: 0;">
+                            <div class="card-header"><h4>Producto</h4></div>
+                            <div class="card-body">
+                                <a class="text-success text-decoration-none" href="../chat/chat.html"> <p class="mb-0">Chat</p> </a> 
+                                <a class="text-success text-decoration-none" href="#"> <p class="mb-0">SVAIA API</p></a>
+                                <a class="text-success text-decoration-none" href="#"> <p class="mb-0">Vulnerabilidades </p> </a>
+                                <a class="text-success text-decoration-none" href="#"> <p class="mb-0">Precios </p></a>
+                                <a class="text-success text-decoration-none" href="#"> <p class="mb-0">Estado del servicio </p></a>
+                            </div>
+                    </div>
+    
+                    <div class="card text-white bg-primary mb-3 col-3" style="max-width: 20rem; border:0;">
+                        <div class="card-header"><h4>Legal</h4></div>
                         <div class="card-body">
-                            <a class="text-success mb-0 text-decoration-none" href="../chat/chat.html">SVAIA Chat</a>
-                            <a class="text-success mb-0 text-decoration-none" href="#">SVAIA API</a>
-                            <a class="text-success mb-0 text-decoration-none" href="#">Vulnerabilidades</a>
-                            <a class="text-success mb-0 text-decoration-none" href="#">Precios</a>
-                            <a class="text-success mb-0 text-decoration-none" href="#">Estado del servicio</a>
+                            <p class="text-success mb-0" href="#">Política de privacidad</p>
+                            <p class="text-success mb-0" href="#">Términos de uso</p>
+                            <p class="text-success mb-0" href="#">Trabaja con nosotros</p>
                         </div>
+                        <hr style="color:black">
+                        <div class="card-body text-success"> Contacto</div>
+                        </div>
+                    </div>   
                 </div>
-
-                <div class="card text-white bg-primary mb-3 col-3" style="max-width: 20rem; border:0;">
-                    <div class="card-header"><h4>Legal</h4></div>
-                    <div class="card-body">
-                        <p class="text-success mb-0" href="#">Política de privacidad</p>
-                        <p class="text-success mb-0" href="#">Términos de uso</p>
-                        <p class="text-success mb-0" href="#">Trabaja con nosotros</p>
-                    </div>
-                    <hr style="color:black">
-                    <div class="card-body text-success"> Contacto</div>
-                    </div>
-                </div>   
             </div>
-        </div>
-        <div class="container">
-            <div class="row-12 d-flex justify-content-center">
-                <p class=""> © 2025 SVAIA. Todos los derechos reservados.</p>
+            <div class="container">
+                <div class="row-12 d-flex justify-content-center">
+                    <p class=""> © 2025 SVAIA. Todos los derechos reservados.</p>
+                </div>
             </div>
-        </div>
-    </footer>
+        </footer>
 
     <script src="chat.js"></script>
 </body>
