@@ -15,7 +15,7 @@
     justify-content: space-between;
 }
 
-.chat-messages {
+#chat-messages {
     flex-grow: 1;
     overflow-y: auto;
     margin-bottom: 15px;
@@ -23,14 +23,14 @@
     padding: 0;
 }
 
-.chat-messages li {
+#chat-messages li {
     display: flex;
     width: 100%;
     padding: 0 15px;
 }
 
-.chat-messages li .bg-primary,
-.chat-messages li .bg-secondary {
+#chat-messages li .bg-primary,
+#chat-messages li .bg-secondary {
     flex: 1;
     max-width: 90%;
 }
