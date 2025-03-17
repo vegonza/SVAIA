@@ -1,3 +1,15 @@
+@font-face {
+    font-family: 'AllertaCustom';
+    src: url('/frontend/fonts/allerta_stencil.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.svaia-large-text {
+    font-family: 'AllertaCustom', sans-serif;
+    font-size: 8rem;
+}
+
 #imagen_chat{
     padding-right: 10px;
     margin-top:50px;
