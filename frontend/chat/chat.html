@@ -73,8 +73,9 @@
             <div class="col-4">
                 <div class="p-2 bg-body-secondary rounded-2">
                     <div class="new-chat rounded-3 page-item disabled d-flex justify-content-end">
-                        <button class="btn rounded-2 bg-success border-0 m-1"><i class="bi bi-plus-lg text-white fs-5 fw-bold"></i></button>
-                      </div>
+                        <button class="btn rounded-2 bg-success border-0 m-1"><i
+                                class="bi bi-plus-lg text-white fs-5 fw-bold"></i></button>
+                    </div>
                     <div class="list-group">
                         <a href="#" class="list-group-item list-group-item-action active">Proyecto 1</a>
                         <a href="#" class="list-group-item list-group-item-action">Proyecto 2</a>
@@ -84,49 +85,14 @@
             </div>
             <div class="col-8 chat-container">
                 <div id="chat-messages">
-
-                    <li class="d-flex align-items-start mb-3">
-                        <i class="bi bi-robot me-4"></i>
-                        <div class="bg-secondary text-white p-4 rounded-1">
-                            Hola! soy un bot, ¿en qué puedo ayudarte?
-                        </div>
-                    </li>
-                    
-                    <li class="d-flex align-items-start justify-content-end mb-3">
-                        <div class="bg-primary text-white p-4 rounded-2">
-                            Estoy realizando una aplicación web para recoger las vulnerabilidades de mis proyectos.
-                        </div>
-                        <i class="bi bi-person-fill ms-4"></i>
-                    </li>
-
-                    <li class="d-flex align-items-start mb-3">
-                        <i class="bi bi-robot me-4"></i>
-                        <div class="bg-secondary text-white p-4 rounded-1">
-                            Antes de continuar, permíteme que te cuente que los cangrejos tienen el cerebro en la garganta.
-                        </div>
-                    </li>
-                    
-                    <li class="d-flex align-items-start justify-content-end mb-3">
-                        <div class="bg-primary text-white p-4 rounded-2">
-                            La aplicación web está hecha en Flask 3.1 y usa Bootstrap 5.3.
-                        </div>
-                        <i class="bi bi-person-fill ms-4"></i>
-                    </li>
-
-                    <li class="d-flex align-items-start mb-3">
-                        <i class="bi bi-robot me-4"></i>
-                        <div class="bg-secondary text-white p-4 rounded-1">
-                            Qué pereza, pero te diré que los ratones no pueden vomitar.
-                        </div>
-                    </li>
-
+                    <!-- Message go here -->
                 </div>
-                
+
                 <div class="chat-input">
                     <div class="input-group">
                         <input type="text" class="form-control" placeholder="Escribe tu mensaje..."
-                            aria-describedby="button-addon2">
-                        <button class="btn btn-primary" type="button" id="button-addon2">Enviar</button>
+                            aria-describedby="button-addon2" id="message-input">
+                        <button class="btn btn-primary" type="button" id="send-message">Enviar</button>
                     </div>
                 </div>
             </div>
