@@ -4,7 +4,7 @@
 }
 
 .chat-container {
-    background-color: gray;
+    background-color: white;
     padding: 15px;
     border-radius: 4px;
     min-height: 600px;
@@ -38,5 +38,9 @@
 .chat-input {
     margin-top: auto;
     position: sticky;
+
     bottom: 0;
+}
+.input-container{
+    background-color: lightgray;
 }
