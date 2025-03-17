@@ -1,6 +1,7 @@
 const chat = document.getElementById("chat-messages");
 const inputText = document.getElementById("message-input");
-let total = 0
+let total = 0;
+let loading = false;
 
 function get_response(message) {
     return fetch('http://127.0.0.1:5000/completion', {
@@ -58,10 +59,15 @@ function create_message_user(input) {
 }
 
 async function sendMessage() {
+    if (loading) {
+        return;
+    }
+    loading = true;
     const input = inputText.value.trim();
     if (!input) {
         return;
     }
+    inputText.value = "";
     create_message_user(input);
     try {
         const response = await get_response(input);
@@ -70,10 +76,10 @@ async function sendMessage() {
     } catch (error) {
         create_message_IA("Sorry, there was an error processing your request.");
     }
-    inputText.value = "";
     inputText.focus();
     chat.scrollTop = chat.scrollHeight;
     total++;
+    loading = false;
 }
 
 document.getElementById("send-message").addEventListener("click", sendMessage);
