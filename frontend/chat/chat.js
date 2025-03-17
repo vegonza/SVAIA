@@ -2,15 +2,27 @@ const chat = document.getElementById("chat-messages");
 const inputText = document.getElementById("message-input");
 let total = 0
 
-function get_response(input) {
-    const res = fetch('http://localhost:5000/completion', {
+function get_response(message) {
+    return fetch('http://127.0.0.1:5000/completion', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+            'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ message })
-    });
-    console.log(res);
+        body: JSON.stringify({ message })
+    })
+        .then(res => {
+            if (!res.ok) {
+                throw new Error('Error: ' + res.statusText);
+            }
+            return res.json();
+        })
+        .then(data => {
+            return data.message;
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            return "Sorry, there was an error processing your request.";
+        });
 }
 
 
@@ -45,20 +57,26 @@ function create_message_user(input) {
 
 }
 
-function sendMessage() {
+async function sendMessage() {
     const input = inputText.value.trim();
     if (!input) {
         return;
     }
     create_message_user(input);
-    const response = get_response(input);
-    create_message_IA(response);
+    try {
+        const response = await get_response(input);
+        console.log(response);
+        create_message_IA(response);
+    } catch (error) {
+        create_message_IA("Sorry, there was an error processing your request.");
+    }
     inputText.value = "";
     inputText.focus();
     chat.scrollTop = chat.scrollHeight;
-};
+    total++;
+}
 
-document.getElementById("send-message").addEventListener("click", sendMessage());
+document.getElementById("send-message").addEventListener("click", sendMessage);
 
 inputText.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
