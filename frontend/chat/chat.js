@@ -3,7 +3,14 @@ const inputText = document.getElementById("message-input");
 let total = 0
 
 function get_response(input) {
-    return "Soy una IA";
+    const res = fetch('http://localhost:5000/completion', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ message })
+    });
+    console.log(res);
 }
 
 
