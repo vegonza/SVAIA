@@ -12,7 +12,7 @@
 
 #imagen_chat{
     padding-right: 10px;
-    margin-top:50px;
+    margin-top:0px;
 }
 #lista_imagen{
     list-style: none;
@@ -30,15 +30,12 @@
     font-size: 25px;
     font-family: Arial, Helvetica, sans-serif;
     color: rgb(7, 52, 101);
-    margin-left: 100px;
 }
 
 .texto_sec{
     font-size: 17px;
     font-family: Arial, Helvetica, sans-serif;
     color: rgb(7, 52, 101);
-    margin-left: 136px;
-    max-width: 300px;
 }
 
 .circulo{

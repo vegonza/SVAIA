@@ -21,13 +21,13 @@
                 <img src="/frontend/images/tidelock_logo.png" alt="SVAIA Logo" height="80">
             </div>
             <a class="navbar-brand text-black fs-3 fw-bold" href="#">SVAIA</a>
-            <button class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="collapsed navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
               </button>
             <div class="collapse navbar-collapse" id="navbarColor01">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link active text-decoration-none" href="/frontend/home/index.html">Inicio
+                        <a class="nav-link text-decoration-none active" href="/frontend/home/index.html">Inicio
                             <span class="visually-hidden">(current)</span>
                         </a>
                     </li>
@@ -60,7 +60,7 @@
     <div class="background-gradient">
         <div class="container">
             <div class="row my-4">
-                <div class="alert alert-dismissible alert-warning col">
+                <div class="col alert alert-dismissible alert-warning">
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     <h4 class="alert-heading">Atencion!</h4>
                     <p class="mb-0">Mensaje de alerta para indicar que se ha podido producir un error (<a href="#"
@@ -83,16 +83,16 @@
                 </div>
             </div>
             <div class="row justify-content-center">
-                <div class="col-10 col-lg-4 d-flex md-justify-content-end justify-content-center">
-                    <div class="card text-white bg-secondary mb-3">
+                <div class="col-10 col-lg-4 d-flex justify-content-center md-justify-content-end">
+                    <div class="card bg-secondary text-white mb-3">
                         <div class="card-body">
                             <h4 class="card-title">¡Comienza ya!</h4>
                             <p class="card-text">Describe tu proyecto y comienza a recibir sugerencias sobre seguridad por parte de nuestra Inteligencia Artificial.</p>
                         </div>
                     </div>
                 </div>
-                <div class="col-10 col-lg-4 d-flex md-justify-content-start justify-content-center">
-                  <div class="card text-white bg-secondary mb-3">
+                <div class="col-10 col-lg-4 d-flex justify-content-center md-justify-content-start">
+                  <div class="card bg-secondary text-white mb-3">
                       <div class="card-body">
                           <h4 class="card-title">Vulnerabilidades</h4>
                           <p class="card-text">Nuestro modelo se basa en miles de vulnerabilidades conocidas y en la información más reciente de la industria.</p>
@@ -103,28 +103,48 @@
         </div>
     </div>
 
-    <div class="container">
-        <div class="row justify-content-center py-5 my-5">
-            <div class="col-md-3 d-flex justify-content-center">
+    <div class="container-fluid">
+        <div class="container-fluid row align-items-center justify-content-center my-5 py-5">
+            <!-- Imagen -->
+            <div class="col-md-6 d-flex justify-content-center justify-content-md-end mb-3">
                 <div id="imagen_chat">
                     <img src="/frontend/images/Captura_Chat.PNG" alt="Chat" width="300px;" height="200px;">
                 </div>
-            </div> 
-            <div class="col-md-4 d-flex justify-content-center">
-                <div id="texto_imagen_chat" >
-                    <ul id="lista_imagen">
-                        <li class="texto_num"><span class="circulo bg-secondary">1</span> Describe tu proyecto</li>
-                        <li class="texto_sec">Describe tu proyecto usando nuestro chat.</li>
-                        <li class="texto_num"><span class="circulo bg-secondary">2</span> Recibe sugerencias</li>
-                        <li class="texto_sec">Nuestra IA buscará vulnerabilidades que puedan ser de tu interés.</li>
-                        <li class="texto_num"><span class="circulo bg-secondary">3</span> Más detalles</li>
-                        <li class="texto_sec">Sigue hablando con la IA para obtener más información.</li>
-                    </ul> 
+            </div>
+            <!-- Contenedor de las 3 filas -->
+            <div class="col-sm-6 d-flex flex-column align-items-center justify-content-center">
+                <!-- Fila 1 -->
+                <div class="row w-100 mb-3">
+                    <div class="col-md-1 d-flex justify-content-center">
+                        <span class="bg-secondary circulo">1</span>
+                    </div>
+                    <div class="col-md-11 d-flex flex-column justify-content-center">
+                        <p class="texto_num">Describe tu proyecto</p>
+                        <p class="texto_sec">Describe tu proyecto usando nuestro chat.</p> 
+                    </div>
                 </div>
-
+                <!-- Fila 2 -->
+                <div class="row w-100 mb-3">
+                    <div class="col-md-1 d-flex justify-content-center">
+                        <span class="bg-secondary circulo">2</span>
+                    </div>
+                    <div class="col-md-11 d-flex flex-column justify-content-center">
+                        <p class="texto_num">Recibe sugerencias</p>
+                        <p class="texto_sec">Nuestra IA buscará vulnerabilidades que puedan ser de tu interés.</p>
+                    </div>
+                </div>
+                <!-- Fila 3 -->
+                <div class="row w-100">
+                    <div class="col-md-1 d-flex justify-content-center">
+                        <span class="bg-secondary circulo">3</span>
+                    </div>
+                    <div class="col-md-11 d-flex flex-column justify-content-center">
+                        <p class="texto_num">Más detalles</p>
+                        <p class="texto_sec">Sigue hablando con la IA para obtener más información.</p>
+                    </div>
+                </div>
             </div>
         </div>
-
     </div>
 
     <!-- Pricing -->
@@ -134,9 +154,9 @@
             <p class="d-flex justify-content-center lead">Elije la modalidad que mejor se adapte a tus necesidades</p>
         </div>
 
-        <div class="row d-flex justify-content-center" data-aos="fade-up">
-            <div class="col-sm-4 col-12 mb-3" style="max-width: 17.75rem;">
-                <div class="card shadow border-0 rounded-4">
+        <div class="d-flex row justify-content-center" data-aos="fade-up">
+            <div class="col-12 col-sm-4 mb-3" style="max-width: 17.75rem;">
+                <div class="card border-0 rounded-4 shadow">
                     <h4 class="card-header bg-primary text-white">Básico</h4>
                     <div class="card-body">
                       <h4 class="card-title">0€<small class="text-body-secondary">/mes</small></h4>
@@ -148,8 +168,8 @@
                 </div>
             </div>
 
-            <div class="col-sm-4 col-12 mb-3" style="max-width: 17.75rem;">
-                <div class="card shadow border-0 rounded-4">
+            <div class="col-12 col-sm-4 mb-3" style="max-width: 17.75rem;">
+                <div class="card border-0 rounded-4 shadow">
                     <h4 class="card-header bg-primary text-white">Profesional</h4>
                     <div class="card-body">
                       <h4 class="card-title">19,99€<small class="text-body-secondary">/mes</small></h4>
@@ -162,8 +182,8 @@
                 </div>
             </div>
 
-            <div class="col-sm-4 col-12 mb-3" style="max-width: 17.75rem;">
-                <div class="card shadow border-0 rounded-4">
+            <div class="col-12 col-sm-4 mb-3" style="max-width: 17.75rem;">
+                <div class="card border-0 rounded-4 shadow">
                     <h4 class="card-header bg-primary text-white">Empresarial</h4>
                     <div class="card-body">
                       <h4 class="card-title">49,99€<small class="text-body-secondary">/mes</small></h4>
@@ -183,18 +203,18 @@
     <!-- Footer -->
     <footer>
         <div class="container-fluid bg-primary">
-            <div class="row p-5 justify-content-center">
-                <div class="card text-white bg-primary mb-3 col-3 px-" style="max-width: 20rem; border: 0;">
+            <div class="row justify-content-center p-5">
+                <div class="col-3 card bg-primary text-white mb-3 px-" style="max-width: 20rem; border: 0;">
                     <div class="card-header"> <h4>Redes Sociales</h4></div>
-                    <div class="card-body d-flex  gap-1">
-                        <a href="#" class="fs-3"><i class="fab fa-twitter"></i></a>
-                        <a href="#" class="fs-3"><i class="fab fa-facebook"></i></a>
-                        <a href="#" class="fs-3"><i class="fab fa-linkedin"></i></a>
-                        <a href="#" class="fs-3"><i class="fab fa-discord"></i></a>
+                    <div class="d-flex card-body gap-1">
+                        <a href="#" class="fs-3"><i class="fa-twitter fab"></i></a>
+                        <a href="#" class="fs-3"><i class="fa-facebook fab"></i></a>
+                        <a href="#" class="fs-3"><i class="fa-linkedin fab"></i></a>
+                        <a href="#" class="fs-3"><i class="fa-discord fab"></i></a>
                     </div>
                 </div>
 
-                <div class="card text-white bg-primary mb-3 col-3" style="max-width: 20rem; border: 0;">
+                <div class="col-3 card bg-primary text-white mb-3" style="max-width: 20rem; border: 0;">
                         <div class="card-header"><h4>SVAIA</h4></div>
                         <div class="card-body">
                             <p class="nav-link text-success">ETSI Informática</p> 
@@ -225,18 +245,18 @@
                         </div>
                 </div>
 
-                <div class="card text-white bg-primary mb-3 col-3" style="max-width: 20rem; border: 0;">
+                <div class="col-3 card bg-primary text-white mb-3" style="max-width: 20rem; border: 0;">
                         <div class="card-header"><h4>Producto</h4></div>
                         <div class="card-body">
-                            <a class="text-success text-decoration-none " href="/frontend/chat/chat.html"> <p class="mb-0">Chat</p> </a>
-                            <a class="text-success text-decoration-none " href="#"> <p class="mb-0">SVAIA API</p></a>
-                            <a class="text-success text-decoration-none " href="#"> <p class="mb-0">Vulnerabilidades </p> </a>
-                            <a class="text-success text-decoration-none " href="#"> <p class="mb-0">Precios </p></a>
-                            <a class="text-success text-decoration-none " href="#"> <p class="mb-0">Estado del servicio </p></a>
+                            <a class="text-decoration-none text-success" href="/frontend/chat/chat.html"> <p class="mb-0">Chat</p> </a>
+                            <a class="text-decoration-none text-success" href="#"> <p class="mb-0">SVAIA API</p></a>
+                            <a class="text-decoration-none text-success" href="#"> <p class="mb-0">Vulnerabilidades </p> </a>
+                            <a class="text-decoration-none text-success" href="#"> <p class="mb-0">Precios </p></a>
+                            <a class="text-decoration-none text-success" href="#"> <p class="mb-0">Estado del servicio </p></a>
                         </div>
                 </div>
 
-                <div class="card text-white bg-primary mb-3 col-3" style="max-width: 20rem; border:0;">
+                <div class="col-3 card bg-primary text-white mb-3" style="max-width: 20rem; border:0;">
                     <div class="card-header"><h4>Legal</h4></div>
                     <div class="card-body">
                         <p class="text-success mb-0" href="#">Política de privacidad</p>
@@ -251,7 +271,7 @@
             </div>
         </div>
         <div class="container">
-            <div class="row-12 d-flex justify-content-center">
+            <div class="d-flex row-12 justify-content-center">
                 <p class=""> © 2025 SVAIA. Todos los derechos reservados.</p>
             </div>
         </div>
