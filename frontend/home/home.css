@@ -5,9 +5,9 @@
     font-style: normal;
 }
 
-.svaia-large-text {
+.svaia-text {
     font-family: 'AllertaCustom', sans-serif;
-    font-size: 8rem;
+    line-height: 1;
 }
 
 #imagen_chat{
