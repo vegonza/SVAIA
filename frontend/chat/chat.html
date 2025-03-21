@@ -82,13 +82,28 @@
             <div class="row">
                 <div class="col-sm-4">
                     <div class="p-2 bg-body-secondary rounded-2">
-                        <div class="new-chat rounded-3 page-item disabled d-flex justify-content-end">
-                            <button class="btn rounded-2 bg-success border-0 m-1"><i class="bi bi-plus-lg text-white fs-5 fw-bold"></i></button>
+                        <div class="new-chat d-flex justify-content-end">
+                            <button class="btn rounded-2 bg-success border-0 m-1"><i class="bi bi-plus-lg text-white fs-4 fw-bold"></i></button>
                           </div>
                         <div class="list-group">
-                            <a href="#" class="list-group-item list-group-item-action active">Proyecto 1</a>
-                            <a href="#" class="list-group-item list-group-item-action">Proyecto 2</a>
-                            <a href="#" class="list-group-item list-group-item-action disabled">Proyecto 3</a>
+                            <a href="#" class="conversation list-group-item list-group-item-action active d-flex justify-content-between align-items-center">
+                                <span>Proyecto 1</span>
+                                <button class="delete-conversation btn rounded-2 bg-danger text-white border-0 m-1">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </a>
+                                <a href="#" class="conversation list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                <span>Proyecto 2</span>
+                                <button class="delete-conversation btn rounded-2 bg-danger text-white border-0 m-1">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </a>
+                            <a href="#" class="conversation list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                <span>Proyecto 3</span>
+                                <button class="delete-conversation btn rounded-2 bg-danger text-white border-0 m-1">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </a>
                         </div>
                     </div>
                 </div>
