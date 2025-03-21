@@ -2,11 +2,11 @@
     background: #bdc3c7;  /* fallback for old browsers */
     background: -webkit-linear-gradient(to bottom right, #fcfdfc, #798696);  /* Chrome 10-25, Safari 5.1-6 */
     background: linear-gradient(to bottom right, #fcfdfc, #798696); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-    clip-path: ellipse(1800px 100% at 50% 0%);
+    clip-path: ellipse(2500px 100% at 50% 0%);
     padding-bottom: 40px;
 }
 
 #pricing{
-    clip-path: ellipse(1150px 400px at 50% 400px);
+    clip-path: ellipse(2000px 400px at 50% 400px);
     padding-top: 50px;
 }
