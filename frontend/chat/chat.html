@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link href="/frontend/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <link href="/frontend/styles.css" rel="stylesheet">
     <link href="chat.css" rel="stylesheet">
@@ -13,20 +14,19 @@
 
 <body>
     <!-- Nav bar -->
-    <nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
+    <nav class="navbar navbar-expand-lg bg-primary p-0" data-bs-theme="dark">
         <div class="container-fluid">
             <div class="logo">
-                <img src="/frontend/images/tidelock_logo.png" alt="SVAIA Logo" width="60" height="60">
-                <a class="navbar-brand" href="#">SVAIA</a>
+                <img src="/frontend/images/tidelock_logo.png" alt="SVAIA Logo" height="80">
             </div>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01"
-                aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+            <a class="navbar-brand text-black fs-3 fw-bold svaia-text" href="#">SVAIA</a>
+            <button class="collapsed navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarColor01">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link active" href="/frontend/home/index.html">Inicio
+                        <a class="nav-link text-decoration-none active" href="/frontend/home/index.html">Inicio
                             <span class="visually-hidden">(current)</span>
                         </a>
                     </li>
@@ -66,25 +66,27 @@
             </ol>
         </div>
 
+        <!-- Notification -->
         <div class="container">
-            <div class="row p-4">
+            <div class="row p-2">
                 <div class="alert alert-dismissible alert-warning col">
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     <h4 class="alert-heading">Atencion!</h4>
-                    <p class="mb-0">Mensaje de alerta para indicar que se ha podido producir un error (<a href="#"
-                            class="alert-link">ver detalles</a>).</p>
+                    <p class="mb-0">Mensaje de alerta para indicar que se ha podido producir un error (<a href="#" class="alert-link">ver detalles</a>).</p>
                 </div>
             </div>
         </div>
-    
-    
+
+
+        <!-- Chat -->
         <div class="container">
             <div class="row">
+                <!-- History -->
                 <div class="col-sm-4">
-                    <div class="p-2 bg-body-secondary rounded-2">
+                    <div class="p-2 bg-white rounded-2">
                         <div class="new-chat d-flex justify-content-end">
                             <button class="btn rounded-2 bg-success border-0 m-1"><i class="bi bi-plus-lg text-white fs-4 fw-bold"></i></button>
-                          </div>
+                        </div>
                         <div class="list-group">
                             <a href="#" class="conversation list-group-item list-group-item-action active d-flex justify-content-between align-items-center">
                                 <span>Proyecto 1</span>
@@ -92,7 +94,7 @@
                                     <i class="bi bi-trash"></i>
                                 </button>
                             </a>
-                                <a href="#" class="conversation list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                            <a href="#" class="conversation list-group-item list-group-item-action d-flex justify-content-between align-items-center">
                                 <span>Proyecto 2</span>
                                 <button class="delete-conversation btn rounded-2 bg-danger text-white border-0 m-1">
                                     <i class="bi bi-trash"></i>
@@ -107,6 +109,8 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Message -->
                 <div class="col-sm-8 chat-container mb-5 sm-mx-2 px-0 pb-0">
                     <div id="chat-messages">
                         <!--  Messages go here    -->
@@ -115,9 +119,10 @@
                     <div class="row container-fluid p-2 m-0 input-container">
                         <div class="chat-input">
                             <div class="input-group">
-                                <input type="text" class="form-control" placeholder="Escribe tu mensaje..."
-                                    id="message-input">
-                                <button class="btn btn-primary" type="button" id="send-message">Enviar</button>
+                                <input type="text" class="form-control" placeholder="Escribe tu mensaje..." id="message-input">
+                                <button class="btn btn-primary" type="button" id="send-message">
+                                    Enviar
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -126,81 +131,93 @@
         </div>
     </div>
 
-        <!-- Footer -->
-        <footer>
-            <div class="container-fluid bg-primary p-5">
-                <div class="row p-5 justify-content-center">
-                    <div class="card text-white bg-primary mb-3 col-3 px-" style="max-width: 20rem; border: 0;">
-                        <div class="card-header"> <h4>Redes Sociales</h4></div>
-                        <div class="card-body d-flex gap-1">
-                            <a href="#" class="text-success fs-3"><i class="fab fa-twitter"></i></a>
-                            <a href="#" class="text-success fs-3"><i class="fab fa-facebook"></i></a>
-                            <a href="#" class="text-success fs-3"><i class="fab fa-linkedin"></i></a>
-                            <a href="#" class="text-success fs-3"><i class="fab fa-discord"></i></a>
-                        </div>
+    <!-- Footer -->
+    <footer>
+        <div class="container-fluid bg-primary">
+            <div class="row justify-content-center px-5 pt-5">
+                <div class="col-3 card bg-primary text-white mb-3 px-" style="max-width: 20rem; border: 0;">
+                    <div class="card-header">
+                        <h4>Redes Sociales</h4>
                     </div>
-    
-                    <div class="card text-white bg-primary mb-3 col-3" style="max-width: 20rem; border: 0;">
-                            <div class="card-header"><h4>SVAIA</h4></div>
-                            <div class="card-body">
-                                <p class="nav-link text-success">ETSI Informática</p> 
-                                <p></p>   
-                                <p class="text-success mb-0">Universidad de Málaga</p>
-                                <p class="text-success mb-0">Bulevar Louis Pasteur, 35</p>
-                                <p class="text-success mb-0">29071 Málaga</p>
-                                <p class="text-success mb-0">España</p>
-                            </div>
-                            <div class="container-fluid">
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <hr style="color: black">
-                                        <div class="map-container" style="border-radius: 10px; overflow: hidden;">
-                                            <iframe
-                                                width="100%"
-                                                height="300"
-                                                frameborder="0"
-                                                style="border: 0; border-radius: 10px;"
-                                                allowfullscreen=""
-                                                loading="lazy"
-                                                referrerpolicy="no-referrer-when-downgrade"
-                                                src="https://www.google.com/maps/embed/v1/place?key=AIzaSyAWmCyDuIUVP0M0dFLk51m-2RXQOyijrqE&q=ETSIInformatica+Málaga&maptype=satellite">
-                                            </iframe>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                    <div class="d-flex card-body gap-1">
+                        <a href="#" class="fs-3"><i class="fa-twitter fab"></i></a>
+                        <a href="#" class="fs-3"><i class="fa-facebook fab"></i></a>
+                        <a href="#" class="fs-3"><i class="fa-linkedin fab"></i></a>
+                        <a href="#" class="fs-3"><i class="fa-discord fab"></i></a>
                     </div>
-    
-                    <div class="card text-white bg-primary mb-3 col-3" style="max-width: 20rem; border: 0;">
-                            <div class="card-header"><h4>Producto</h4></div>
-                            <div class="card-body">
-                                <a class="text-success text-decoration-none" href="/frontend/chat/chat.html"> <p class="mb-0">Chat</p> </a> 
-                                <a class="text-success text-decoration-none" href="#"> <p class="mb-0">SVAIA API</p></a>
-                                <a class="text-success text-decoration-none" href="#"> <p class="mb-0">Vulnerabilidades </p> </a>
-                                <a class="text-success text-decoration-none" href="#"> <p class="mb-0">Precios </p></a>
-                                <a class="text-success text-decoration-none" href="#"> <p class="mb-0">Estado del servicio </p></a>
-                            </div>
+                </div>
+
+                <div class="col-3 card bg-primary text-white mb-3" style="max-width: 20rem; border: 0;">
+                    <div class="card-header">
+                        <h4>SVAIA</h4>
                     </div>
-    
-                    <div class="card text-white bg-primary mb-3 col-3" style="max-width: 20rem; border:0;">
-                        <div class="card-header"><h4>Legal</h4></div>
-                        <div class="card-body">
-                            <p class="text-success mb-0" href="#">Política de privacidad</p>
-                            <p class="text-success mb-0" href="#">Términos de uso</p>
-                            <p class="text-success mb-0" href="#">Trabaja con nosotros</p>
-                        </div>
+                    <div class="card-body">
+                        <p class="nav-link text-success">ETSI Informática</p>
+                        <p></p>
+                        <p class="text-success mb-0">Universidad de Málaga</p>
+                        <p class="text-success mb-0">Bulevar Louis Pasteur, 35</p>
+                        <p class="text-success mb-0">29071 Málaga</p>
+                        <p class="text-success mb-0">España</p>
+                    </div>
+                    <!-- Map moved to separate row -->
+                </div>
+
+                <div class="col-3 card bg-primary text-white mb-3" style="max-width: 20rem; border: 0;">
+                    <div class="card-header">
+                        <h4>Producto</h4>
+                    </div>
+                    <div class="card-body">
+                        <a class="text-decoration-none text-success" href="/frontend/chat/chat.html">
+                            <p class="mb-0">Chat</p>
+                        </a>
+                        <a class="text-decoration-none text-success" href="#">
+                            <p class="mb-0">SVAIA API</p>
+                        </a>
+                        <a class="text-decoration-none text-success" href="#">
+                            <p class="mb-0">Vulnerabilidades </p>
+                        </a>
+                        <a class="text-decoration-none text-success" href="#">
+                            <p class="mb-0">Precios </p>
+                        </a>
+                        <a class="text-decoration-none text-success" href="#">
+                            <p class="mb-0">Estado del servicio </p>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="col-3 card bg-primary text-white mb-3" style="max-width: 20rem; border:0;">
+                    <div class="card-header">
+                        <h4>Legal</h4>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-success mb-0" href="#">Política de privacidad</p>
+                        <p class="text-success mb-0" href="#">Términos de uso</p>
+                        <p class="text-success mb-0" href="#">Trabaja con nosotros</p>
                         <hr style="color:black">
-                        <div class="card-body text-success"> Contacto</div>
-                        </div>
-                    </div>   
+                        <p class="text-success"> Contacto</p>
+                    </div>
+
+
                 </div>
             </div>
-            <div class="container">
-                <div class="row-12 d-flex justify-content-center">
-                    <p class=""> © 2025 SVAIA. Todos los derechos reservados.</p>
+            <!-- Map row -->
+            <div class="row pb-5">
+                <div class="card bg-primary text-white" style="width: 20rem; margin-left: calc(25% + 48px); border: 0;">
+                    <hr style="color: black">
+                    <div class="map-container" style="overflow: hidden; height: 300px;">
+                        <iframe width="100%" height="300" frameborder="0" style="border: 0" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps/embed/v1/place?key=AIzaSyAWmCyDuIUVP0M0dFLk51m-2RXQOyijrqE&q=ETSIInformatica+Málaga&maptype=satellite">
+                        </iframe>
+                    </div>
                 </div>
             </div>
-        </footer>
+        </div>
+        <div class="container">
+            <div class="d-flex row-12 justify-content-center">
+                <p class=""> © 2025 SVAIA. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
 
     <script src="chat.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

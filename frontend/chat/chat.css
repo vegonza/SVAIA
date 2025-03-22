@@ -38,18 +38,21 @@
 .chat-input {
     margin-top: auto;
     position: sticky;
-
     bottom: 0;
 }
 
 .input-container {
-    background-color: lightgray;
+    background-color: whitesmoke;
+    outline: auto;
+    outline-color: lightgray;
 }
 
 .delete-conversation {
+    display: none;
     opacity: 0;
 }
 
 .conversation:hover .delete-conversation {
+    display: block;
     opacity: 1;
 }

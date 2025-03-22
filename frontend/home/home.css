@@ -1,44 +1,33 @@
-@font-face {
-    font-family: 'AllertaCustom';
-    src: url('/frontend/fonts/allerta_stencil.ttf') format('truetype');
-    font-weight: normal;
-    font-style: normal;
-}
-
-.svaia-text {
-    font-family: 'AllertaCustom', sans-serif;
-    line-height: 1;
-}
-
-#imagen_chat{
+#imagen_chat {
     padding-right: 10px;
-    margin-top:0px;
+    margin-top: 0px;
 }
-#lista_imagen{
+
+#lista_imagen {
     list-style: none;
     padding: 0px;
 }
 
-#lista_imagen li{
+#lista_imagen li {
     display: flex;
     align-items: center;
     margin-bottom: 10px;
     margin-top: 10px;
 }
 
-.texto_num{
+.texto_num {
     font-size: 25px;
     font-family: Arial, Helvetica, sans-serif;
     color: rgb(7, 52, 101);
 }
 
-.texto_sec{
+.texto_sec {
     font-size: 17px;
     font-family: Arial, Helvetica, sans-serif;
     color: rgb(7, 52, 101);
 }
 
-.circulo{
+.circulo {
     width: 40px;
     height: 40px;
     border-radius: 50%;
@@ -49,4 +38,9 @@
     align-items: center;
     margin-right: 10px;
     flex-shrink: 0;
+}
+
+#pricing {
+    clip-path: ellipse(2000px 400px at 50% 400px);
+    padding-top: 50px;
 }
