@@ -80,14 +80,14 @@
 
         <!-- Chat -->
         <div class="container">
-            <div class="row">
+            <div class="row flex-column flex-md-row">
                 <!-- History -->
-                <div class="col-sm-4">
+                <div class="col-12 col-md-4 order-1 mb-3">
                     <div class="p-2 bg-white rounded-2">
                         <div class="new-chat d-flex justify-content-end">
                             <button class="btn rounded-2 bg-success border-0 m-1"><i class="bi bi-plus-lg text-white fs-4 fw-bold"></i></button>
                         </div>
-                        <div class="list-group">
+                        <div class="list-group d-none d-md-block">
                             <a href="#" class="conversation list-group-item list-group-item-action active d-flex justify-content-between align-items-center">
                                 <span>Proyecto 1</span>
                                 <button class="delete-conversation btn rounded-2 bg-danger text-white border-0 m-1">
@@ -107,15 +107,21 @@
                                 </button>
                             </a>
                         </div>
+                        
+                        <!-- History for mobile -->
+                        <select class="form-select d-block d-md-none">
+                            <option>Proyecto 1</option>
+                            <option>Proyecto 2</option>
+                            <option>Proyecto 3</option>
+                        </select>
                     </div>
                 </div>
 
                 <!-- Message -->
-                <div class="col-sm-8 chat-container mb-5 sm-mx-2 px-0 pb-0">
+                <div class="col-12 col-md-8 order-2 chat-container mb-5 px-0 pb-0 mx-auto">
                     <div id="chat-messages">
-                        <!--  Messages go here    -->
+                        <!-- Messages go here -->
                     </div>
-
                     <div class="row container-fluid p-2 m-0 input-container">
                         <div class="chat-input">
                             <div class="input-group">
@@ -129,6 +135,7 @@
                 </div>
             </div>
         </div>
+    </div>
     </div>
 
     <!-- Footer -->
