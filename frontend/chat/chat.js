@@ -90,4 +90,6 @@ inputText.addEventListener('keydown', (e) => {
     }
 });
 
-create_message_IA("Hola usuario");
+document.addEventListener("DOMContentLoaded", function () {
+    create_message_IA("Hola usuario");
+});
