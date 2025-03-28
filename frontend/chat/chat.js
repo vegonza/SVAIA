@@ -28,7 +28,6 @@ function get_response(message) {
         });
 }
 
-
 function create_message(input, isUser = false) {
     const template = isUser ? template_user : template_ai;
     const clone = template.content.cloneNode(true);
