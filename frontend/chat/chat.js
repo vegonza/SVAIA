@@ -1,10 +1,12 @@
 const chat = document.getElementById("chat-messages");
 const inputText = document.getElementById("message-input");
+const template_user = document.getElementById("user-message-template");
+const template_ai = document.getElementById("ai-message-template");
 let total = 0;
 let loading = false;
 
 function get_response(message) {
-    return fetch('http://127.0.0.1:5000/completion', {
+    return fetch('https://albertosalguero.eu.pythonanywhere.com/send-message', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -27,35 +29,16 @@ function get_response(message) {
 }
 
 
-function create_message_IA(input) {
-    const message = document.createElement('div');
+function create_message(input, isUser = false) {
+    const template = isUser ? template_user : template_ai;
+    const clone = template.content.cloneNode(true);
+    const messageDiv = clone.querySelector(".message-content");
+    messageDiv.textContent = input;
+
+    const message = document.createElement("div");
     message.id = `message-${total}`;
-    message.innerHTML = `
-    <li class="d-flex align-items-start mb-3 container-fluid pe-0">
-        <i class="bi bi-robot me-4"></i>
-        <div class="bg-secondary text-white p-4 rounded-1 container-fluid">
-            ${input}
-        </div>
-    </li>
-    `;
+    message.appendChild(clone);
     chat.appendChild(message);
-
-
-}
-function create_message_user(input) {
-    const message = document.createElement('div');
-    message.id = `message-${total}`;
-    message.innerHTML = `
-    <li class="d-flex align-items-start justify-content-end mb-3 ps-0">
-        <div class="bg-primary text-white p-4 rounded-2 container-fluid">
-                    ${input}
-        </div>
-        <i class="bi bi-person-fill ms-4"></i>
-    </li>
-    `;
-    chat.appendChild(message);
-
-
 }
 
 async function sendMessage() {
@@ -68,13 +51,13 @@ async function sendMessage() {
         return;
     }
     inputText.value = "";
-    create_message_user(input);
+    create_message(input, isUser = true);
     try {
         const response = await get_response(input);
         console.log(response);
-        create_message_IA(response);
+        create_message(response);
     } catch (error) {
-        create_message_IA("Sorry, there was an error processing your request.");
+        create_message("Ha habido un error en el servidor");
     }
     inputText.focus();
     chat.scrollTop = chat.scrollHeight;
@@ -91,5 +74,5 @@ inputText.addEventListener('keydown', (e) => {
 });
 
 document.addEventListener("DOMContentLoaded", function () {
-    create_message_IA("Hola usuario");
+    create_message("Hola usuario");
 });
