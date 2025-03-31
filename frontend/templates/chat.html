@@ -1,14 +1,17 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "layout.html" %}
 
-<head>
+{% block head %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SVAIA - Chat</title>
-    <link href="chat.css" rel="stylesheet">
-</head>
+    <script src="{{ url_for('static', filename='js/chat.js') }}"></script>
+    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/chat.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 
-<body>
+{% endblock %}
+
+{% block content %}
 
     <div class="background-gradient">
         <!--Breadcrumb-->
@@ -104,6 +107,6 @@
         </div>
     </div>
     </div>
-</body>
+{% endblock %}
 
 </html>
