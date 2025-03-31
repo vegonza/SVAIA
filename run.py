@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, jsonify, render_template, request
+from flask import Flask, jsonify, render_template, request, send_from_directory
 from flask_cors import CORS
 
 from services import get_response
@@ -14,8 +14,11 @@ CORS(app)
 
 @app.route("/")
 def home():
-    return render_template("layout.html")
+    return render_template("index.html")
 
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(app.static_folder, "images"), "tidelock_sin_fondo.png")
 
 @app.route("/chat")
 def chat():

@@ -1,7 +1,8 @@
 {% extends "layout.html" %}
 
 {% block head %}
-    <link href="home.css" rel="stylesheet">
+    <title>SVAIA</title>
+    <link href="{{ url_for('static', filename='css/home.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css">
 {% endblock %}
 
@@ -26,7 +27,7 @@
                 </div>
             </div>
             <div class="row justify-content-center">
-                <a href="/frontend/chat/chat.html" class="col-10 col-md-4 d-flex justify-content-center md-justify-content-end text-decoration-none">
+                <a href="{{ url_for('chat') }}" class="col-10 col-md-4 d-flex justify-content-center md-justify-content-end text-decoration-none">
                     <div class="card bg-secondary text-white mb-3">
                         <div class="card-body">
                             <h4 class="card-title">¡Comienza ya!</h4>
@@ -51,7 +52,7 @@
             <!-- Imagen -->
             <div class="col-md-6 d-flex justify-content-center justify-content-md-end mb-3">
                 <div id="imagen_chat">
-                    <img src="/frontend/images/Captura_Chat.PNG" alt="Chat" width="300px;" height="200px;">
+                    <img src="{{ url_for('static', filename='images/Captura_Chat.PNG') }}" alt="Chat" width="300px;" height="200px;">
                 </div>
             </div>
             <!-- Contenedor de las 3 filas -->
@@ -137,7 +138,10 @@
             </div>
         </div>
     </div>
+    
+{% endblock %}
 
+{% block scripts %}
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
         AOS.init({

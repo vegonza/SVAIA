@@ -1,20 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "layout.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+{% block head %}
     <title>SVAIA - Chat</title>
-    <link href="chat.css" rel="stylesheet">
-</head>
+    <link href="{{ url_for('static', filename='css/chat.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+{% endblock %}
 
-<body>
+{% block content %}
 
     <div class="background-gradient">
         <!--Breadcrumb-->
         <div class="container">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="/frontend/home/index.html">Inicio<a></li>
+                <li class="breadcrumb-item"><a href="{{ url_for('home') }}">Inicio<a></li>
                 <li class="breadcrumb-item active"></li>
                 <li class="breadcrumb-item active">Chat</li>
             </ol>
@@ -104,6 +102,8 @@
         </div>
     </div>
     </div>
-</body>
+{% endblock %}
 
-</html>
+{% block scripts %}
+    <script src="{{ url_for('static', filename='js/chat.js') }}"></script>
+{% endblock %}
