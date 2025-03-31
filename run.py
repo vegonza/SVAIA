@@ -5,7 +5,7 @@ from flask_cors import CORS
 
 from services import get_response
 
-app = Flask(__name__, template_folder="frontend/templates")
+app = Flask(__name__, template_folder="frontend/templates", static_folder="frontend/static")
 app.config.update(
     SECRET_KEY=os.environ.get('APP_SECRET_KEY'),
 )
@@ -15,6 +15,7 @@ CORS(app)
 @app.route("/")
 def home():
     return render_template("layout.html")
+
 
 @app.route("/chat")
 def chat():

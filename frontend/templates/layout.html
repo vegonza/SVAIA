@@ -4,10 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SVAIA</title>
-    <link href="/frontend/static/bootstrap.min.css" rel="stylesheet">
-    <link href="/frontend/static/styles.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-    {% block head %}{% endblock %}
+    <link href="{{ url_for('static', filename='bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='styles.css') }}" rel="stylesheet">
   </head>
   <body>
     <!-- Nav bar -->
@@ -15,7 +14,7 @@
         <div class="container-fluid">
             <div class="d-flex justify-content-start align-items-center">
                 <div class="logo">
-                    <img src="/frontend/static/images/tidelock_logo.png" alt="SVAIA Logo" height="80">
+                    <img src="{{ url_for('static', filename='images/tidelock_logo.png') }}" alt="SVAIA Logo" height="80">
                 </div>
                 <a class="navbar-brand text-black fs-3 fw-bold svaia-text" href="#">SVAIA</a>
             </div>
@@ -25,8 +24,8 @@
             <div class="collapse navbar-collapse" id="navbarColor01">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link text-decoration-none active" href="/frontend/templates/index.html">Inicio
-                            <span class="visually-hidden">(current)</span>
+                        <a class="nav-link text-decoration-none active" href="{{ url_for('static', filename='index.html') }}">Inicio
+                        <span class="visually-hidden">(current)</span>
                         </a>
                     </li>
                     <li class="nav-item">
@@ -49,7 +48,7 @@
                 </ul>
                 <form class="d-flex mb-3 mb-lg-0 gap-2">
                     <input class="form-control" type="search" placeholder="Describe tu proyecto...">
-                    <a href="/frontend/templates/chat.html" class="btn btn-secondary my-2 my-sm-0">Comenzar</a>
+                    <a href="{{ url_for('chat') }}" class="btn btn-secondary my-2 my-sm-0">Comenzar</a>
                 </form>
             </div>
         </div>
@@ -100,7 +99,7 @@
                 <div class="col-3 card bg-primary text-white mb-3" style="max-width: 20rem; border: 0;">
                         <div class="card-header"><h4>Producto</h4></div>
                         <div class="card-body">
-                            <a class="text-decoration-none text-success" href="/frontend/templates/chat.html"> <p class="mb-0">Chat</p> </a>
+                            <a class="text-decoration-none text-success" href="{{ url_for('chat') }}"> <p class="mb-0">Chat</p> </a>
                             <a class="text-decoration-none text-success" href="#"> <p class="mb-0">SVAIA API</p></a>
                             <a class="text-decoration-none text-success" href="#"> <p class="mb-0">Vulnerabilidades </p> </a>
                             <a class="text-decoration-none text-success" href="#"> <p class="mb-0">Precios </p></a>
