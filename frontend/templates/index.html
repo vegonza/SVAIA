@@ -1,0 +1,147 @@
+{% extends "layout.html" %}
+
+{% block head %}
+    <link href="home.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css">
+{% endblock %}
+
+{% block content %}
+    <div class="background-gradient background-ellipse">
+        <div class="container">
+            <div class="row p-4">
+                <div class="col alert alert-dismissible alert-warning">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    <h4 class="alert-heading">Atencion!</h4>
+                    <p class="mb-0">Mensaje de alerta para indicar que se ha podido producir un error (<a href="#"
+                            class="alert-link">ver detalles</a>).</p>
+                </div>
+            </div>
+        </div>
+    
+        <div class="container text-center pt-5">
+            <div class="row mt-5 mb-5">
+                <div class="col">
+                    <p class="svaia-text mb-0" style="font-size: 8rem;">SVAIA</p>
+                    <p class="text-dark fs-4"><i>Sistema de soporte para Vulnerabilidades y Amenazas basado en Inteligencia Artificial</i></p>
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <a href="/frontend/chat/chat.html" class="col-10 col-md-4 d-flex justify-content-center md-justify-content-end text-decoration-none">
+                    <div class="card bg-secondary text-white mb-3">
+                        <div class="card-body">
+                            <h4 class="card-title">¡Comienza ya!</h4>
+                            <p class="card-text">Describe tu proyecto y comienza a recibir sugerencias sobre seguridad por parte de nuestra Inteligencia Artificial.</p>
+                        </div>
+                    </div>
+                </a>
+                <div class="col-10 col-md-4 d-flex justify-content-center md-justify-content-start">
+                  <div class="card bg-secondary text-white mb-3">
+                      <div class="card-body">
+                          <h4 class="card-title">Vulnerabilidades</h4>
+                          <p class="card-text">Nuestro modelo se basa en miles de vulnerabilidades conocidas y en la información más reciente de la industria.</p>
+                      </div>
+                  </div>
+              </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="container-fluid row align-items-center justify-content-center my-5 py-5">
+            <!-- Imagen -->
+            <div class="col-md-6 d-flex justify-content-center justify-content-md-end mb-3">
+                <div id="imagen_chat">
+                    <img src="/frontend/images/Captura_Chat.PNG" alt="Chat" width="300px;" height="200px;">
+                </div>
+            </div>
+            <!-- Contenedor de las 3 filas -->
+            <div class="col d-flex flex-column align-items-center justify-content-center overflow-x-hidden">
+                <!-- Fila 1 -->
+                <div class="row w-100 mb-3" data-aos="fade-left" data-aos-duration="3000" data-aos-delay="500">
+                    <div class="col-md-1 d-flex justify-content-center">
+                        <span class="bg-secondary circulo">1</span>
+                    </div>
+                    <div class="col-md-11 d-flex flex-column justify-content-center">
+                        <p class="texto_num">Describe tu proyecto</p>
+                        <p class="texto_sec">Describe tu proyecto usando nuestro chat.</p> 
+                    </div>
+                </div>
+                <!-- Fila 2 -->
+                <div class="row w-100 mb-3" data-aos="fade-left" data-aos="fade-left" data-aos-duration="3000" data-aos-delay="1500">
+                    <div class="col-md-1 d-flex justify-content-center">
+                        <span class="bg-secondary circulo">2</span>
+                    </div>
+                    <div class="col-md-11 d-flex flex-column justify-content-center">
+                        <p class="texto_num">Recibe sugerencias</p>
+                        <p class="texto_sec">Nuestra IA buscará vulnerabilidades que puedan ser de tu interés.</p>
+                    </div>
+                </div>
+                <!-- Fila 3 -->
+                <div class="row w-100" data-aos="fade-left" data-aos-duration="3000" data-aos-delay="2500">
+                    <div class="col-md-1 d-flex justify-content-center">
+                        <span class="bg-secondary circulo">3</span>
+                    </div>
+                    <div class="col-md-11 d-flex flex-column justify-content-center">
+                        <p class="texto_num">Más detalles</p>
+                        <p class="texto_sec">Sigue hablando con la IA para obtener más información.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pricing -->
+    <div class="container-fluid bg-secondary" id="pricing">
+        <div class="row mb-5" id="pricing-title">
+            <h1 class="d-flex justify-content-center">Tabla de precios</h1>
+            <p class="d-flex justify-content-center lead">Elije la modalidad que mejor se adapte a tus necesidades</p>
+        </div>
+    
+        <div class="row justify-content-center pb-5" data-aos="fade-up">
+            <div class="col-12 d-flex flex-column flex-md-row justify-content-md-center justify-content-top align-items-md-start align-items-center gap-3">
+                <div class="card shadow" style="max-width: 15rem; width: 100%;">
+                    <h4 class="card-header bg-primary text-white">Básico</h4>
+                    <div class="card-body">
+                        <h4 class="card-title">0€<small class="text-body-secondary">/mes</small></h4>
+                        <p class="card-text mb-0">1 proyecto</p>
+                        <p class="card-text mb-0">10 sugerencias</p>
+                        <p class="card-text mb-0">Sin soporte</p>
+                    </div>
+                    <button type="button" class="btn btn-outline-primary m-3">Comenzar</button>
+                </div>
+    
+                <div class="card shadow" style="max-width: 15rem; width: 100%;">
+                    <h4 class="card-header bg-primary text-white">Profesional</h4>
+                    <div class="card-body">
+                        <h4 class="card-title">19,99€<small class="text-body-secondary">/mes</small></h4>
+                        <p class="card-text mb-0">10 proyectos</p>
+                        <p class="card-text mb-0">100 sugerencias</p>
+                        <p class="card-text mb-0">Soporte por chat</p>
+                        <p class="card-text mb-0">Acceso a la API</p>
+                    </div>
+                    <button type="button" class="btn btn-outline-primary m-3">Comenzar</button>
+                </div>
+    
+                <div class="card shadow" style="max-width: 15rem; width: 100%;">
+                    <h4 class="card-header bg-primary text-white">Empresarial</h4>
+                    <div class="card-body">
+                        <h4 class="card-title">49,99€<small class="text-body-secondary">/mes</small></h4>
+                        <p class="card-text mb-0">100 proyectos</p>
+                        <p class="card-text mb-0">Sugerencias ilimitadas</p>
+                        <p class="card-text mb-0">Soporte por chat</p>
+                        <p class="card-text mb-0">Soporte por teléfono</p>
+                        <p class="card-text mb-0">Acceso a la API</p>
+                    </div>
+                    <button type="button" class="btn btn-outline-primary m-3">Comenzar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({
+        once: true 
+    });
+    </script>
+{% endblock %}
