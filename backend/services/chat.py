@@ -14,7 +14,7 @@ client = OpenAI(
 
 def get_response(message: str):
     completion = client.chat.completions.create(
-        model="google/gemini-2.0-flash-lite-preview-02-05:free",
+        model="google/gemini-2.0-flash-exp:free",
         messages=[
             {
                 "role": "user",
