@@ -1,14 +1,20 @@
-from flask import Flask, jsonify, request, render_template
+import os
+
+from flask import Flask, jsonify, render_template, request
 from flask_cors import CORS
+
 from services import get_response
 
-app = Flask(__name__, template_folder="../frontend")
+app = Flask(__name__)
+app.config.update(
+    SECRET_KEY=os.environ.get('APP_SECRET_KEY'),
+)
 CORS(app)
 
 
 @app.route("/")
 def home():
-    return render_template("/home/index.html")
+    return render_template("layout.html")
 
 
 @app.route("/completion", methods=["POST"])
