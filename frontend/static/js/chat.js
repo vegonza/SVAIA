@@ -6,7 +6,7 @@ let total = 0;
 let loading = false;
 
 function get_response(message) {
-    return fetch("http://127.0.0.1:5000/completion", {
+    return fetch("/completion", {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
