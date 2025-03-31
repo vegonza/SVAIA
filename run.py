@@ -14,7 +14,7 @@ CORS(app)
 
 @app.route("/")
 def home():
-    return render_template("layout.html")
+    return render_template("index.html")
 
 
 @app.route("/chat")
