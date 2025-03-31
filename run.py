@@ -5,7 +5,7 @@ from flask_cors import CORS
 
 from services import get_response
 
-app = Flask(__name__, template_folder="/frontend/templates")
+app = Flask(__name__, template_folder="frontend/templates")
 app.config.update(
     SECRET_KEY=os.environ.get('APP_SECRET_KEY'),
 )
