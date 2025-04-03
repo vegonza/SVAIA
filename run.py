@@ -16,9 +16,11 @@ CORS(app)
 def home():
     return render_template("index.html")
 
+
 @app.route('/favicon.ico')
 def favicon():
     return send_from_directory(os.path.join(app.static_folder, "images"), "tidelock_sin_fondo.png")
+
 
 @app.route("/chat")
 def chat():
