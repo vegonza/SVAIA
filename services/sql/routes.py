@@ -7,7 +7,7 @@ auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
 @auth_bp.route('/projects/<string: uuid>', methods=['GET'])
 def get_project(uuid):
     project = Project.query.filter_by(uuid=uuid).first()
-    if project is None:
+    if project is None or project.user != 'admin':
         return {'error': 'Project not found'}, 404
     return project.to_dict(), 200
 
