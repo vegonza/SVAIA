@@ -150,20 +150,19 @@ async function delete_project(uuid, element) {
         });
 }
 
-async function create_project() {
+async function create_project(name) {
     return fetch("/sql/projects", {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ name: "New Project" })
+        body: JSON.stringify({ name })
     })
         .then(res => {
             console.log(res);
             return res.json();
         })
         .then(data => {
-            // Refresh the project list
             get_projects();
             return data;
         });
@@ -176,8 +175,10 @@ inputText.addEventListener('keydown', (e) => {
 });
 
 new_chat.addEventListener("click", () => {
-    console.log("new chat");
-    create_project();
+    const projectName = prompt("Introduce el nombre del proyecto", "Proyecto nuevo");
+    if (projectName) {
+        create_project(projectName);
+    }
 });
 
 document.addEventListener("DOMContentLoaded", function () {
