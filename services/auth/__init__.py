@@ -1,6 +1,8 @@
-from flask import Blueprint, request, flash, render_template
+from flask import Blueprint, request, flash, render_template, redirect, abort, url_for
 from flask_login import login_user, login_required, logout_user
 from werkzeug.security import generate_password_hash, check_password_hash
+
+from .utils import url_has_allowed_host_and_scheme
 from .test_users import users
 
 auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
