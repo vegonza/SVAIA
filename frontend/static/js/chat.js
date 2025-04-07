@@ -7,8 +7,16 @@ const template_mobile_project = document.getElementById("mobile-project-template
 const new_chat = document.getElementById("new-chat");
 const project_list = document.getElementById("project-list");
 const mobile_project_list = document.getElementById("mobile-project-list");
+const warningAlert = document.getElementById("warning-alert");
+const warningMessage = document.getElementById("warning-message");
 let total = 0;
 let loading = false;
+
+// Function to show a warning message
+function showWarning(message) {
+    warningMessage.textContent = message;
+    warningAlert.classList.remove("d-none");
+}
 
 async function get_response(message) {
     return fetch("/chat/completion", {
@@ -29,6 +37,7 @@ async function get_response(message) {
         })
         .catch(error => {
             console.error('Error:', error);
+            showWarning("Error al procesar tu solicitud: " + error.message);
             return "Sorry, there was an error processing your request.";
         });
 }
@@ -147,24 +156,33 @@ async function delete_project(uuid, element) {
         })
         .catch(error => {
             console.error('Error:', error);
+            showWarning("Error al eliminar el proyecto: " + error.message);
         });
 }
 
-async function create_project(name) {
+async function create_project() {
     return fetch("/sql/projects", {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ name })
+        body: JSON.stringify({ name: "New Project" })
     })
         .then(res => {
             console.log(res);
+            if (!res.ok) {
+                throw new Error('Error creating project: ' + res.statusText);
+            }
             return res.json();
         })
         .then(data => {
+            // Refresh the project list
             get_projects();
             return data;
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showWarning("Error al crear el proyecto: " + error.message);
         });
 }
 
@@ -175,10 +193,8 @@ inputText.addEventListener('keydown', (e) => {
 });
 
 new_chat.addEventListener("click", () => {
-    const projectName = prompt("Introduce el nombre del proyecto", "Proyecto nuevo");
-    if (projectName) {
-        create_project(projectName);
-    }
+    console.log("new chat");
+    create_project();
 });
 
 document.addEventListener("DOMContentLoaded", function () {
