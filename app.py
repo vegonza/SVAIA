@@ -1,17 +1,22 @@
 import os
 
 from flask import Flask, render_template, send_from_directory
-from flask_login import LoginManager
-from services.auth.test_users import users
-
 from flask_cors import CORS
+from flask_login import LoginManager
+
 from services import auth_bp, chat_bp
+from services.auth.test_users import users
+from services.sql import init_sql
 
 app = Flask(__name__, template_folder="frontend/templates", static_folder="frontend/static")
 app.config.update(
     SECRET_KEY=os.environ.get('APP_SECRET_KEY'),
+    SQLALCHEMY_DATABASE_URI='sqlite:///db.sqlite',
+    SQLALCHEMY_TRACK_MODIFICATIONS=False
 )
 CORS(app)
+
+init_sql(app)
 
 login_manager = LoginManager()
 login_manager.init_app(app)

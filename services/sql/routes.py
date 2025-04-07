@@ -1,10 +1,10 @@
 from flask import Blueprint
 from .models import Project
 
-auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
+sql_bp = Blueprint('sql', __name__)
 
 
-@auth_bp.route('/projects/<string: uuid>', methods=['GET'])
+@sql_bp.route('/projects/<string:uuid>', methods=['GET'])
 def get_project(uuid):
     project = Project.query.filter_by(uuid=uuid).first()
     if project is None or project.user != 'admin':
@@ -12,11 +12,11 @@ def get_project(uuid):
     return project.to_dict(), 200
 
 
-@auth_bp.route('/projects', methods=['POST'])
+@sql_bp.route('/projects', methods=['POST'])
 def create_project():
     pass
 
 
-@auth_bp.route('/projects', methods=['DELETE'])
-def delete_project():
+@sql_bp.route('/projects/<string:uuid>', methods=['DELETE'])
+def delete_project(uuid):
     pass
