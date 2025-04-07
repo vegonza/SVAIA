@@ -6,7 +6,7 @@ let total = 0;
 let loading = false;
 
 function get_response(message) {
-    return fetch("/completion", {
+    return fetch("/chat/completion", {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

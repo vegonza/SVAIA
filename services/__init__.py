@@ -1,3 +1,4 @@
-from .chat import get_response
+from .chat import chat_bp
+from .auth import auth_bp
 
-__all__ = ["get_response"]
+__all__ = ["chat_bp", "auth_bp"]

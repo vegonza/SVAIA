@@ -49,7 +49,7 @@
                 </ul>
                 <form class="d-flex mb-3 mb-lg-0 gap-2">
                     <input class="form-control" type="search" placeholder="Describe tu proyecto...">
-                    <a href="{{ url_for('chat') }}" class="btn btn-secondary my-2 my-sm-0">Comenzar</a>
+                    <a href="{{ url_for('chat.index') }}" class="btn btn-secondary my-2 my-sm-0">Comenzar</a>
                 </form>
             </div>
         </div>
@@ -100,7 +100,7 @@
                 <div class="col-3 card bg-primary text-white mb-3" style="max-width: 20rem; border: 0;">
                         <div class="card-header"><h4>Producto</h4></div>
                         <div class="card-body">
-                            <a class="text-decoration-none text-success" href="{{ url_for('chat') }}"> <p class="mb-0">Chat</p> </a>
+                            <a class="text-decoration-none text-success" href="{{ url_for('chat.index') }}"> <p class="mb-0">Chat</p> </a>
                             <a class="text-decoration-none text-success" href="#"> <p class="mb-0">SVAIA API</p></a>
                             <a class="text-decoration-none text-success" href="#"> <p class="mb-0">Vulnerabilidades </p> </a>
                             <a class="text-decoration-none text-success" href="#"> <p class="mb-0">Precios </p></a>

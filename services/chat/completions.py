@@ -1,11 +1,11 @@
 import os
+
+from dotenv import find_dotenv, load_dotenv
 from openai import OpenAI
-from dotenv import load_dotenv, find_dotenv
+
 load_dotenv(find_dotenv())
 
-
 api_key = os.environ.get("AI_API_KEY")
-
 client = OpenAI(
     base_url="https://openrouter.ai/api/v1",
     api_key=api_key,
