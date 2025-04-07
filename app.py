@@ -26,7 +26,7 @@ login_manager.login_message_category = 'info'
 
 
 @app.context_processor
-def inject_google_maps_api_key():
+def set_context_variables():
     return {'GOOGLE_MAPS_API_KEY': os.environ.get('GOOGLE_MAPS_API_KEY')}
 
 
