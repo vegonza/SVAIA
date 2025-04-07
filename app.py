@@ -4,7 +4,7 @@ from flask import Flask, render_template, send_from_directory
 from flask_cors import CORS
 from flask_login import LoginManager
 
-from services import auth_bp, chat_bp
+from services import auth_bp, chat_bp, sql_bp
 from services.auth.test_users import users
 from services.sql import init_sql
 
@@ -46,6 +46,7 @@ def favicon():
 # ---------------- register blueprints ---------------- #
 app.register_blueprint(auth_bp, url_prefix="/auth")
 app.register_blueprint(chat_bp, url_prefix="/chat")
+app.register_blueprint(sql_bp, url_prefix="/sql")
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

@@ -9,7 +9,8 @@ class Project(db.Model):
     """Table for storing project information."""
     uuid: Mapped[str] = mapped_column(db.String(36), primary_key=True, nullable=False)
     name: Mapped[str] = mapped_column(db.String(50), nullable=False)
-    user: Mapped[str] = mapped_column(db.String(12), db.ForeignKey('user.username'), nullable=False)
+    # TODO: change to nullable=False
+    user_id: Mapped[str] = mapped_column(db.String(12), db.ForeignKey('user.id'), nullable=True)
 
     def to_dict(self):
         return {

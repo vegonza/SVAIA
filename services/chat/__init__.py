@@ -7,7 +7,6 @@ chat_bp = Blueprint("chat", __name__)
 
 
 @chat_bp.route("/")
-@login_required
 def index():
     return render_template("chat.html")
 
