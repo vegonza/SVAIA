@@ -1,8 +1,8 @@
 import os
 
 from flask import Flask, render_template, send_from_directory
-from flask_login import LoginManager, login_required
-from services.test_users import users
+from flask_login import LoginManager
+from services.auth.test_users import users
 
 from flask_cors import CORS
 from services import auth_bp, chat_bp

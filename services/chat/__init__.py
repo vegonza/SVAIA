@@ -1,4 +1,5 @@
 from flask import Blueprint, jsonify, render_template, request
+from flask_login import login_required
 
 from .completions import get_response
 
@@ -6,6 +7,7 @@ chat_bp = Blueprint("chat", __name__)
 
 
 @chat_bp.route("/")
+@login_required
 def index():
     return render_template("chat.html")
 
