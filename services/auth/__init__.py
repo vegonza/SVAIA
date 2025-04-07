@@ -16,9 +16,11 @@ def check(password, hash):
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        username = request.form['username']
+        first_name = request.form['first_name']
+        last_name = request.form['last_name']
+        email = request.form['email']
         password = request.form['password']
-        user = users.get(username)
+        user = users.get(email)
         if user and check(password, user.password):
             login_user(user, remember=True)
             flash('Has iniciado sesión correctamente.', 'success')

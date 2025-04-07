@@ -1,10 +1,11 @@
 class Usuario:
-    def __init__(self, id, username, password):
+    def __init__(self, id, first_name, last_name, password):
         self.id = id
-        self.username = username
+        self.first_name
+        self.last_name
         self.password = password
 
-users = { # Simulamos una base de datos de usuarios
-    'user1': Usuario(id=1, username='user1', password=hash('pass1')),
-    'user2': Usuario(id=2, username='user2', password=hash('pass2'))
+users = {
+    'user1@gmail.com': Usuario(id=1, first_name='tonto', last_name="elquelolea", password=hash('pass1')),
+    'user2@gmail.com': Usuario(id=1, first_name='tonto', last_name="elquelolea2", password=hash('pass2'))
 }
