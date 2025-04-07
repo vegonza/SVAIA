@@ -2,6 +2,7 @@ import os
 
 from flask import Flask, jsonify, render_template, request, send_from_directory
 from flask_cors import CORS
+from services.auth import auth_bp
 
 from services import get_response
 
@@ -9,6 +10,7 @@ app = Flask(__name__, template_folder="frontend/templates", static_folder="front
 app.config.update(
     SECRET_KEY=os.environ.get('APP_SECRET_KEY'),
 )
+app.register_blueprint(auth_bp)
 CORS(app)
 
 
