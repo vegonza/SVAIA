@@ -2,7 +2,7 @@ from uuid import uuid4
 
 from flask import Blueprint, request
 
-from .models import Project, db
+from .models import Project, Message, db
 
 sql_bp = Blueprint('sql', __name__)
 
@@ -12,7 +12,14 @@ def load_project(uuid):
     project = Project.query.filter_by(uuid=uuid).first()
     if not project:
         return {"error": "Project not found"}, 404
-    return project.to_dict()
+
+    # Get all messages for this project
+    messages = Message.query.filter_by(project_uuid=uuid).order_by(Message.timestamp).all()
+
+    response = project.to_dict()
+    response['messages'] = [message.to_dict() for message in messages]
+
+    return response
 
 
 @sql_bp.route('/projects', methods=['GET'])
