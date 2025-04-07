@@ -1,19 +1,9 @@
-from flask import Blueprint, request, flash
+from flask import Blueprint, request, flash, render_template
 from flask_login import login_user, login_required, logout_user
 from werkzeug.security import generate_password_hash, check_password_hash
+from .test_users import users
 
 auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
-
-class Usuario:
-    def __init__(self, id, username, password):
-        self.id = id
-        self.username = username
-        self.password = password
-
-users = { # Simulamos una base de datos de usuarios
-    'user1': Usuario(id=1, username='user1', password=hash('pass1')),
-    'user2': Usuario(id=2, username='user2', password=hash('pass2'))
-}
 
 def hash(password):
     return generate_password_hash(password, method='pbkdf2:sha256', salt_length=16)
@@ -32,7 +22,7 @@ def login():
         if user and check(password, user.password):
             login_user(user, remember=True)
             flash('Has iniciado sesión correctamente.', 'success')
-            next = request.form.get('next', '/')
+            next = request.form.get('next', '/chat')
             if not url_has_allowed_host_and_scheme(next, request.host):
                 return abort(400)
             return redirect(next)
