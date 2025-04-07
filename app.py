@@ -1,6 +1,7 @@
 import os
 
 from flask import Flask, render_template, send_from_directory
+from flask_login import LoginManager
 from flask_cors import CORS
 from services import auth_bp, chat_bp
 
@@ -9,6 +10,20 @@ app.config.update(
     SECRET_KEY=os.environ.get('APP_SECRET_KEY'),
 )
 CORS(app)
+
+login_manager = LoginManager()
+login_manager.init(app)
+login_manager.login_view = 'auth.login'
+login_manager.login_message = 'Debes iniciar sesión para acceder a esta página.'
+login_manager.login_message_category = 'info'
+
+
+@login_manager.user_loader
+def load_user(user_id: str):
+    for user in users.values():
+        if user.id == int(user_id):
+            return user
+    return None
 
 
 @app.route("/")
