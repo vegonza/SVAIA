@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, render_template, send_from_directory
+from flask import Flask, render_template, send_from_directory, jsonify, request, redirect, url_for
 from flask_cors import CORS
 from flask_login import LoginManager
 
@@ -22,6 +22,12 @@ login_manager.init_app(app)
 login_manager.login_view = 'auth.login'
 login_manager.login_message = 'Debes iniciar sesión para acceder a esta página.'
 login_manager.login_message_category = 'info'
+
+@login_manager.unauthorized_handler
+def handle_unauthorized():
+    if request.accept_mimetypes['application/json']:
+        return jsonify({'error': 'unauthorized'}), 401
+    return redirect(url_for('auth.login', next=request.url))
 
 
 @app.context_processor
