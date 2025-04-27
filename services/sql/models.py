@@ -45,3 +45,4 @@ class User(UserMixin, db.Model):
     email: Mapped[str] = mapped_column(db.String(120), unique=True, nullable=False)
     username: Mapped[str] = mapped_column(db.String(12), unique=True, nullable=False)
     password: Mapped[str] = mapped_column(db.String(255), nullable=False)
+    is_admin: Mapped[bool] = mapped_column(db.Boolean, default=False)

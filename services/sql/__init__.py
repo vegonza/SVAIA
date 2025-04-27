@@ -18,7 +18,7 @@ def init_sql(app: Flask):
     with app.app_context():
         db.create_all()
         if not User.query.filter_by(username='admin').first():
-            admin = User(username='admin', password=hash('admin'), email='admin@admin.com')
-            default_user = User(username='user', password=hash('user'), email='user@user.com')
+            admin = User(username='admin', password=hash('admin'), email='admin@admin.com', is_admin=True)
+            default_user = User(username='user', password=hash('user'), email='user@user.com', is_admin=False)
             db.session.add_all([admin, default_user])
             db.session.commit()
