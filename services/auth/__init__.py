@@ -19,7 +19,6 @@ def login():
         user: User = User.query.filter_by(username=username).first()
         if user and check(password, user.password):
             login_user(user, remember=True)
-            flash('Has iniciado sesión correctamente.', 'success')
             next = request.form.get('next', '/chat')
             if not url_has_allowed_host_and_scheme(next, request.host):
                 return abort(400)
@@ -33,5 +32,4 @@ def login():
 @login_required
 def logout():
     logout_user()
-    flash('Has cerrado la sesión.', 'info')
     return redirect(url_for('auth.login'))
