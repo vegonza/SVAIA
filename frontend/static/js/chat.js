@@ -365,7 +365,7 @@ async function saveProject() {
         projectModal.hide();
 
         if (!isEditMode) {
-            // For new projects, load it
+            await get_projects();
             load_project(data.uuid);
         } else {
             // For edited projects, refresh the list
