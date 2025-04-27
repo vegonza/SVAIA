@@ -58,6 +58,13 @@ async function loadUsers() {
             row.querySelector('.user-email').textContent = user.email;
             row.querySelector('.user-username').textContent = user.username;
 
+            const roleCell = row.querySelector('.user-role');
+            if (user.is_admin) {
+                roleCell.textContent = 'Admin';
+            } else {
+                roleCell.textContent = 'Usuario';
+            }
+
             // Set up the action buttons
             const viewProjectsButton = row.querySelector('.view-projects-btn');
             viewProjectsButton.setAttribute('data-user-id', user.id);
