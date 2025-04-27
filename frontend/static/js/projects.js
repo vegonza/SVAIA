@@ -10,6 +10,14 @@ const errorTemplate = document.getElementById('error-template');
 const projectItemTemplate = document.getElementById('project-item-template');
 const projectsContainerTemplate = document.getElementById('projects-container-template');
 
+const projectModal = new bootstrap.Modal(document.getElementById('projectModal'));
+const projectForm = document.getElementById('projectForm');
+const projectUuidInput = document.getElementById('projectUuid');
+const projectNameInput = document.getElementById('projectName');
+const projectDescriptionInput = document.getElementById('projectDescription');
+const saveProjectBtn = document.getElementById('saveProjectBtn');
+const projectModalLabel = document.getElementById('projectModalLabel');
+
 function createAlert(message, category = 'danger') {
     const alertNode = alertTemplate.content.cloneNode(true);
     const alertDiv = alertNode.querySelector('.alert');
@@ -85,10 +93,8 @@ async function loadUserProjects() {
 
             const editBtn = projectItem.querySelector('.edit-btn');
             editBtn.setAttribute('data-project-uuid', project.uuid);
-            editBtn.setAttribute('data-project-name', project.name);
-            editBtn.setAttribute('data-project-description', project.description || '');
             editBtn.addEventListener('click', () => {
-                editProject(project.uuid, project.name, project.description, editBtn);
+                showEditProjectModal(project);
             });
 
             const deleteBtn = projectItem.querySelector('.delete-btn');
@@ -110,37 +116,33 @@ async function loadUserProjects() {
     }
 }
 
-async function editProject(projectUuid, currentName, currentDescription, button) {
-    const newName = prompt("Ingrese el nuevo nombre para el proyecto:", currentName);
-    if (!newName || newName.trim() === '') {
+function showEditProjectModal(project) {
+    projectModalLabel.textContent = 'Editar Proyecto';
+    projectUuidInput.value = project.uuid;
+    projectNameInput.value = project.name;
+    projectDescriptionInput.value = project.description || '';
+    projectModal.show();
+}
+
+async function saveProject() {
+    const name = projectNameInput.value.trim();
+    if (!name) {
+        alert('El nombre del proyecto es obligatorio');
         return;
     }
 
-    const newDescription = prompt("Ingrese la nueva descripción para el proyecto:", currentDescription || '');
-    if (newDescription === null) {
-        return;
-    }
-
-    const projectItem = button.closest('.list-group-item');
-    const projectNameElement = projectItem.querySelector('.project-name');
-    const projectDescriptionElement = projectItem.querySelector('.project-description');
-    const originalName = projectNameElement.textContent;
-    const originalDescription = projectDescriptionElement.textContent;
-
-    // Disable button and show loading
-    const originalHtml = button.innerHTML;
-    button.disabled = true;
-    button.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
+    const description = projectDescriptionInput.value.trim();
+    const uuid = projectUuidInput.value;
 
     try {
-        const response = await fetch(`/sql/projects/${projectUuid}`, {
+        const response = await fetch(`/sql/projects/${uuid}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                name: newName.trim(),
-                description: newDescription.trim()
+                name: name,
+                description: description
             })
         });
 
@@ -150,23 +152,15 @@ async function editProject(projectUuid, currentName, currentDescription, button)
         }
 
         const updatedProject = await response.json();
+        projectModal.hide();
 
-        // Update project data in the UI
-        projectNameElement.textContent = updatedProject.name;
-        projectDescriptionElement.textContent = `Descripción: ${updatedProject.description}`;
-        projectItem.querySelector('.project-updated').textContent = `Última modificación: ${formatDateTime(updatedProject.updated_at)}`;
-
+        // Reload the projects list
+        loadUserProjects();
         createAlert(`Proyecto actualizado con éxito.`, 'success');
 
     } catch (error) {
         console.error('Error updating project:', error);
         createAlert(`Error al actualizar el proyecto: ${error.message}`, 'danger');
-        projectNameElement.textContent = originalName;
-        projectDescriptionElement.textContent = originalDescription;
-    } finally {
-        // Re-enable button
-        button.disabled = false;
-        button.innerHTML = originalHtml;
     }
 }
 
@@ -205,5 +199,8 @@ async function deleteProject(projectUuid, button) {
         button.innerHTML = originalHtml;
     }
 }
+
+// Event listeners
+saveProjectBtn.addEventListener('click', saveProject);
 
 document.addEventListener('DOMContentLoaded', loadUserProjects);

@@ -38,8 +38,6 @@
     max-width: 90%;
 }
 
-
-
 .chat-input {
     margin-top: auto;
     position: sticky;
@@ -51,14 +49,25 @@
     border: 1px solid lightgray;
 }
 
-.delete-conversation {
-    display: none;
-    opacity: 0;
+/* Project actions styling */
+.project-actions {
+    display: flex;
 }
 
-.conversation:hover .delete-conversation {
+.project-actions button {
+    display: none;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.conversation:hover .project-actions button {
     display: block;
     opacity: 1;
+}
+
+/* Dark project items styling */
+.project-dark small.text-muted {
+    color: white !important;
 }
 
 /* Markdown styles for chat messages */

@@ -1,17 +1,28 @@
 const chat = document.getElementById("chat-messages");
 const input_text = document.getElementById("message-input");
-const user_template = document.getElementById("user-message-template");
-const ai_template = document.getElementById("ai-message-template");
-const project_template = document.getElementById("project-template");
-const mobile_project_template = document.getElementById("mobile-project-template");
 const new_chat_btn = document.getElementById("new-chat");
 const project_list = document.getElementById("project-list");
 const mobile_project_list = document.getElementById("mobile-project-list");
 const warning_alert = document.getElementById("warning-alert");
 const warning_message = document.getElementById("warning-message");
+const projectModal = new bootstrap.Modal(document.getElementById('projectModal'));
+const projectModalElement = document.getElementById('projectModal');
+const projectForm = document.getElementById('projectForm');
+const projectUuidInput = document.getElementById('projectUuid');
+const projectNameInput = document.getElementById('projectName');
+const projectDescriptionInput = document.getElementById('projectDescription');
+const saveProjectBtn = document.getElementById('saveProjectBtn');
+const projectModalLabel = document.getElementById('projectModalLabel');
+
+const user_template = document.getElementById("user-message-template");
+const ai_template = document.getElementById("ai-message-template");
+const project_template = document.getElementById("project-template");
+const mobile_project_template = document.getElementById("mobile-project-template");
+
 let message_counter = 0;
 let loading = false;
 let current_project_uuid = null;
+let isEditMode = false;
 
 function show_warning(message) {
     warning_message.textContent = message;
@@ -213,22 +224,37 @@ async function get_projects() {
             const project_div = clone.querySelector(".conversation");
             const project_name = project_div.querySelector(".project-name");
             const project_description = project_div.querySelector(".project-description");
-            const project_timestamp = project_div.querySelector(".project-timestamp");
             const delete_btn = project_div.querySelector(".delete-conversation");
+
             project_name.textContent = project.name;
             project_description.textContent = project.description;
 
-            const date = new Date(project.updated_at);
-            project_timestamp.textContent = `Última modificación: ${date.toLocaleString()}`;
 
             if (index % 2 !== 0) {
                 project_div.classList.add("active");
+                project_div.classList.add("project-dark");
             } else {
                 project_div.classList.remove("active");
             }
 
+            // Create action buttons container if it doesn't exist
+            let actionsDiv = delete_btn.parentElement;
+            actionsDiv.className = "project-actions";
+
+            // Add edit button
+            const edit_btn = document.createElement('button');
+            edit_btn.className = 'edit-conversation btn rounded-2 bg-warning text-white border-0 m-1';
+            edit_btn.innerHTML = '<i class="bi bi-pencil"></i>';
+            edit_btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                showEditProjectModal(project);
+            });
+
+            // Add the edit button before the delete button
+            actionsDiv.insertBefore(edit_btn, delete_btn);
+
             project_div.addEventListener("click", (e) => {
-                if (!e.target.closest('.delete-conversation')) {
+                if (!e.target.closest('.delete-conversation') && !e.target.closest('.edit-conversation')) {
                     load_project(project.uuid);
                 }
             });
@@ -264,6 +290,84 @@ async function get_projects() {
     } catch (error) {
         console.error('Error loading projects:', error);
         show_warning("Error al cargar los proyectos.");
+    }
+}
+
+function showCreateProjectModal() {
+    isEditMode = false;
+    projectModalLabel.textContent = 'Nuevo Proyecto';
+    projectUuidInput.value = '';
+    projectNameInput.value = '';
+    projectDescriptionInput.value = '';
+    projectModal.show();
+}
+
+function showEditProjectModal(project) {
+    isEditMode = true;
+    projectModalLabel.textContent = 'Editar Proyecto';
+    projectUuidInput.value = project.uuid;
+    projectNameInput.value = project.name;
+    projectDescriptionInput.value = project.description || '';
+    projectModal.show();
+}
+
+async function saveProject() {
+    const name = projectNameInput.value.trim();
+    if (!name) {
+        alert('El nombre del proyecto es obligatorio');
+        return;
+    }
+
+    const description = projectDescriptionInput.value.trim();
+    const uuid = projectUuidInput.value;
+
+    try {
+        let response;
+        let data;
+
+        if (isEditMode) {
+            // Update existing project
+            response = await fetch(`/sql/projects/${uuid}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    name: name,
+                    description: description
+                })
+            });
+        } else {
+            // Create new project
+            response = await fetch("/sql/projects", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    name: name,
+                    description: description
+                })
+            });
+        }
+
+        if (!response.ok) {
+            throw new Error('Error al guardar el proyecto: ' + response.statusText);
+        }
+
+        data = await response.json();
+        projectModal.hide();
+
+        if (!isEditMode) {
+            // For new projects, load it
+            load_project(data.uuid);
+        } else {
+            // For edited projects, refresh the list
+            get_projects();
+        }
+    } catch (error) {
+        console.error('Error saving project:', error);
+        show_warning("Error al guardar el proyecto: " + error.message);
     }
 }
 
@@ -312,46 +416,14 @@ async function delete_project(uuid) {
     }
 }
 
-async function create_project() {
-    const project_name = prompt("Ingresa un nombre para el proyecto:", "Nuevo Proyecto");
-    if (project_name === null) {
-        return;
-    }
-
-    const project_description = prompt("Ingresa una breve descripción del proyecto:", "");
-    if (project_description === null) {
-        return;
-    }
-
-    try {
-        const response = await fetch("/sql/projects", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                name: project_name,
-                description: project_description
-            })
-        });
-
-        if (!response.ok) {
-            throw new Error('Error al crear el proyecto: ' + response.statusText);
-        }
-
-        const data = await response.json();
-        load_project(data.uuid);
-    } catch (error) {
-        console.error('Error creating project:', error);
-        show_warning("Error al crear el proyecto: " + error.message);
-    }
-}
-
+// Event listeners
 input_text.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
         send_message();
     }
 });
+
+document.getElementById('send-message').addEventListener('click', send_message);
 
 mobile_project_list.addEventListener('change', function () {
     const selected_uuid = this.value;
@@ -361,8 +433,10 @@ mobile_project_list.addEventListener('change', function () {
 });
 
 new_chat_btn.addEventListener("click", () => {
-    create_project();
+    showCreateProjectModal();
 });
+
+saveProjectBtn.addEventListener('click', saveProject);
 
 document.addEventListener("DOMContentLoaded", function () {
     get_projects();

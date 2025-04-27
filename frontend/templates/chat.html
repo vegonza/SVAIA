@@ -45,11 +45,12 @@
                                     <div>
                                         <span class="project-name d-block"></span>
                                         <small class="text-muted project-description d-block"></small>
-                                        <small class="text-muted project-timestamp d-block"></small>
                                     </div>
-                                    <button class="delete-conversation btn rounded-2 bg-danger text-white border-0 m-1">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
+                                    <div class="project-actions">
+                                        <button class="delete-conversation btn rounded-2 bg-danger text-white border-0 m-1">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
                                 </a>
                             </template>
                             <!-- projects go here -->
@@ -99,7 +100,8 @@
             </div>
         </div>
     </div>
-    </div>
+    
+    {% include 'project_modal.html' %}
 {% endblock %}
 
 {% block scripts %}
