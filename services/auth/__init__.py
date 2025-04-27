@@ -3,7 +3,7 @@ from flask_login import login_user, login_required, logout_user
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from .utils import url_has_allowed_host_and_scheme
-from .test_users import users
+from sql.models import User
 
 auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
 
@@ -22,7 +22,7 @@ def login():
         last_name = request.form['last_name']
         email = request.form['email']
         password = request.form['password']
-        user = users.get(email)
+        user = User.query.filter_by(email=email).first()
         if user and check(password, user.password):
             login_user(user, remember=True)
             flash('Has iniciado sesión correctamente.', 'success')

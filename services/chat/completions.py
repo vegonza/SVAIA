@@ -1,5 +1,5 @@
 import os
-
+from typing import Optional
 from dotenv import find_dotenv, load_dotenv
 from openai import OpenAI
 from flask import Response, stream_with_context
@@ -17,7 +17,7 @@ client = OpenAI(
 )
 
 
-def get_response(message: str, project_uuid: str = None):
+def get_response(message: str, project_uuid: Optional[str] = None):
     stream = client.chat.completions.create(
         model="google/gemini-2.0-flash-exp:free",
         messages=[
