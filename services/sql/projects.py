@@ -1,7 +1,9 @@
 from uuid import uuid4
 
 from flask import Blueprint, request
-from flask_login import login_required
+from flask_login import current_user, login_required
+
+from services.decorators import admin_required
 
 from .models import Message, Project, db
 
@@ -26,8 +28,15 @@ def load_project(uuid):
 
 @projects_bp.route('/', methods=['GET'])
 @login_required
-def get_projects():
-    projects = Project.query.all()
+def get_user_projects():
+    projects = Project.query.filter_by(user_id=current_user.id).all()
+    return [project.to_dict() for project in projects]
+
+
+@projects_bp.route('/user/<int:user_id>', methods=['GET'])
+@admin_required
+def get_projects_by_user(user_id):
+    projects = Project.query.filter_by(user_id=user_id).all()
     return [project.to_dict() for project in projects]
 
 
@@ -36,7 +45,8 @@ def get_projects():
 def create_project():
     project = Project(
         uuid=str(uuid4()),
-        name=request.json['name']
+        name=request.json['name'],
+        user_id=current_user.id
     )
     db.session.add(project)
     db.session.commit()
@@ -53,3 +63,28 @@ def delete_project(uuid):
     db.session.delete(project)
     db.session.commit()
     return {"message": "Project deleted successfully"}, 200
+
+
+@projects_bp.route('/all', methods=['GET'])
+@admin_required
+def get_all_projects():
+    projects = Project.query.all()
+    return [project.to_dict() for project in projects]
+
+
+@projects_bp.route('/<string:uuid>', methods=['PUT'])
+@login_required
+def update_project(uuid):
+    project = Project.query.filter_by(uuid=uuid).first()
+    if not project:
+        return {"error": "Project not found"}, 404
+
+    if not current_user.is_admin and project.user_id != current_user.id:
+        return {"error": "Unauthorized"}, 403
+
+    data = request.json
+    if 'name' in data:
+        project.name = data['name']
+        db.session.commit()
+
+    return project.to_dict()

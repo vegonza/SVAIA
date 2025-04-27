@@ -1,12 +1,15 @@
 import os
+from typing import Optional
 
-from flask import Flask, render_template, send_from_directory, jsonify, request, redirect, url_for
+from flask import (Flask, jsonify, redirect, render_template, request,
+                   send_from_directory, url_for)
 from flask_cors import CORS
 from flask_login import LoginManager
 
-from services import auth_bp, chat_bp, sql_bp
+from services import auth_bp, chat_bp, sql_bp, admin_bp
 from services.sql import init_sql
 from services.sql.models import User
+
 app = Flask(__name__, template_folder="frontend/templates", static_folder="frontend/static")
 app.config.update(
     SECRET_KEY=os.environ.get('APP_SECRET_KEY'),
@@ -39,7 +42,7 @@ def set_context_variables():
 
 @login_manager.user_loader
 def load_user(user_id: str):
-    user: User = User.query.filter_by(id=user_id).first()
+    user: Optional[User] = User.query.filter_by(id=user_id).first()
     if user:
         return user
     return None
@@ -59,6 +62,7 @@ def favicon():
 app.register_blueprint(auth_bp, url_prefix="/auth")
 app.register_blueprint(chat_bp, url_prefix="/chat")
 app.register_blueprint(sql_bp, url_prefix="/sql")
+app.register_blueprint(admin_bp, url_prefix="/admin")
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

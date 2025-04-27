@@ -1,0 +1,129 @@
+{% extends "layout.html" %}
+
+{% block head %}
+    <title>SVAIA - Mensajes del Proyecto</title>
+    <link href="{{ url_for('static', filename='css/chat.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/admin.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="background-gradient min-vh-100">
+    <!-- Breadcrumb -->
+    <div class="container pt-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('home') }}">Inicio</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for('admin.index') }}">Admin Panel</a></li>
+            <li class="breadcrumb-item"><a href="#" id="back-to-projects">Proyectos de <span id="breadcrumb-username">Usuario</span></a></li>
+            <li class="breadcrumb-item active">Mensajes de <span id="breadcrumb-project-name">Proyecto</span></li>
+        </ol>
+    </div>
+
+    <!-- Notification -->
+    <div class="container">
+        <div class="row p-2" id="notification-area">
+            {# Flash messages rendered by server on initial load/redirects #}
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-dismissible alert-{{ category }} shadow-sm">
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+    </div>
+
+    <!-- Project Information -->
+    <div class="container mb-4">
+        <div class="row">
+            <div class="col">
+                <div class="card shadow rounded-3">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h2 class="text-primary page-title mb-0" id="project-name">Cargando proyecto...</h2>
+                                <p class="text-muted mb-0">UUID: {{ project_uuid }}</p>
+                            </div>
+                            <div>
+                                <button id="back-button" class="btn btn-secondary px-3 py-2">
+                                    <i class="bi bi-arrow-left"></i> Volver
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Messages Display -->
+    <div class="container mb-4">
+        <div class="row">
+            <div class="col">
+                <div class="card shadow rounded-3">
+                    <div class="card-body p-0">
+                        <div id="chat-messages" class="p-3" style="max-height: 60vh; overflow-y: auto;">
+                            <div class="text-center py-5">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Cargando...</span>
+                                </div>
+                                <p class="mt-2">Cargando mensajes...</p>
+                            </div>
+                            
+                            <!-- Templates for messages -->
+                            <template id="user-message-template">
+                                <li class="d-flex align-items-start justify-content-end mb-3 ps-0">
+                                    <div class="bg-primary text-white p-4 rounded-2 container-fluid message-content"></div>
+                                    <i class="bi bi-person-fill ms-4"></i>
+                                </li>
+                            </template>
+                        
+                            <template id="ai-message-template">
+                                <li class="d-flex align-items-start mb-3 container-fluid pe-0">
+                                    <i class="bi bi-robot me-4"></i>
+                                    <div class="bg-secondary text-white p-4 rounded-2 container-fluid message-content markdown-body"></div>
+                                </li>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Templates -->
+<template id="alert-template">
+    <div class="alert alert-dismissible shadow-sm">
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        <span class="alert-message"></span>
+    </div>
+</template>
+
+<template id="loading-template">
+    <div class="text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Cargando...</span>
+        </div>
+        <p class="mt-2">Cargando mensajes...</p>
+    </div>
+</template>
+
+<template id="empty-messages-template">
+    <p class="text-muted text-center py-4">Este proyecto no tiene mensajes.</p>
+</template>
+
+<template id="error-template">
+    <p class="text-danger text-center py-4">Error al cargar los mensajes.</p>
+</template>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const projectUuid = "{{ project_uuid }}";
+</script>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="{{ url_for('static', filename='js/project_messages.js') }}"></script>
+{% endblock %} 

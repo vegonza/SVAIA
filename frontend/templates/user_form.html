@@ -2,7 +2,6 @@
 
 {% block head %}
     <title>SVAIA - {% if user %}Editar{% else %}Nuevo{% endif %} Usuario</title>
-    <!-- <link href="{{ url_for('static', filename='css/users.css') }}" rel="stylesheet"> -->
     <link href="{{ url_for('static', filename='css/login.css') }}" rel="stylesheet">
 {% endblock %}
 
@@ -12,7 +11,7 @@
         <!--Breadcrumb-->
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{{ url_for('home') }}">Inicio</a></li>
-            <li class="breadcrumb-item"><a href="{{ url_for('sql.users.list_users') }}">Usuarios</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for('admin.index') }}">Admin Panel</a></li>
             <li class="breadcrumb-item active">{% if user %}Editar{% else %}Nuevo{% endif %} Usuario</li>
         </ol>
 

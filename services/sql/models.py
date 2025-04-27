@@ -10,14 +10,14 @@ db = SQLAlchemy()
 class Project(db.Model):
     uuid: Mapped[str] = mapped_column(db.String(36), primary_key=True, nullable=False)
     name: Mapped[str] = mapped_column(db.String(50), nullable=False)
-    # TODO: change to nullable=False
-    user_id: Mapped[str] = mapped_column(db.String(12), db.ForeignKey('user.id'), nullable=True)
+    user_id: Mapped[int] = mapped_column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     messages = db.relationship('Message', backref='project', lazy=True, cascade="all, delete-orphan")
 
     def to_dict(self):
         return {
             'uuid': self.uuid,
-            'name': self.name
+            'name': self.name,
+            'user_id': self.user_id
         }
 
 
@@ -46,3 +46,13 @@ class User(UserMixin, db.Model):
     username: Mapped[str] = mapped_column(db.String(12), unique=True, nullable=False)
     password: Mapped[str] = mapped_column(db.String(255), nullable=False)
     is_admin: Mapped[bool] = mapped_column(db.Boolean, default=False)
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'first_name': self.first_name,
+            'last_name': self.last_name,
+            'email': self.email,
+            'username': self.username,
+            'is_admin': self.is_admin
+        }

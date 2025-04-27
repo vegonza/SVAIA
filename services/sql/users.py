@@ -1,19 +1,12 @@
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 from flask_login import current_user
 
-from services.decorators import admin_required
 from services.auth.password_utils import hash
+from services.decorators import admin_required
 
 from .models import User, db
 
 users_bp = Blueprint('users', __name__)
-
-
-@users_bp.route('/')
-@admin_required
-def list_users():
-    users = User.query.all()
-    return render_template('users.html', users=users)
 
 
 @users_bp.route('/create', methods=['GET', 'POST'])
@@ -49,7 +42,7 @@ def create_user():
         db.session.commit()
 
         flash('Usuario creado con éxito', 'success')
-        return redirect(url_for('sql.users.list_users'))
+        return redirect(url_for('admin.index'))
 
     return render_template('user_form.html', user=None)
 
@@ -91,7 +84,7 @@ def edit_user(user_id):
         db.session.commit()
 
         flash('Usuario actualizado con éxito', 'success')
-        return redirect(url_for('sql.users.list_users'))
+        return redirect(url_for('admin.index'))
 
     return render_template('user_form.html', user=user)
 
@@ -103,10 +96,17 @@ def delete_user(user_id):
 
     if user.id == current_user.id:
         flash('No puedes eliminar tu propio usuario', 'danger')
-        return redirect(url_for('sql.users.list_users'))
+        return redirect(url_for('admin.index'))
 
     db.session.delete(user)
     db.session.commit()
 
     flash('Usuario eliminado con éxito', 'success')
-    return redirect(url_for('sql.users.list_users'))
+    return redirect(url_for('admin.index'))
+
+
+@users_bp.route('/all', methods=['GET'])
+@admin_required
+def get_all_users():
+    users = User.query.all()
+    return [user.to_dict() for user in users]
