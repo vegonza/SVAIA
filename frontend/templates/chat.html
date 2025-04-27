@@ -18,17 +18,7 @@
             </ol>
         </div>
 
-        <!-- Notification -->
-        <div class="container">
-            <div class="row p-2">
-                <div id="warning-alert" class="alert alert-dismissible alert-warning col d-none">
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    <h4 class="alert-heading">Atencion!</h4>
-                    <p id="warning-message" class="mb-0">Mensaje de alerta para indicar que se ha podido producir un error (<a href="#" class="alert-link">ver detalles</a>).</p>
-                </div>
-            </div>
-        </div>
-
+        {% include 'include/notification.html' %}
 
         <!-- Chat -->
         <div class="container">
@@ -101,7 +91,7 @@
         </div>
     </div>
     
-    {% include 'project_modal.html' %}
+    {% include 'include/project_modal.html' %}
 {% endblock %}
 
 {% block scripts %}

@@ -1,0 +1,23 @@
+<!-- Notification -->
+<div class="container">
+    <div class="row p-2" id="notification-area">
+        {# Flash messages rendered by server on initial load/redirects #}
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-dismissible alert-{{ category }} shadow-sm">
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <!-- Static warning alert (hidden by default) -->
+        <div id="warning-alert" class="alert alert-dismissible alert-warning col d-none">
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            <h4 class="alert-heading">Atencion!</h4>
+            <p id="warning-message" class="mb-0">Mensaje de alerta para indicar que se ha podido producir un error (<a href="#" class="alert-link">ver detalles</a>).</p>
+        </div>
+    </div>
+</div>
