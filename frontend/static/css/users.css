@@ -7,7 +7,7 @@
     background-color: rgba(100, 100, 100, 0.1);
 }
 
-.card {
+.table-responsive {
     border-radius: 16px;
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
     border: none;

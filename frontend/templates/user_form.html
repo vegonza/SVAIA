@@ -2,80 +2,90 @@
 
 {% block head %}
     <title>SVAIA - {% if user %}Editar{% else %}Nuevo{% endif %} Usuario</title>
-    <link href="{{ url_for('static', filename='css/users.css') }}" rel="stylesheet">
+    <!-- <link href="{{ url_for('static', filename='css/users.css') }}" rel="stylesheet"> -->
+    <link href="{{ url_for('static', filename='css/login.css') }}" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
-<div class="background-gradient min-vh-100">
-    <!--Breadcrumb-->
+<section class="background-gradient min-vh-100 d-flex flex-column">
     <div class="container pt-3">
+        <!--Breadcrumb-->
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{{ url_for('home') }}">Inicio</a></li>
             <li class="breadcrumb-item"><a href="{{ url_for('sql.users.list_users') }}">Usuarios</a></li>
             <li class="breadcrumb-item active">{% if user %}Editar{% else %}Nuevo{% endif %} Usuario</li>
         </ol>
-    </div>
 
-    <!-- Notification -->
-    <div class="container">
-        <div class="row p-2">
-            {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                    {% for category, message in messages %}
-                        <div class="alert alert-dismissible alert-{{ category }}">
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                            {{ message }}
-                        </div>
-                    {% endfor %}
-                {% endif %}
-            {% endwith %}
-        </div>
-    </div>
-
-    <!-- User Form -->
-    <div class="container py-3 mb-0">
-        <div class="row mb-4">
-            <div class="col d-flex justify-content-between align-items-center">
-                <h1 class="text-primary form-title mb-4">{% if user %}Editar{% else %}Nuevo{% endif %} Usuario</h1>
+        <!-- Notification -->
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-dismissible alert-{{ category }} shadow-sm">
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
             </div>
         </div>
+    </div>
 
-        <div class="row justify-content-center">
-            <div class="col-12 col-md-8 col-lg-6">
-                <div class="card form-container shadow">
-                    <div class="card-header bg-primary text-white py-3">
-                        <h4 class="mb-0">Datos del Usuario</h4>
+    <!-- User Form Centered -->
+    <div class="container flex-grow-1 d-flex align-items-center justify-content-center">
+        <div class="row justify-content-center w-100">
+            <div class="col-lg-6 mb-5 mb-lg-0">
+                <div class="card login-card">
+                    <div class="card-header-custom">
+                        <h3 class="mb-0 svaia-text">{% if user %}Editar{% else %}Nuevo{% endif %} Usuario</h3>
                     </div>
-                    <div class="card-body p-4">
+                    <div class="card-body py-5 px-md-5">
                         <form method="POST" action="{% if user %}{{ url_for('sql.users.edit_user', user_id=user.id) }}{% else %}{{ url_for('sql.users.create_user') }}{% endif %}">
-                            <div class="mb-4">
-                                <label for="first_name" class="form-label mb-2">Nombre</label>
-                                <input type="text" class="form-control py-3 px-3" id="first_name" name="first_name" value="{{ user.first_name if user else '' }}" required>
+                            <!-- Nombre y Apellidos -->
+                            <div class="row">
+                                <div class="col-md-6 mb-4">
+                                    <div class="input-group-custom">
+                                        <i class="bi bi-person-fill input-icon"></i>
+                                        <input type="text" id="first_name" name="first_name" class="form-control form-control-custom" placeholder="Nombre" value="{{ user.first_name if user else '' }}" required />
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-4">
+                                    <div class="input-group-custom">
+                                        <i class="bi bi-person-fill input-icon"></i>
+                                        <input type="text" id="last_name" name="last_name" class="form-control form-control-custom" placeholder="Apellidos" value="{{ user.last_name if user else '' }}" required />
+                                    </div>
+                                </div>
                             </div>
-                            <div class="mb-4">
-                                <label for="last_name" class="form-label mb-2">Apellido</label>
-                                <input type="text" class="form-control py-3 px-3" id="last_name" name="last_name" value="{{ user.last_name if user else '' }}" required>
+
+                            <!-- Usuario input -->
+                            <div class="input-group-custom">
+                                <i class="bi bi-person-badge-fill input-icon"></i>
+                                <input type="text" id="username" name="username" class="form-control form-control-custom" placeholder="Usuario" value="{{ user.username if user else '' }}" required />
                             </div>
-                            <div class="mb-4">
-                                <label for="email" class="form-label mb-2">Email</label>
-                                <input type="email" class="form-control py-3 px-3" id="email" name="email" value="{{ user.email if user else '' }}" required>
+                            
+                            <!-- Email input -->
+                            <div class="input-group-custom">
+                                <i class="bi bi-envelope-fill input-icon"></i>
+                                <input type="email" id="email" name="email" class="form-control form-control-custom" placeholder="Correo Electrónico" value="{{ user.email if user else '' }}" required />
                             </div>
-                            <div class="mb-4">
-                                <label for="username" class="form-label mb-2">Nombre de usuario</label>
-                                <input type="text" class="form-control py-3 px-3" id="username" name="username" value="{{ user.username if user else '' }}" required>
+                            
+                            <!-- Password input -->
+                            <div class="input-group-custom">
+                                <i class="bi bi-lock-fill input-icon"></i>
+                                <input type="password" id="password" name="password" class="form-control form-control-custom" placeholder="Contraseña {% if user %}(Dejar en blanco para mantener la actual){% endif %}" {% if not user %}required{% endif %} />
                             </div>
-                            <div class="mb-4">
-                                <label for="password" class="form-label mb-2">Contraseña {% if user %}(Dejar en blanco para mantener la actual){% endif %}</label>
-                                <input type="password" class="form-control py-3 px-3" id="password" name="password" {% if not user %}required{% endif %}>
-                            </div>
-                            <div class="d-grid mt-5">
-                                <button type="submit" class="btn btn-primary save-btn py-3 px-4">Guardar</button>
-                            </div>
+
+                            <!-- Submit button -->
+                            <button type="submit" class="btn btn-primary btn-login w-100 mb-4">
+                                {% if user %}Actualizar{% else %}Crear{% endif %} Usuario
+                            </button>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</section>
 {% endblock %} 
