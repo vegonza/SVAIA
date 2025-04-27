@@ -1,0 +1,81 @@
+{% extends "layout.html" %}
+
+{% block head %}
+    <title>SVAIA - {% if user %}Editar{% else %}Nuevo{% endif %} Usuario</title>
+    <link href="{{ url_for('static', filename='css/users.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="custom-background">
+    <!--Breadcrumb-->
+    <div class="container">
+        <ol class="breadcrumb mt-4">
+            <li class="breadcrumb-item"><a href="{{ url_for('home') }}">Inicio</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for('sql.users.list_users') }}">Usuarios</a></li>
+            <li class="breadcrumb-item active">{% if user %}Editar{% else %}Nuevo{% endif %} Usuario</li>
+        </ol>
+    </div>
+
+    <!-- Notification -->
+    <div class="container">
+        <div class="row p-2">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-dismissible alert-{{ category }}">
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+    </div>
+
+    <!-- User Form -->
+    <div class="container mb-4 py-3">
+        <div class="row mb-4">
+            <div class="col d-flex justify-content-between align-items-center">
+                <h1 class="form-title">{% if user %}Editar{% else %}Nuevo{% endif %} Usuario</h1>
+                <a href="{{ url_for('sql.users.list_users') }}" class="btn btn-secondary btn-action back-btn">
+                    <i class="bi bi-arrow-left"></i> Volver
+                </a>
+            </div>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-8 col-lg-6">
+                <div class="card form-container">
+                    <div class="card-body p-4">
+                        <form method="POST" action="{% if user %}{{ url_for('sql.users.edit_user', user_id=user.id) }}{% else %}{{ url_for('sql.users.create_user') }}{% endif %}">
+                            <div class="mb-4">
+                                <label for="first_name" class="form-label">Nombre</label>
+                                <input type="text" class="form-control" id="first_name" name="first_name" value="{{ user.first_name if user else '' }}" required>
+                            </div>
+                            <div class="mb-4">
+                                <label for="last_name" class="form-label">Apellido</label>
+                                <input type="text" class="form-control" id="last_name" name="last_name" value="{{ user.last_name if user else '' }}" required>
+                            </div>
+                            <div class="mb-4">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="email" name="email" value="{{ user.email if user else '' }}" required>
+                            </div>
+                            <div class="mb-4">
+                                <label for="username" class="form-label">Nombre de usuario</label>
+                                <input type="text" class="form-control" id="username" name="username" value="{{ user.username if user else '' }}" required>
+                            </div>
+                            <div class="mb-4">
+                                <label for="password" class="form-label">Contraseña {% if user %}(Dejar en blanco para mantener la actual){% endif %}</label>
+                                <input type="password" class="form-control" id="password" name="password" {% if not user %}required{% endif %}>
+                            </div>
+                            <div class="d-grid mt-5">
+                                <button type="submit" class="btn btn-primary save-btn">Guardar</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

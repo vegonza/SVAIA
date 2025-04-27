@@ -1,8 +1,15 @@
-from flask import Flask
-from .models import db, User
-from .routes import sql_bp
+from flask import Blueprint, Flask
 
-__all__ = ["sql_bp"]
+from .models import User, db
+from .projects import projects_bp
+from .users import users_bp
+
+__all__ = ["projects_bp", "users_bp"]
+
+sql_bp = Blueprint("sql", __name__)
+
+sql_bp.register_blueprint(projects_bp, url_prefix="/projects")
+sql_bp.register_blueprint(users_bp, url_prefix="/users")
 
 
 def init_sql(app: Flask):

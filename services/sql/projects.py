@@ -2,12 +2,12 @@ from uuid import uuid4
 
 from flask import Blueprint, request
 
-from .models import Project, Message, db
+from .models import Message, Project, db
 
-sql_bp = Blueprint('sql', __name__)
+projects_bp = Blueprint('projects', __name__)
 
 
-@sql_bp.route('/projects/<string:uuid>', methods=['GET'])
+@projects_bp.route('/<string:uuid>', methods=['GET'])
 def load_project(uuid):
     project = Project.query.filter_by(uuid=uuid).first()
     if not project:
@@ -22,13 +22,13 @@ def load_project(uuid):
     return response
 
 
-@sql_bp.route('/projects', methods=['GET'])
+@projects_bp.route('/', methods=['GET'])
 def get_projects():
     projects = Project.query.all()
     return [project.to_dict() for project in projects]
 
 
-@sql_bp.route('/projects', methods=['POST'])
+@projects_bp.route('/', methods=['POST'])
 def create_project():
     project = Project(
         uuid=str(uuid4()),
@@ -39,7 +39,7 @@ def create_project():
     return project.to_dict(), 200
 
 
-@sql_bp.route('/projects/<string:uuid>', methods=['DELETE'])
+@projects_bp.route('/<string:uuid>', methods=['DELETE'])
 def delete_project(uuid):
     project = Project.query.filter_by(uuid=uuid).first()
     if not project:
