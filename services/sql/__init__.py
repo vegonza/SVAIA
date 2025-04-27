@@ -3,7 +3,7 @@ from flask import Blueprint, Flask
 from .models import User, db
 from .projects import projects_bp
 from .users import users_bp
-from ..auth import hash
+from ..auth.password_utils import hash
 
 __all__ = ["projects_bp", "users_bp"]
 
