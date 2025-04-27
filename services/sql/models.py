@@ -2,6 +2,7 @@ from datetime import datetime
 
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import Mapped, mapped_column
+from flask_login import UserMixin
 
 db = SQLAlchemy()
 
@@ -37,10 +38,10 @@ class Message(db.Model):
         }
 
 
-class User(db.Model):
+class User(UserMixin, db.Model):
     id: Mapped[int] = mapped_column(db.Integer, primary_key=True)
     first_name: Mapped[str] = mapped_column(db.String(50), nullable=True)
     last_name: Mapped[str] = mapped_column(db.String(50), nullable=True)
     email: Mapped[str] = mapped_column(db.String(120), unique=True, nullable=False)
     username: Mapped[str] = mapped_column(db.String(12), unique=True, nullable=False)
-    password: Mapped[str] = mapped_column(db.String(12), nullable=False)
+    password: Mapped[str] = mapped_column(db.String(255), nullable=False)

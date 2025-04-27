@@ -9,11 +9,13 @@ chat_bp = Blueprint("chat", __name__)
 
 
 @chat_bp.route("/")
+@login_required
 def index():
     return render_template("chat.html")
 
 
 @chat_bp.route("/completion", methods=["POST"])
+@login_required
 def completion():
     data: dict = request.json
     message = data.get("message")
