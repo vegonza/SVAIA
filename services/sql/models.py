@@ -39,7 +39,7 @@ class Message(db.Model):
 
 
 class User(UserMixin, db.Model):
-    id: Mapped[int] = mapped_column(db.Integer, primary_key=True)
+    id: Mapped[int] = mapped_column(db.Integer, primary_key=True, autoincrement=True)
     first_name: Mapped[str] = mapped_column(db.String(50), nullable=True)
     last_name: Mapped[str] = mapped_column(db.String(50), nullable=True)
     email: Mapped[str] = mapped_column(db.String(120), unique=True, nullable=False)
