@@ -13,7 +13,7 @@ def load_project(uuid):
     if not project:
         return {"error": "Project not found"}, 404
 
-    # Get all messages for this project
+    # get all messages of this proyect
     messages = Message.query.filter_by(project_uuid=uuid).order_by(Message.timestamp).all()
 
     response = project.to_dict()

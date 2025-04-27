@@ -24,7 +24,7 @@ def login():
         email = request.form['email']
         username = request.form['username']
         password = request.form['password']
-        user = User.query.filter_by(username=username).first()
+        user: User = User.query.filter_by(username=username).first()
         if user and check(password, user.password):
             login_user(user, remember=True)
             flash('Has iniciado sesión correctamente.', 'success')
