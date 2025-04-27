@@ -14,10 +14,24 @@
 }
 
 .table-responsive {
-    border-radius: 16px;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+    box-shadow: none;
     border: none;
     overflow: hidden;
+}
+
+.table {
+    border-radius: 0;
+    margin-bottom: 0;
+}
+
+.card.shadow.rounded-3 {
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12) !important;
+}
+
+.card-body {
+    padding: 0;
 }
 
 .table-header {

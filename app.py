@@ -13,8 +13,9 @@ from services.sql.models import User
 app = Flask(__name__, template_folder="frontend/templates", static_folder="frontend/static")
 app.config.update(
     SECRET_KEY=os.environ.get('APP_SECRET_KEY'),
-    SQLALCHEMY_DATABASE_URI='sqlite:///db.sqlite',
+    SQLALCHEMY_DATABASE_URI=os.environ.get('DATABASE_URI'),
     SQLALCHEMY_TRACK_MODIFICATIONS=False,
+    SQLALCHEMY_POOL_RECYCLE=280
 )
 CORS(app)
 
