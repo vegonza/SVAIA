@@ -1,4 +1,5 @@
 from uuid import uuid4
+from datetime import datetime
 
 from flask import Blueprint, request
 from flask_login import current_user, login_required
@@ -46,6 +47,7 @@ def create_project():
     project = Project(
         uuid=str(uuid4()),
         name=request.json['name'],
+        description=request.json.get('description', ''),
         user_id=current_user.id
     )
     db.session.add(project)
@@ -75,7 +77,7 @@ def get_all_projects():
 @projects_bp.route('/<string:uuid>', methods=['PUT'])
 @login_required
 def update_project(uuid):
-    project = Project.query.filter_by(uuid=uuid).first()
+    project: Project = Project.query.filter_by(uuid=uuid).first()
     if not project:
         return {"error": "Project not found"}, 404
 
@@ -85,6 +87,10 @@ def update_project(uuid):
     data = request.json
     if 'name' in data:
         project.name = data['name']
-        db.session.commit()
+    if 'description' in data:
+        project.description = data['description']
+
+    project.updated_at = datetime.utcnow()
+    db.session.commit()
 
     return project.to_dict()

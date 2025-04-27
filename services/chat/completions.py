@@ -1,11 +1,14 @@
-import os
-from typing import Optional
-from dotenv import find_dotenv, load_dotenv
-from openai import OpenAI
-from flask import Response, stream_with_context
 import json
+import os
+from datetime import datetime
+from typing import Optional
 
-from services.sql.models import Message, db
+from dotenv import find_dotenv, load_dotenv
+from flask import Response, stream_with_context
+from openai import OpenAI
+
+from services.sql.models import Message, Project, db
+
 from .prompts import SYSTEM_MESSAGE
 
 load_dotenv(find_dotenv())
@@ -52,6 +55,11 @@ def get_response(message: str, project_uuid: Optional[str] = None):
                 project_uuid=project_uuid
             )
             db.session.add(ai_message)
+
+            project: Project = Project.query.filter_by(uuid=project_uuid).first()
+            if project:
+                project.updated_at = datetime.utcnow()
+
             db.session.commit()
 
         yield f"data: {json.dumps({'done': True, 'full_content': collected_content})}\n\n"

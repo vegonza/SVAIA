@@ -1,7 +1,8 @@
 from flask import Blueprint, jsonify, render_template, request
 from flask_login import login_required
+from datetime import datetime
 
-from services.sql.models import Message, db
+from services.sql.models import Message, Project, db
 
 from .completions import get_response
 
@@ -33,6 +34,11 @@ def completion():
         project_uuid=project_uuid
     )
     db.session.add(user_message)
+
+    project: Project = Project.query.filter_by(uuid=project_uuid).first()
+    if project:
+        project.updated_at = datetime.utcnow()
+
     db.session.commit()
 
     return get_response(message, project_uuid)

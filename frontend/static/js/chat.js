@@ -212,8 +212,14 @@ async function get_projects() {
             const clone = project_template.content.cloneNode(true);
             const project_div = clone.querySelector(".conversation");
             const project_name = project_div.querySelector(".project-name");
+            const project_description = project_div.querySelector(".project-description");
+            const project_timestamp = project_div.querySelector(".project-timestamp");
             const delete_btn = project_div.querySelector(".delete-conversation");
             project_name.textContent = project.name;
+            project_description.textContent = project.description;
+
+            const date = new Date(project.updated_at);
+            project_timestamp.textContent = `Última modificación: ${date.toLocaleString()}`;
 
             if (index % 2 !== 0) {
                 project_div.classList.add("active");
@@ -308,8 +314,12 @@ async function delete_project(uuid) {
 
 async function create_project() {
     const project_name = prompt("Ingresa un nombre para el proyecto:", "Nuevo Proyecto");
-
     if (project_name === null) {
+        return;
+    }
+
+    const project_description = prompt("Ingresa una breve descripción del proyecto:", "");
+    if (project_description === null) {
         return;
     }
 
@@ -319,7 +329,10 @@ async function create_project() {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ name: project_name })
+            body: JSON.stringify({
+                name: project_name,
+                description: project_description
+            })
         });
 
         if (!response.ok) {

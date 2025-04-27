@@ -29,6 +29,11 @@ function createAlert(message, category = 'danger') {
     }, 5000);
 }
 
+function formatDateTime(isoString) {
+    const date = new Date(isoString);
+    return date.toLocaleString();
+}
+
 async function loadUserProjects() {
     try {
         // First, get user info to display username
@@ -70,6 +75,9 @@ async function loadUserProjects() {
             // Set data
             projectItem.querySelector('.project-name').textContent = project.name;
             projectItem.querySelector('.project-uuid').textContent = `UUID: ${project.uuid}`;
+            projectItem.querySelector('.project-description').textContent = `Descripción: ${project.description}`;
+            projectItem.querySelector('.project-created').textContent = `Creado: ${formatDateTime(project.created_at)}`;
+            projectItem.querySelector('.project-updated').textContent = `Última modificación: ${formatDateTime(project.updated_at)}`;
 
             // Set up buttons
             const viewBtn = projectItem.querySelector('.view-messages-btn');
@@ -78,8 +86,9 @@ async function loadUserProjects() {
             const editBtn = projectItem.querySelector('.edit-btn');
             editBtn.setAttribute('data-project-uuid', project.uuid);
             editBtn.setAttribute('data-project-name', project.name);
+            editBtn.setAttribute('data-project-description', project.description || '');
             editBtn.addEventListener('click', () => {
-                editProject(project.uuid, project.name, editBtn);
+                editProject(project.uuid, project.name, project.description, editBtn);
             });
 
             const deleteBtn = projectItem.querySelector('.delete-btn');
@@ -101,16 +110,22 @@ async function loadUserProjects() {
     }
 }
 
-async function editProject(projectUuid, currentName, button) {
+async function editProject(projectUuid, currentName, currentDescription, button) {
     const newName = prompt("Ingrese el nuevo nombre para el proyecto:", currentName);
+    if (!newName || newName.trim() === '') {
+        return;
+    }
 
-    if (!newName || newName.trim() === '' || newName === currentName) {
-        return; // Cancel or no change
+    const newDescription = prompt("Ingrese la nueva descripción para el proyecto:", currentDescription || '');
+    if (newDescription === null) {
+        return;
     }
 
     const projectItem = button.closest('.list-group-item');
     const projectNameElement = projectItem.querySelector('.project-name');
+    const projectDescriptionElement = projectItem.querySelector('.project-description');
     const originalName = projectNameElement.textContent;
+    const originalDescription = projectDescriptionElement.textContent;
 
     // Disable button and show loading
     const originalHtml = button.innerHTML;
@@ -123,7 +138,10 @@ async function editProject(projectUuid, currentName, button) {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ name: newName.trim() })
+            body: JSON.stringify({
+                name: newName.trim(),
+                description: newDescription.trim()
+            })
         });
 
         if (!response.ok) {
@@ -133,16 +151,18 @@ async function editProject(projectUuid, currentName, button) {
 
         const updatedProject = await response.json();
 
-        // Update project name in the UI
+        // Update project data in the UI
         projectNameElement.textContent = updatedProject.name;
+        projectDescriptionElement.textContent = `Descripción: ${updatedProject.description}`;
+        projectItem.querySelector('.project-updated').textContent = `Última modificación: ${formatDateTime(updatedProject.updated_at)}`;
 
         createAlert(`Proyecto actualizado con éxito.`, 'success');
 
     } catch (error) {
         console.error('Error updating project:', error);
         createAlert(`Error al actualizar el proyecto: ${error.message}`, 'danger');
-        // Restore original name in case of error
         projectNameElement.textContent = originalName;
+        projectDescriptionElement.textContent = originalDescription;
     } finally {
         // Re-enable button
         button.disabled = false;
