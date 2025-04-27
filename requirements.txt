@@ -5,4 +5,4 @@ openai
 python-dotenv
 Flask-SQLAlchemy
 Flask-Login
-mariadb
+pymysql
