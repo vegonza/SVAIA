@@ -3,7 +3,7 @@ from flask_login import login_user, login_required, logout_user
 
 from .utils import url_has_allowed_host_and_scheme
 from .password_utils import check
-from ..sql.models import User
+from services.sql.models import User
 
 auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
 
