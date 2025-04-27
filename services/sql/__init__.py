@@ -3,6 +3,7 @@ from flask import Blueprint, Flask
 from .models import User, db
 from .projects import projects_bp
 from .users import users_bp
+from ..auth import hash
 
 __all__ = ["projects_bp", "users_bp"]
 
@@ -17,7 +18,7 @@ def init_sql(app: Flask):
     with app.app_context():
         db.create_all()
         if not User.query.filter_by(username='admin').first():
-            admin = User(username='admin', password='admin', email='admin@admin.com')
-            default_user = User(username='user', password='user', email='user@user.com')
+            admin = User(username='admin', password=hash('admin'), email='admin@admin.com')
+            default_user = User(username='user', password=hash('user'), email='user@user.com')
             db.session.add_all([admin, default_user])
             db.session.commit()
