@@ -21,30 +21,20 @@
     {% include 'include/notification.html' %}
 
     <!-- Project Information -->
-    <div class="container mb-4">
-        <div class="row">
-            <div class="col">
-                <div class="card shadow rounded-3">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <h2 class="text-primary page-title mb-0" id="project-name">Cargando proyecto...</h2>
-                                <p class="text-muted mb-0">UUID: {{ project_uuid }}</p>
-                            </div>
-                            <div>
-                                <button id="back-button" class="btn btn-secondary px-3 py-2">
-                                    <i class="bi bi-arrow-left"></i> Volver
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+    <div class="container py-3 mb-4">
+        <div class="row mb-4">
+            <div class="col d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="text-primary page-title mb-0" id="project-name">Cargando proyecto...</h1>
+                    <p class="text-muted mb-0">UUID: {{ project_uuid }}</p>
                 </div>
+                <button id="back-button" class="btn btn-secondary px-3 py-2">
+                    <i class="bi bi-arrow-left"></i> Volver
+                </button>
             </div>
         </div>
-    </div>
 
-    <!-- Messages Display -->
-    <div class="container mb-4">
+        <!-- Messages Display -->
         <div class="row">
             <div class="col">
                 <div class="card shadow rounded-3">
