@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import current_user
 from .models import User, db
+from services.auth.password_utils import hash
 
 users_bp = Blueprint('users', __name__)
 
@@ -31,8 +32,6 @@ def create_user():
             flash('El correo electrónico ya está en uso.', 'danger')
             return redirect(url_for('sql.users.create_user'))
 
-        # Create new user
-        from services.auth import hash
         new_user = User(
             first_name=first_name,
             last_name=last_name,
@@ -81,7 +80,6 @@ def edit_user(user_id):
         # Update password if provided
         password = request.form.get('password')
         if password and password.strip():
-            from services.auth import hash
             user.password = hash(password)
 
         db.session.commit()
