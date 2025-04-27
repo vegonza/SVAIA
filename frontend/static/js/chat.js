@@ -2,7 +2,6 @@ const chat = document.getElementById("chat-messages");
 const input_text = document.getElementById("message-input");
 const new_chat_btn = document.getElementById("new-chat");
 const project_list = document.getElementById("project-list");
-const mobile_project_list = document.getElementById("mobile-project-list");
 const warning_alert = document.getElementById("warning-alert");
 const warning_message = document.getElementById("warning-message");
 const projectModal = new bootstrap.Modal(document.getElementById('projectModal'));
@@ -23,6 +22,7 @@ let message_counter = 0;
 let loading = false;
 let current_project_uuid = null;
 let isEditMode = false;
+let mobile_project_list = document.getElementById("mobile-project-list");
 
 function show_warning(message) {
     warning_message.textContent = message;
@@ -281,6 +281,12 @@ async function get_projects() {
             mobile_project_list.appendChild(mobile_clone);
         });
 
+        // Remove existing event listeners by cloning and replacing the element
+        const new_mobile_list = mobile_project_list.cloneNode(true);
+        mobile_project_list.parentNode.replaceChild(new_mobile_list, mobile_project_list);
+        mobile_project_list = new_mobile_list; // Update the reference
+
+        // Add the event listener only once
         mobile_project_list.addEventListener('change', function () {
             const selected_uuid = this.value;
             if (selected_uuid) {
@@ -384,8 +390,6 @@ async function load_project(uuid) {
         } else {
             clear_chat();
         }
-
-        get_projects();
     } catch (error) {
         console.error('Error loading project:', error);
         show_warning("Error al cargar el proyecto: " + error.message);
@@ -424,13 +428,6 @@ input_text.addEventListener('keydown', (e) => {
 });
 
 document.getElementById('send-message').addEventListener('click', send_message);
-
-mobile_project_list.addEventListener('change', function () {
-    const selected_uuid = this.value;
-    if (selected_uuid) {
-        load_project(selected_uuid);
-    }
-});
 
 new_chat_btn.addEventListener("click", () => {
     showCreateProjectModal();
