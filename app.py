@@ -5,9 +5,8 @@ from flask_cors import CORS
 from flask_login import LoginManager
 
 from services import auth_bp, chat_bp, sql_bp
-from services.auth.test_users import users
 from services.sql import init_sql
-
+from services.sql.models import User
 app = Flask(__name__, template_folder="frontend/templates", static_folder="frontend/static")
 app.config.update(
     SECRET_KEY=os.environ.get('APP_SECRET_KEY'),
@@ -32,9 +31,9 @@ def set_context_variables():
 
 @login_manager.user_loader
 def load_user(user_id: str):
-    for user in users.values():
-        if user.id == int(user_id):
-            return user
+    user: User = User.query.filter_by(id=user_id).first()
+    if user:
+        return user
     return None
 
 
