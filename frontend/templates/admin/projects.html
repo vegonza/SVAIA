@@ -21,7 +21,7 @@
     <!-- User Projects Section -->
     <div class="container py-3 mb-4">
         <div class="row mb-4">
-            <div class="col d-flex justify-content-between align-items-center">
+            <div class="col-12 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
                 <h1 class="text-primary page-title mb-0">Proyectos de <span id="name-display">Usuario</span></h1>
                 <a href="{{ url_for('admin.index') }}" class="btn btn-secondary px-3 py-2">
                     <i class="bi bi-arrow-left"></i> Volver
@@ -31,15 +31,17 @@
 
         <!-- Projects List -->
         <div class="row">
-            <div class="col">
+            <div class="col-12">
                 <div class="card shadow rounded-3">
                     <div class="card-body p-0">
-                        <div id="projects-list" class="p-3">
-                            <div class="text-center py-5">
-                                <div class="spinner-border text-primary" role="status">
-                                    <span class="visually-hidden">Cargando...</span>
+                        <div class="table-responsive">
+                            <div id="projects-list" class="p-0">
+                                <div class="text-center py-5">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Cargando...</span>
+                                    </div>
+                                    <p class="mt-2">Cargando proyectos...</p>
                                 </div>
-                                <p class="mt-2">Cargando proyectos...</p>
                             </div>
                         </div>
                     </div>
@@ -69,30 +71,30 @@
 </template>
 
 <template id="empty-projects-template">
-    <p class="text-muted text-center py-4">Este usuario no tiene proyectos.</p>
+    <div class="text-muted text-center py-4">Este usuario no tiene proyectos.</div>
 </template>
 
 <template id="error-template">
-    <p class="text-danger text-center py-4">Error al cargar los proyectos.</p>
+    <div class="text-danger text-center py-4">Error al cargar los proyectos.</div>
 </template>
 
 <template id="project-item-template">
-    <div class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-        <div>
+    <div class="list-group-item list-group-item-action d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 border-0 border-bottom">
+        <div class="project-info flex-grow-1">
             <h5 class="mb-1 project-name"></h5>
             <small class="text-muted project-uuid d-block"></small>
             <small class="text-muted project-description d-block"></small>
             <small class="text-muted project-created d-block"></small>
             <small class="text-muted project-updated d-block"></small>
         </div>
-        <div class="user-actions">
-            <a class="btn btn-info btn-sm text-white rounded-2 border-0 m-1 view-messages-btn">
-                <i class="bi bi-chat-dots-fill"></i> Ver Mensajes
+        <div class="user-actions d-flex flex-wrap justify-content-start justify-content-md-end mt-2 mt-md-0">
+            <a class="btn btn-info btn-sm text-white rounded-2 border-0 m-1 view-messages-btn" title="Ver Mensajes">
+                <i class="bi bi-chat-dots-fill"></i><span> Ver Mensajes</span>
             </a>
-            <button class="btn btn-warning edit-btn btn-sm text-white rounded-2 border-0 m-1">
+            <button class="btn btn-warning edit-btn btn-sm text-white rounded-2 border-0 m-1" title="Editar">
                 <i class="bi bi-pencil-fill"></i>
             </button>
-            <button class="btn btn-danger btn-sm delete-btn rounded-2 border-0 m-1">
+            <button class="btn btn-danger btn-sm delete-btn rounded-2 border-0 m-1" title="Eliminar">
                 <i class="bi bi-trash-fill"></i>
             </button>
         </div>
@@ -100,7 +102,7 @@
 </template>
 
 <template id="projects-container-template">
-    <div class="list-group"></div>
+    <div class="list-group list-group-flush overflow-auto" style="max-height: 60vh;"></div>
 </template>
 {% endblock %}
 
