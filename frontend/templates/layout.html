@@ -43,11 +43,14 @@
                 {% else %}
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('home') }}">Inicio</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('chat.index') }}">Chat</a>
                     </li>
                     {% if current_user.is_authenticated and current_user.username == 'admin' %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('admin.index') }}">Usuarios</a>
+                        <a class="nav-link" href="{{ url_for('admin.index') }}">Admin</a>
                     </li>
                     {% endif %}
                 </ul>
