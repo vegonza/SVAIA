@@ -1,6 +1,7 @@
 from uuid import uuid4
 
 from flask import Blueprint, request
+from flask_login import login_required
 
 from .models import Message, Project, db
 
@@ -8,6 +9,7 @@ projects_bp = Blueprint('projects', __name__)
 
 
 @projects_bp.route('/<string:uuid>', methods=['GET'])
+@login_required
 def load_project(uuid):
     project = Project.query.filter_by(uuid=uuid).first()
     if not project:
@@ -23,12 +25,14 @@ def load_project(uuid):
 
 
 @projects_bp.route('/', methods=['GET'])
+@login_required
 def get_projects():
     projects = Project.query.all()
     return [project.to_dict() for project in projects]
 
 
 @projects_bp.route('/', methods=['POST'])
+@login_required
 def create_project():
     project = Project(
         uuid=str(uuid4()),
@@ -40,6 +44,7 @@ def create_project():
 
 
 @projects_bp.route('/<string:uuid>', methods=['DELETE'])
+@login_required
 def delete_project(uuid):
     project = Project.query.filter_by(uuid=uuid).first()
     if not project:

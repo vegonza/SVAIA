@@ -34,4 +34,4 @@ def login():
 def logout():
     logout_user()
     flash('Has cerrado la sesión.', 'info')
-    return redirect(url_for('login'))
+    return redirect(url_for('auth.login'))

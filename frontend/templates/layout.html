@@ -23,6 +23,7 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarColor01">
+                {% if request.endpoint == 'home' %}
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
                         <a class="nav-link text-decoration-none active" href="{{ url_for('home') }}">Inicio
@@ -39,18 +40,47 @@
                         <a class="nav-link" href="#">CVE</a>
                     </li>
                 </ul>
+                {% else %}
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('chat.index') }}">Chat</a>
+                    </li>
+                    {% if current_user.is_authenticated and current_user.username == 'admin' %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('sql.users.list_users') }}">Usuarios</a>
+                    </li>
+                    {% endif %}
+                </ul>
+                {% endif %}
                 <ul class="navbar-nav">
+                    {% if request.endpoint == 'home' %}
                     <li class="nav-item d-none d-lg-block">
                         <a class="nav-link" href="#"><i class="bi bi-envelope-fill"></i></a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#"><i class="d-none d-lg-inline bi bi-person-fill me-2"></i>Mi cuenta</a>
                     </li>
+                    {% endif %}
+                    {% if current_user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('auth.logout') }}">
+                            <i class="bi bi-box-arrow-right me-1"></i>Cerrar sesión
+                        </a>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('auth.login') }}">
+                            <i class="bi bi-box-arrow-in-right me-1"></i>Iniciar sesión
+                        </a>
+                    </li>
+                    {% endif %}
                 </ul>
+                {% if request.endpoint == 'home' %}
                 <form class="d-flex mb-3 mb-lg-0 gap-2">
                     <input class="form-control" type="search" placeholder="Describe tu proyecto...">
                     <a href="{{ url_for('chat.index') }}" class="btn btn-secondary my-2 my-sm-0">Comenzar</a>
                 </form>
+                {% endif %}
             </div>
         </div>
     </nav>
