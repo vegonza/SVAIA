@@ -1,22 +1,14 @@
 from flask import Blueprint, request, flash, render_template, redirect, abort, url_for
 from flask_login import login_user, login_required, logout_user
-from werkzeug.security import generate_password_hash, check_password_hash
 
 from .utils import url_has_allowed_host_and_scheme
+from .password_utils import check
 from ..sql.models import User
 
 auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
 
 
-def hash(password):
-    return generate_password_hash(password, method='pbkdf2:sha256', salt_length=16)
-
-
-def check(password, hash):
-    return check_password_hash(hash, password)
-
-
-@auth_bp.route('/login', methods=['GET', 'POST'])
+@auth_bp.route('/login', methods=['POST'])
 def login():
     if request.method == 'POST':
         first_name = request.form['first_name']
