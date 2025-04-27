@@ -1,6 +1,6 @@
 const projectsList = document.getElementById('projects-list');
-const usernameDisplay = document.getElementById('username-display');
-const breadcrumbUsername = document.getElementById('breadcrumb-username');
+const nameDisplay = document.getElementById('name-display');
+const breadcrumbname = document.getElementById('breadcrumb-name');
 const notificationArea = document.getElementById('notification-area');
 
 const alertTemplate = document.getElementById('alert-template');
@@ -44,7 +44,7 @@ function formatDateTime(isoString) {
 
 async function loadUserProjects() {
     try {
-        // First, get user info to display username
+        // First, get user info to display name
         const userResponse = await fetch(`/sql/users/all`);
         if (!userResponse.ok) {
             throw new Error(`HTTP error! status: ${userResponse.status}`);
@@ -53,9 +53,9 @@ async function loadUserProjects() {
         const user = users.find(u => u.id === userId);
 
         if (user) {
-            usernameDisplay.textContent = user.username;
-            breadcrumbUsername.textContent = user.username;
-            document.title = `SVAIA - Proyectos de ${user.username}`;
+            nameDisplay.textContent = user.name;
+            breadcrumbname.textContent = user.name;
+            document.title = `SVAIA - Proyectos de ${user.name}`;
         }
 
         // Now get the user's projects

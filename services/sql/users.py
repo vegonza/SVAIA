@@ -13,14 +13,13 @@ users_bp = Blueprint('users', __name__)
 @admin_required
 def create_user():
     if request.method == 'POST':
-        first_name = request.form.get('first_name')
+        name = request.form.get('name')
         last_name = request.form.get('last_name')
         email = request.form.get('email')
-        username = request.form.get('username')
         password = request.form.get('password')
 
         # Check if user already exists
-        existing_user = User.query.filter_by(username=username).first()
+        existing_user = User.query.filter_by(name=name).first()
         if existing_user:
             flash('El nombre de usuario ya está en uso.', 'danger')
             return redirect(url_for('sql.users.create_user'))
@@ -31,10 +30,9 @@ def create_user():
             return redirect(url_for('sql.users.create_user'))
 
         new_user = User(
-            first_name=first_name,
+            name=name,
             last_name=last_name,
             email=email,
-            username=username,
             password=hash(password)
         )
 
@@ -53,10 +51,9 @@ def edit_user(user_id):
     user = User.query.get_or_404(user_id)
 
     if request.method == 'POST':
-        first_name = request.form.get('first_name')
+        name = request.form.get('name')
         last_name = request.form.get('last_name')
         email = request.form.get('email')
-        username = request.form.get('username')
 
         # Check if email is already in use by another user
         email_user = User.query.filter_by(email=email).first()
@@ -64,17 +61,16 @@ def edit_user(user_id):
             flash('El correo electrónico ya está en uso.', 'danger')
             return redirect(url_for('sql.users.edit_user', user_id=user_id))
 
-        # Check if username is already in use by another user
-        username_user = User.query.filter_by(username=username).first()
-        if username_user and username_user.id != user.id:
+        # Check if name is already in use by another user
+        name_user = User.query.filter_by(name=name).first()
+        if name_user and name_user.id != user.id:
             flash('El nombre de usuario ya está en uso.', 'danger')
             return redirect(url_for('sql.users.edit_user', user_id=user_id))
 
         # Update user
-        user.first_name = first_name
+        user.name = name
         user.last_name = last_name
         user.email = email
-        user.username = username
 
         # Update password if provided
         password = request.form.get('password')

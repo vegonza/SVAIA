@@ -48,7 +48,7 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('chat.index') }}">Chat</a>
                     </li>
-                    {% if current_user.is_authenticated and current_user.username == 'admin' %}
+                    {% if current_user.is_authenticated and current_user.is_admin == True %}
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('admin.index') }}">Admin</a>
                     </li>

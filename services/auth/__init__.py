@@ -11,12 +11,12 @@ auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        first_name = request.form.get('first_name')
+        name = request.form.get('name')
         last_name = request.form.get('last_name')
         email = request.form.get('email')
-        username = request.form.get('username')
+        name = request.form.get('name')
         password = request.form.get('password')
-        user: User = User.query.filter_by(username=username).first()
+        user: User = User.query.filter_by(name=name).first()
         if user and check(password, user.password):
             login_user(user, remember=True)
             next = request.form.get('next', '/chat')

@@ -47,7 +47,7 @@
                                 <div class="col-md-6 mb-4">
                                     <div class="input-group-custom">
                                         <i class="bi bi-person-fill input-icon"></i>
-                                        <input type="text" id="first_name" name="first_name" class="form-control form-control-custom" placeholder="Nombre" value="{{ user.first_name if user else '' }}" required />
+                                        <input type="text" id="name" name="name" class="form-control form-control-custom" placeholder="Nombre" value="{{ user.name if user else '' }}" required />
                                     </div>
                                 </div>
                                 <div class="col-md-6 mb-4">
@@ -58,12 +58,6 @@
                                 </div>
                             </div>
 
-                            <!-- Usuario input -->
-                            <div class="input-group-custom">
-                                <i class="bi bi-person-badge-fill input-icon"></i>
-                                <input type="text" id="username" name="username" class="form-control form-control-custom" placeholder="Usuario" value="{{ user.username if user else '' }}" required />
-                            </div>
-                            
                             <!-- Email input -->
                             <div class="input-group-custom">
                                 <i class="bi bi-envelope-fill input-icon"></i>

@@ -40,7 +40,6 @@
                                     <th class="px-3 py-3">Nombre</th>
                                     <th class="px-3 py-3">Apellido</th>
                                     <th class="px-3 py-3">Email</th>
-                                    <th class="px-3 py-3">Usuario</th>
                                     <th class="px-3 py-3">Rol</th>
                                     <th class="px-3 py-3 text-center">Acciones</th>
                                 </tr>
@@ -48,7 +47,7 @@
                             <tbody class="user-table" id="user-table-body">
                                 {# User rows will be loaded here by JavaScript #}
                                 <tr class="loading-row">
-                                    <td colspan="7">
+                                    <td colspan="6">
                                         <div class="spinner-border spinner-border-sm text-primary" role="status">
                                             <span class="visually-hidden">Loading...</span>
                                         </div>
@@ -74,7 +73,7 @@
 
 <template id="loading-template">
     <tr class="loading-row">
-        <td colspan="7">
+        <td colspan="6">
             <div class="spinner-border spinner-border-sm text-primary" role="status">
                 <span class="visually-hidden">Loading...</span>
             </div>
@@ -85,23 +84,22 @@
 
 <template id="empty-table-template">
     <tr>
-        <td colspan="7" class="text-center py-4">No hay usuarios registrados.</td>
+        <td colspan="6" class="text-center py-4">No hay usuarios registrados.</td>
     </tr>
 </template>
 
 <template id="error-template">
     <tr>
-        <td colspan="7" class="text-center py-4 text-danger">Error al cargar usuarios.</td>
+        <td colspan="6" class="text-center py-4 text-danger">Error al cargar usuarios.</td>
     </tr>
 </template>
 
 <template id="user-row-template">
     <tr>
         <td class="px-3 py-2 align-middle user-id"></td>
-        <td class="px-3 py-2 align-middle user-first-name"></td>
+        <td class="px-3 py-2 align-middle user-name"></td>
         <td class="px-3 py-2 align-middle user-last-name"></td>
         <td class="px-3 py-2 align-middle user-email"></td>
-        <td class="px-3 py-2 align-middle user-username"></td>
         <td class="px-3 py-2 align-middle user-role"></td>
         <td class="px-3 py-2 text-center user-actions align-middle">
             <button class="btn btn-info view-projects-btn btn-sm text-white rounded-2 border-0 m-1">

@@ -12,7 +12,7 @@
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{{ url_for('home') }}">Inicio</a></li>
             <li class="breadcrumb-item"><a href="{{ url_for('admin.index') }}">Admin</a></li>
-            <li class="breadcrumb-item active">Proyectos de <span id="breadcrumb-username">Usuario</span></li>
+            <li class="breadcrumb-item active">Proyectos de <span id="breadcrumb-name">Usuario</span></li>
         </ol>
     </div>
 
@@ -22,7 +22,7 @@
     <div class="container py-3 mb-4">
         <div class="row mb-4">
             <div class="col d-flex justify-content-between align-items-center">
-                <h1 class="text-primary page-title mb-0">Proyectos de <span id="username-display">Usuario</span></h1>
+                <h1 class="text-primary page-title mb-0">Proyectos de <span id="name-display">Usuario</span></h1>
                 <a href="{{ url_for('admin.index') }}" class="btn btn-secondary px-3 py-2">
                     <i class="bi bi-arrow-left"></i> Volver
                 </a>

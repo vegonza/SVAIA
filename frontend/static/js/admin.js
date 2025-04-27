@@ -53,10 +53,9 @@ async function loadUsers() {
 
             // Fill in the user data
             row.querySelector('.user-id').textContent = user.id;
-            row.querySelector('.user-first-name').textContent = user.first_name || 'N/A';
+            row.querySelector('.user-name').textContent = user.name || 'N/A';
             row.querySelector('.user-last-name').textContent = user.last_name || 'N/A';
             row.querySelector('.user-email').textContent = user.email;
-            row.querySelector('.user-username').textContent = user.username;
 
             const roleCell = row.querySelector('.user-role');
             if (user.is_admin) {
@@ -68,7 +67,7 @@ async function loadUsers() {
             // Set up the action buttons
             const viewProjectsButton = row.querySelector('.view-projects-btn');
             viewProjectsButton.setAttribute('data-user-id', user.id);
-            viewProjectsButton.setAttribute('data-username', user.username);
+            viewProjectsButton.setAttribute('data-name', user.name);
 
             const editButton = row.querySelector('.edit-btn');
             editButton.href = editUserUrl.replace('0', user.id);

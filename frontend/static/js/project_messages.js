@@ -3,7 +3,7 @@ const projectName = document.getElementById('project-name');
 const breadcrumbProjectName = document.getElementById('breadcrumb-project-name');
 const backButton = document.getElementById('back-button');
 const backToProjects = document.getElementById('back-to-projects');
-const breadcrumbUsername = document.getElementById('breadcrumb-username');
+const breadcrumbname = document.getElementById('breadcrumb-name');
 const notificationArea = document.getElementById('notification-area');
 const userMessageTemplate = document.getElementById('user-message-template');
 const aiMessageTemplate = document.getElementById('ai-message-template');
@@ -101,13 +101,13 @@ async function loadProject() {
         // Set user ID for back button
         userId = data.user_id;
 
-        // Get username and update breadcrumb
+        // Get name and update breadcrumb
         const userResponse = await fetch(`/sql/users/all`);
         if (userResponse.ok) {
             const users = await userResponse.json();
             const user = users.find(u => u.id === userId);
             if (user) {
-                breadcrumbUsername.textContent = user.username;
+                breadcrumbname.textContent = user.name;
             }
         }
 
