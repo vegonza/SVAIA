@@ -1,6 +1,7 @@
 from flask import Blueprint, flash, redirect, render_template, request, url_for
-from flask_login import current_user, login_required
+from flask_login import current_user
 
+from services.decorators import admin_required
 from services.auth.password_utils import hash
 
 from .models import User, db
@@ -9,14 +10,14 @@ users_bp = Blueprint('users', __name__)
 
 
 @users_bp.route('/')
-@login_required
+@admin_required
 def list_users():
     users = User.query.all()
     return render_template('users.html', users=users)
 
 
 @users_bp.route('/create', methods=['GET', 'POST'])
-@login_required
+@admin_required
 def create_user():
     if request.method == 'POST':
         first_name = request.form.get('first_name')
@@ -54,7 +55,7 @@ def create_user():
 
 
 @users_bp.route('/edit/<int:user_id>', methods=['GET', 'POST'])
-@login_required
+@admin_required
 def edit_user(user_id):
     user = User.query.get_or_404(user_id)
 
@@ -96,7 +97,7 @@ def edit_user(user_id):
 
 
 @users_bp.route('/delete/<int:user_id>', methods=['POST'])
-@login_required
+@admin_required
 def delete_user(user_id):
     user: User = User.query.get_or_404(user_id)
 

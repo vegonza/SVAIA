@@ -23,9 +23,11 @@ login_manager.login_view = 'auth.login'
 login_manager.login_message = 'Debes iniciar sesión para acceder a esta página.'
 login_manager.login_message_category = 'info'
 
+
 @login_manager.unauthorized_handler
 def handle_unauthorized():
-    if request.accept_mimetypes['application/json']:
+    best = request.accept_mimetypes.best_match(['application/json', 'text/html'])
+    if best == 'application/json':
         return jsonify({'error': 'unauthorized'}), 401
     return redirect(url_for('auth.login', next=request.url))
 
