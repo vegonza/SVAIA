@@ -16,7 +16,8 @@
 .table-responsive {
     box-shadow: none;
     border: none;
-    overflow: hidden;
+    overflow: auto;
+    max-height: 500px;
 }
 
 .table {
@@ -38,6 +39,9 @@
     font-weight: 600;
     color: #fff;
     padding: 16px 12px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
 }
 
 .table-header th {
@@ -59,7 +63,6 @@
     font-weight: 700;
     font-size: 2.2rem;
     color: #343a40;
-    /* Match header color */
 }
 
 .add-btn {
@@ -67,33 +70,27 @@
     border-radius: 8px;
     transition: all 0.3s ease;
     background-color: #28a745;
-    /* Green */
     border-color: #28a745;
 }
 
 .edit-btn {
     background-color: #ffc107;
-    /* Warning yellow */
     border-color: #ffc107;
     color: #212529;
-    /* Dark text for yellow background */
 }
 
 .delete-btn {
     background-color: #dc3545;
-    /* Danger red */
     border-color: #dc3545;
 }
 
 .view-projects-btn {
     background-color: #17a2b8;
-    /* Info cyan */
     border-color: #17a2b8;
 }
 
 .btn i {
     margin-right: 0;
-    /* Ensure icons don't add extra space */
 }
 
 /* Form styles */
