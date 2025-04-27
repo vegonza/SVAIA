@@ -44,4 +44,4 @@ class User(db.Model):
     email: Mapped[str] = mapped_column(db.String(120), unique=True, nullable=False)
     username: Mapped[str] = mapped_column(db.String(12), unique=True, nullable=False)
     password: Mapped[str] = mapped_column(db.String(12), nullable=False)
-    project_uuid: Mapped[str] = mapped_column(db.String(36), db.ForeignKey('project.uuid'))
+    projects = db.relationship('Project', backref='user', lazy=True, cascade="all, delete-orphan")
