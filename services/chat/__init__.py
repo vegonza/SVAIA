@@ -17,7 +17,7 @@ def index():
 @chat_bp.route("/completion", methods=["POST"])
 @login_required
 def completion():
-    data: dict = request.json
+    data = request.json
     message = data.get("message")
     project_uuid = data.get("project_uuid")
 
