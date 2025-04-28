@@ -46,26 +46,10 @@
                   {% endif %}
                 {% endwith %}
                 <form action="{{ url_for('auth.login') }}" method="POST">
-                  <!-- Nombre y Apellidos -->
-                  <div class="row">
-                    <div class="col-md-6 mb-4">
-                      <div class="input-group-custom">
-                        <i class="bi bi-person-fill input-icon"></i>
-                        <input type="text" id="inputNombre" name="name" class="form-control form-control-custom" placeholder="Nombre" required />
-                      </div>
-                    </div>
-                    <div class="col-md-6 mb-4">
-                      <div class="input-group-custom">
-                        <i class="bi bi-person-fill input-icon"></i>
-                        <input type="text" id="inputApellidos" name="last_name" class="form-control form-control-custom" placeholder="Apellidos" required />
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <!-- Email input -->
+                  <!-- Nombre -->
                   <div class="input-group-custom">
-                    <i class="bi bi-envelope-fill input-icon"></i>
-                    <input type="email" id="form3Example3" name="email" class="form-control form-control-custom" placeholder="Correo Electrónico" required />
+                    <i class="bi bi-person-fill input-icon"></i>
+                    <input type="text" id="inputNombre" name="name" class="form-control form-control-custom" placeholder="Nombre" required />
                   </div>
   
                   <!-- Password input -->
