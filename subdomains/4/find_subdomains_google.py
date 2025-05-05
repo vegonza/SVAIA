@@ -1,11 +1,10 @@
 import os
+import re
 import sys
 import time
 
 import requests
 from dotenv import find_dotenv, load_dotenv
-
-from subdominios import main as search_subdomains_from_file
 
 load_dotenv(find_dotenv())
 
@@ -16,6 +15,17 @@ CSE_ID = os.environ.get("CSE_ID")
 def build_query(domain, excluded_subdomains):
     exclusions = ' '.join(f'-{sub}.{domain}' for sub in excluded_subdomains)
     return f"site:*.{domain} -www.{domain} {exclusions}"
+
+
+def search_subdomains_from_file(url):
+    response = requests.get(url)
+    html = response.text
+
+    subdomains = re.findall(r'([a-zA-Z0-9-]+)\.uma\.es', html)
+    subdomains = sorted(set(subdomains))
+    subdomains = [f"{subdomain}.uma.es" for subdomain in subdomains]
+
+    return subdomains
 
 
 def search_subdomains(domain, pages):
