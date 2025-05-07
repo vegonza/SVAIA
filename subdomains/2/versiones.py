@@ -2,7 +2,7 @@ import re
 
 from requests.sessions import Session
 
-with open('subdomains/scripts.txt', 'r') as file:
+with open('scripts.txt', 'r') as file:
     scripts = file.readlines()
 
 
@@ -58,6 +58,6 @@ for script in scripts:
         print(f'{script}: {e}')
 
 print(versions_list)
-with open('subdomains/versiones.txt', 'w') as file:
+with open('versiones.txt', 'w') as file:
     for version in versions_list:
         file.write(version + '\n')

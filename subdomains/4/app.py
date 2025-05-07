@@ -89,7 +89,7 @@ def main():
     pages = int(sys.argv[2])
 
     subdomains = search_subdomains(domain, pages)
-    with open('subdomains/google/subdominios.txt', 'w') as file:
+    with open('subdominios.txt', 'w') as file:
         for subdomain in subdomains:
             file.write(subdomain + '\n')
 

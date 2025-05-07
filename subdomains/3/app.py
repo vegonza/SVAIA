@@ -18,6 +18,6 @@ if __name__ == "__main__":
     url = 'https://www.uma.es/'
     subdomains = main(url)
 
-    with open('subdomains/subdominios.txt', 'w') as file:
+    with open('subdominios.txt', 'w') as file:
         for subdomain in subdomains:
             file.write(subdomain + '\n')
