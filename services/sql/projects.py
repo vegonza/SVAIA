@@ -4,6 +4,7 @@ from datetime import datetime
 from flask import Blueprint, request
 from flask_login import current_user, login_required
 
+from libs.logging_utils import log_manager
 from services.decorators import admin_required
 
 from .models import Message, Project, db
@@ -52,6 +53,7 @@ def create_project():
     )
     db.session.add(project)
     db.session.commit()
+    log_manager.add_log(log_level="info", user=current_user.name, function=create_project.__name__, argument=str(project.to_dict()), log_string="Project created successfully")    
     return project.to_dict(), 200
 
 
@@ -60,10 +62,12 @@ def create_project():
 def delete_project(uuid):
     project = Project.query.filter_by(uuid=uuid).first()
     if not project:
+        log_manager.add_log(log_level="warning", user=current_user.name, function=delete_project.__name__, argument=str(uuid), log_string="Project not found")
         return {"error": "Project not found"}, 404
 
     db.session.delete(project)
     db.session.commit()
+    log_manager.add_log(log_level="info", user=current_user.name, function=delete_project.__name__, argument=str(project.to_dict()), log_string="Project deleted successfully")
     return {"message": "Project deleted successfully"}, 200
 
 
@@ -92,5 +96,5 @@ def update_project(uuid):
 
     project.updated_at = datetime.utcnow()
     db.session.commit()
-
+    log_manager.add_log(log_level="info", user=current_user.name, function=update_project.__name__, argument=str(project.to_dict()), log_string="Project updated successfully")
     return project.to_dict()

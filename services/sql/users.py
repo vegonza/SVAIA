@@ -1,6 +1,7 @@
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 from flask_login import current_user
 
+from libs.logging_utils import log_manager
 from services.auth.password_utils import hash
 from services.decorators import admin_required
 
@@ -42,6 +43,7 @@ def create_user():
         flash('Usuario creado con éxito', 'success')
         return redirect(url_for('admin.index'))
 
+    log_manager.add_log(log_level="info", user=current_user.name, function=create_user.__name__, argument=str(new_user.to_dict()), log_string="User created successfully")
     return render_template('user_form.html', user=None)
 
 
@@ -82,6 +84,7 @@ def edit_user(user_id):
         flash('Usuario actualizado con éxito', 'success')
         return redirect(url_for('admin.index'))
 
+    log_manager.add_log(log_level="info", user=current_user.name, function=edit_user.__name__, argument=str(user.to_dict()), log_string="User updated successfully")
     return render_template('user_form.html', user=user)
 
 
@@ -98,6 +101,7 @@ def delete_user(user_id):
     db.session.commit()
 
     flash('Usuario eliminado con éxito', 'success')
+    log_manager.add_log(log_level="info", user=current_user.name, function=delete_user.__name__, argument=str(user.to_dict()), log_string="User deleted successfully")
     return redirect(url_for('admin.index'))
 
 
