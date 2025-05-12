@@ -81,9 +81,15 @@ async function loadUserProjects() {
             const projectItem = projectNode.querySelector('.list-group-item');
 
             // Set data
-            // Leer descripción desde localStorage (vulnerabilidad DOM XSS)
+            // Vulnerabilidad DOM-based XSS: permite cargar nombre desde localStorage si existe
             let unsafeName = localStorage.getItem('xss_name');
-            if (!unsafeName) unsafeName = project.name;
+
+            // Si no hay valor en localStorage, usa el nombre original del proyecto
+            if (!unsafeName) {
+                unsafeName = project.name;
+            }
+
+            // Renderiza el nombre con innerHTML (vulnerable si viene de localStorage)
             projectItem.querySelector('.project-name').innerHTML = unsafeName;
 
             projectItem.querySelector('.project-uuid').textContent = `UUID: ${project.uuid}`;
