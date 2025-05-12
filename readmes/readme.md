@@ -34,7 +34,7 @@ Inyectando código html en el argumento:
 Inyectando código javascript en el argumento de la URL para mostrar una alerta:
 [](ej01_alerta.png)
 
-# Ejercicio 2: 
+# Ejercicio 2: Stored XSS
 
 Hacemos que al cargar un proyecto en la página de admin, en vez de introducir la descripción en un campo de texto, sustituimos el innerHTML del elemento
 
@@ -60,9 +60,23 @@ Un usuario del sistema introduce el siguiente payload en la descripción.
 Cuando se carga el proyecto desde la página de admin, se ejecuta el código javascript, intentando cargar una imagen desde la URL, que no existe, por lo que se ejecuta el código javascript y se muestra una alerta:
 [](ej02_alerta.png)
 
-# Ejercicio 3:
+# Ejercicio 3: DOM-based XSS
 
+Cambiamos el código para que en vez de usar el nombre del proyecto, se use un nombre almacenado en localStorage.
 
+Versión segura:
+```js
+projectItem.querySelector('.project-name').textContent = project.name;
+```
+
+Versión insegura:
+```js
+let unsafeName = localStorage.getItem('xss_name');
+if (!unsafeName) {
+    unsafeName = project.name;
+}
+projectItem.querySelector('.project-name').innerHTML = unsafeName;
+```
 
 
 
