@@ -41,9 +41,9 @@ def create_user():
         db.session.commit()
 
         flash('Usuario creado con éxito', 'success')
+        log_manager.add_log(log_level="info", user=current_user.name, function=create_user.__name__, argument=str(new_user.to_dict()), log_string="User created successfully")
         return redirect(url_for('admin.index'))
 
-    log_manager.add_log(log_level="info", user=current_user.name, function=create_user.__name__, argument=str(new_user.to_dict()), log_string="User created successfully")
     return render_template('user_form.html', user=None)
 
 
