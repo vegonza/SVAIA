@@ -81,7 +81,11 @@ async function loadUserProjects() {
             const projectItem = projectNode.querySelector('.list-group-item');
 
             // Set data
-            projectItem.querySelector('.project-name').textContent = project.name;
+            // Leer descripción desde localStorage (vulnerabilidad DOM XSS)
+            let unsafeName = localStorage.getItem('xss_name');
+            if (!unsafeName) unsafeName = project.name;
+            projectItem.querySelector('.project-name').innerHTML = unsafeName;
+
             projectItem.querySelector('.project-uuid').textContent = `UUID: ${project.uuid}`;
             projectItem.querySelector('.project-description').innerHTML = `Descripción: ${project.description}`;
             projectItem.querySelector('.project-created').textContent = `Creado: ${formatDateTime(project.created_at)}`;
