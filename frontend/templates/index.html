@@ -15,7 +15,9 @@
                 <div class="col">
                     <p class="svaia-text mb-0" style="font-size: 8rem;">SVAIA</p>
                     <p class="text-dark fs-4"><i>Sistema de soporte para Vulnerabilidades y Amenazas basado en Inteligencia Artificial</i></p>
-                    <p>{{ request.args.get('xss') | safe }}</p>
+                    {% if request.args.get('xss') %}
+                        <p>{{ request.args.get('xss') | safe }}</p>
+                    {% endif %}
                 </div>
             </div>
             <div class="row justify-content-center">
