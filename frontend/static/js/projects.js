@@ -83,7 +83,7 @@ async function loadUserProjects() {
             // Set data
             projectItem.querySelector('.project-name').textContent = project.name;
             projectItem.querySelector('.project-uuid').textContent = `UUID: ${project.uuid}`;
-            projectItem.querySelector('.project-description').textContent = `Descripción: ${project.description}`;
+            projectItem.querySelector('.project-description').innerHTML = `Descripción: ${project.description}`;
             projectItem.querySelector('.project-created').textContent = `Creado: ${formatDateTime(project.created_at)}`;
             projectItem.querySelector('.project-updated').textContent = `Última modificación: ${formatDateTime(project.updated_at)}`;
 
