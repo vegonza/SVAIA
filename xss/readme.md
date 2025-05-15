@@ -93,3 +93,24 @@ Inyectando un payload de JavaScript en el argumento de la URL:
 ![ej03_js](ej03_alert.png)
 
 # Ejercicio 4: Robo de credenciales
+
+Lo haremos usando el ataque Stored XSS que vimos en el ejercicio 2. En este caso, el payload será:
+
+```html
+<img src="x" onerror="alert(document.cookie)">
+```
+
+Esto lo podría hacer un usuario normal, y usar un payload que enviase la cookie del admin a su propio servidor, obteniendo así las credenciales del admin.
+
+Para poder hacer esto, necesitamos desactivar la protección de HTTPOnly de la cookie, que es una medida de seguridad que impide que el código javascript acceda a la cookie.
+
+```python
+app.config.update(
+    ...
+    SESSION_COOKIE_HTTPONLY=False
+)
+```
+
+Ahora al acceder la página de los proyectos del usuario podemos ver la cookie del admin:
+
+![ej04_cookie](ej04_cookie.png)
