@@ -26,13 +26,13 @@ Código inseguro:
 ```
 
 Como se ve sin argumentos en la URL:
-[](ej01_normal.png)
+![ej01_normal](ej01_normal.png)
 
 Inyectando código html en el argumento:
-[](ej01_inyeccion_html.png)
+![ej01_inyeccion_html](ej01_inyeccion_html.png)
 
 Inyectando código javascript en el argumento de la URL para mostrar una alerta:
-[](ej01_alerta.png)
+![ej01_alerta](ej01_alerta.png)
 
 # Ejercicio 2: Stored XSS
 
@@ -49,7 +49,7 @@ projectItem.querySelector('.project-description').innerHTML = `Descripción: ${p
 ```
 
 Cómo se ve de normal:
-[](ej02_normal.png)
+![ej02_normal](ej02_normal.png)
 
 Un usuario del sistema introduce el siguiente payload en la descripción.
 
@@ -58,25 +58,28 @@ Un usuario del sistema introduce el siguiente payload en la descripción.
 ```
 
 Cuando se carga el proyecto desde la página de admin, se ejecuta el código javascript, intentando cargar una imagen desde la URL, que no existe, por lo que se ejecuta el código javascript y se muestra una alerta:
-[](ej02_alerta.png)
+![ej02_alerta](ej02_alerta.png)
 
 # Ejercicio 3: DOM-based XSS
 
-Cambiamos el código para que en vez de usar el nombre del proyecto, se use un nombre almacenado en localStorage.
+Añadimos el siguiente código en el archivo projects.js. Esto lo que hace es cambiar el título de la página en función del nombre del proyecto que se le pasa como argumento en la URL.
 
-Versión segura:
 ```js
-projectItem.querySelector('.project-name').textContent = project.name;
-```
-
-Versión insegura:
-```js
-let unsafeName = localStorage.getItem('xss_name');
-if (!unsafeName) {
-    unsafeName = project.name;
+const urlParams = new URLSearchParams(window.location.search);
+const name = urlParams.get('name');
+if (name) {
+    document.title = `SVAIA - Proyectos de ${name}`;
 }
-projectItem.querySelector('.project-name').innerHTML = unsafeName;
 ```
+
+Cómo se ve de normal:
+![ej03_normal](ej03_normal.png)
+
+Inyectando un payload de texto en el argumento de la URL:
+![ej03_texto](ej03_texto.png)
+
+Inyectando un payload de JavaScript en el argumento de la URL:
+![ej03_js](ej03_js.png)
 
 
 

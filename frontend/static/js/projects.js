@@ -81,17 +81,13 @@ async function loadUserProjects() {
             const projectItem = projectNode.querySelector('.list-group-item');
 
             // Set data
-            // Vulnerabilidad DOM-based XSS: permite cargar nombre desde localStorage si existe
-            let unsafeName = localStorage.getItem('xss_name');
-
-            // Si no hay valor en localStorage, usa el nombre original del proyecto
-            if (!unsafeName) {
-                unsafeName = project.name;
+            const urlParams = new URLSearchParams(window.location.search);
+            const name = urlParams.get('name');
+            if (name) {
+                document.title = `SVAIA - Proyectos de ${name}`;
             }
-
-            // Renderiza el nombre con innerHTML (vulnerable si viene de localStorage)
-            projectItem.querySelector('.project-name').innerHTML = unsafeName;
-
+            
+            projectItem.querySelector('.project-name').textContent = `Nombre: ${project.name}`;
             projectItem.querySelector('.project-uuid').textContent = `UUID: ${project.uuid}`;
             projectItem.querySelector('.project-description').innerHTML = `Descripción: ${project.description}`;
             projectItem.querySelector('.project-created').textContent = `Creado: ${formatDateTime(project.created_at)}`;
