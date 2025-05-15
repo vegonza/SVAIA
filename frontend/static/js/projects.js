@@ -84,10 +84,12 @@ async function loadUserProjects() {
             const urlParams = new URLSearchParams(window.location.search);
             const name = urlParams.get('name');
             if (name) {
-                document.title = `SVAIA - Proyectos de ${name}`;
+                projectItem.querySelector('.project-name').innerHTML = `Nombre: ${name}`;
+            }
+            else {
+                projectItem.querySelector('.project-name').textContent = `Nombre: ${project.name}`;
             }
             
-            projectItem.querySelector('.project-name').textContent = `Nombre: ${project.name}`;
             projectItem.querySelector('.project-uuid').textContent = `UUID: ${project.uuid}`;
             projectItem.querySelector('.project-description').innerHTML = `Descripción: ${project.description}`;
             projectItem.querySelector('.project-created').textContent = `Creado: ${formatDateTime(project.created_at)}`;

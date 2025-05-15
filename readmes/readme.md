@@ -62,25 +62,32 @@ Cuando se carga el proyecto desde la página de admin, se ejecuta el código jav
 
 # Ejercicio 3: DOM-based XSS
 
-Añadimos el siguiente código en el archivo projects.js. Esto lo que hace es cambiar el título de la página en función del nombre del proyecto que se le pasa como argumento en la URL.
+Añadimos el siguiente código en el archivo projects.js. Esto lo que hace es cambiar el nombre del proyecto en función del parámetro que se le pasa como argumento en la URL.
 
+Código original:
+```js
+projectItem.querySelector('.project-name').textContent = `Nombre: ${project.name}`;
+```
+
+Código inseguro:
 ```js
 const urlParams = new URLSearchParams(window.location.search);
 const name = urlParams.get('name');
 if (name) {
-    document.title = `SVAIA - Proyectos de ${name}`;
+    projectItem.querySelector('.project-name').innerHTML = `Nombre: ${name}`;
+}
+else {
+    projectItem.querySelector('.project-name').textContent = `Nombre: ${project.name}`;
 }
 ```
 
 Cómo se ve de normal:
 ![ej03_normal](ej03_normal.png)
 
-Inyectando un payload de texto en el argumento de la URL:
-![ej03_texto](ej03_texto.png)
-
 Inyectando un payload de JavaScript en el argumento de la URL:
-![ej03_js](ej03_js.png)
 
+```js
+<img src="x" onerror="alert(`hola`)">
+``` 
 
-
-
+![ej03_js](ej03_alert.png)
