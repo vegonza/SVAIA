@@ -91,3 +91,5 @@ Inyectando un payload de JavaScript en el argumento de la URL:
 ``` 
 
 ![ej03_js](ej03_alert.png)
+
+# Ejercicio 4: Robo de credenciales
