@@ -6,7 +6,7 @@ from flask import (Flask, jsonify, redirect, render_template, request,
 from flask_cors import CORS
 from flask_login import LoginManager
 
-from services import auth_bp, chat_bp, sql_bp, admin_bp
+from services import admin_bp, auth_bp, chat_bp, sql_bp
 from services.sql import init_sql
 from services.sql.models import User
 

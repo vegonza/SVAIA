@@ -15,14 +15,14 @@ load_dotenv(find_dotenv())
 
 api_key = os.environ.get("AI_API_KEY")
 client = OpenAI(
-    base_url="https://openrouter.ai/api/v1",
+    base_url="https://generativelanguage.googleapis.com/v1beta/openai/",
     api_key=api_key,
 )
 
 
 def get_response(message: str, project_uuid: Optional[str] = None):
     stream = client.chat.completions.create(
-        model="google/gemini-2.0-flash-exp:free",
+        model="Gemini 2.5 Flash Preview 05-20",
         messages=[
             {
                 "role": "system",

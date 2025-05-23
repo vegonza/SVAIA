@@ -1,6 +1,7 @@
+from datetime import datetime
+
 from flask import Blueprint, jsonify, render_template, request
 from flask_login import login_required
-from datetime import datetime
 
 from services.sql.models import Message, Project, db
 
