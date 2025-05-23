@@ -181,25 +181,128 @@ function showEditProjectModal(project) {
     projectNameInput.value = project.name;
     projectDescriptionInput.value = project.description || '';
     
-    // Reset dropdown and custom vulnerability
-    if (vulnerabilityDropdown) {
-        vulnerabilityDropdown.textContent = 'Elegir';
-        selectedVulnerabilityInput.value = '';
-    }
-    if (customVulnerabilityInput) {
-        customVulnerabilityInput.value = '';
-    }
-    const customVulnerabilityContainer = document.getElementById('customVulnerabilityContainer');
-    if (customVulnerabilityContainer) {
-        customVulnerabilityContainer.style.display = 'none';
+    // Load existing vulnerability level
+    const existingVulnerability = project.vulnerability_level || '';
+    if (existingVulnerability && vulnerabilityDropdown) {
+        const predefinedValues = {
+            'critical': 'Grado de vulnerabilidad crítico (8-10)',
+            'severe': 'Grado de vulnerabilidad severa (6-7)',
+            'mild': 'Grado de vulnerabilidad leve o medio (1-5)'
+        };
+        
+        if (predefinedValues[existingVulnerability]) {
+            vulnerabilityDropdown.textContent = predefinedValues[existingVulnerability];
+            selectedVulnerabilityInput.value = existingVulnerability;
+            if (customVulnerabilityInput) {
+                customVulnerabilityInput.value = '';
+            }
+            const customVulnerabilityContainer = document.getElementById('customVulnerabilityContainer');
+            if (customVulnerabilityContainer) {
+                customVulnerabilityContainer.style.display = 'none';
+            }
+        } else {
+            vulnerabilityDropdown.textContent = 'Otro (especificar)';
+            selectedVulnerabilityInput.value = existingVulnerability;
+            if (customVulnerabilityInput) {
+                customVulnerabilityInput.value = existingVulnerability;
+            }
+            const customVulnerabilityContainer = document.getElementById('customVulnerabilityContainer');
+            if (customVulnerabilityContainer) {
+                customVulnerabilityContainer.style.display = 'block';
+            }
+        }
+    } else {
+        if (vulnerabilityDropdown) {
+            vulnerabilityDropdown.textContent = 'Elegir';
+            selectedVulnerabilityInput.value = '';
+        }
+        if (customVulnerabilityInput) {
+            customVulnerabilityInput.value = '';
+        }
+        const customVulnerabilityContainer = document.getElementById('customVulnerabilityContainer');
+        if (customVulnerabilityContainer) {
+            customVulnerabilityContainer.style.display = 'none';
+        }
     }
     
-    // Hide file upload section in admin view
+    // Reset file inputs for new uploads
+    const dockerfilesInput = document.getElementById('dockerfiles');
+    const dockerComposeFilesInput = document.getElementById('dockerComposeFiles');
+    const dockerImagesInput = document.getElementById('dockerImages');
+    
+    if (dockerfilesInput) dockerfilesInput.value = '';
+    if (dockerComposeFilesInput) dockerComposeFilesInput.value = '';
+    if (dockerImagesInput) dockerImagesInput.value = '';
+    
     if (fileUploadSection) {
-        fileUploadSection.style.display = 'none';
+        fileUploadSection.style.display = 'block';
     }
     
     projectModal.show();
+}
+
+async function uploadFiles(projectUuid) {
+    try {
+        const dockerfilesInput = document.getElementById('dockerfiles');
+        const dockerComposeFilesInput = document.getElementById('dockerComposeFiles');
+        const dockerImagesInput = document.getElementById('dockerImages');
+        
+        // Upload Dockerfiles
+        if (dockerfilesInput && dockerfilesInput.files.length > 0) {
+            const dockerfileFormData = new FormData();
+            for (let file of dockerfilesInput.files) {
+                dockerfileFormData.append('dockerfiles', file);
+            }
+            
+            const dockerfileResponse = await fetch(`/sql/projects/upload/dockerfiles/${projectUuid}`, {
+                method: 'POST',
+                body: dockerfileFormData
+            });
+            
+            if (!dockerfileResponse.ok) {
+                throw new Error('Error al subir Dockerfiles');
+            }
+        }
+        
+        // Upload Docker Compose files
+        if (dockerComposeFilesInput && dockerComposeFilesInput.files.length > 0) {
+            const composeFormData = new FormData();
+            for (let file of dockerComposeFilesInput.files) {
+                composeFormData.append('docker_compose_files', file);
+            }
+            
+            const composeResponse = await fetch(`/sql/projects/upload/docker-compose-files/${projectUuid}`, {
+                method: 'POST',
+                body: composeFormData
+            });
+            
+            if (!composeResponse.ok) {
+                throw new Error('Error al subir archivos Docker Compose');
+            }
+        }
+        
+        // Upload Docker images
+        if (dockerImagesInput && dockerImagesInput.files.length > 0) {
+            const imagesFormData = new FormData();
+            for (let file of dockerImagesInput.files) {
+                imagesFormData.append('images', file);
+            }
+            
+            const imagesResponse = await fetch(`/sql/projects/upload/docker-image/${projectUuid}`, {
+                method: 'POST',
+                body: imagesFormData
+            });
+            
+            if (!imagesResponse.ok) {
+                throw new Error('Error al subir imágenes Docker');
+            }
+        }
+        
+        return true;
+    } catch (error) {
+        console.error('Error uploading files:', error);
+        throw error;
+    }
 }
 
 async function saveProject() {
@@ -221,6 +324,7 @@ async function saveProject() {
             description: description
         };
         
+        // Only include vulnerability level if it's set
         if (vulnerabilityLevel) {
             requestBody.vulnerability_level = vulnerabilityLevel;
         }
@@ -239,11 +343,30 @@ async function saveProject() {
         }
 
         const updatedProject = await response.json();
+        
+        // Upload files if any are selected
+        const dockerfilesInput = document.getElementById('dockerfiles');
+        const dockerComposeFilesInput = document.getElementById('dockerComposeFiles');
+        const dockerImagesInput = document.getElementById('dockerImages');
+        
+        const hasFiles = (dockerfilesInput && dockerfilesInput.files.length > 0) || 
+                         (dockerComposeFilesInput && dockerComposeFilesInput.files.length > 0) || 
+                         (dockerImagesInput && dockerImagesInput.files.length > 0);
+        
+        if (hasFiles) {
+            try {
+                await uploadFiles(uuid);
+                createAlert('Proyecto y archivos actualizados con éxito.', 'success');
+            } catch (uploadError) {
+                createAlert('Proyecto actualizado, pero hubo un error al subir algunos archivos: ' + uploadError.message, 'warning');
+            }
+        } else {
+            createAlert('Proyecto actualizado con éxito.', 'success');
+        }
+        
         projectModal.hide();
-
         // Reload the projects list
         loadUserProjects();
-        createAlert(`Proyecto actualizado con éxito.`, 'success');
 
     } catch (error) {
         console.error('Error updating project:', error);

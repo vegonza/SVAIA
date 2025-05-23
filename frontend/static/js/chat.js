@@ -93,24 +93,6 @@ function validateForm() {
         return false;
     }
     
-    if (!isEditMode) {
-        // Validate file uploads for new projects
-        if (!dockerfilesInput.files.length) {
-            alert('Debe subir al menos un Dockerfile');
-            return false;
-        }
-        
-        if (!dockerComposeFilesInput.files.length) {
-            alert('Debe subir al menos un archivo Docker Compose');
-            return false;
-        }
-        
-        if (!dockerImagesInput.files.length) {
-            alert('Debe subir al menos una imagen Docker');
-            return false;
-        }
-    }
-    
     return true;
 }
 
@@ -479,13 +461,11 @@ function showCreateProjectModal() {
     dockerComposeFilesInput.value = '';
     dockerImagesInput.value = '';
     
-    // Show file upload section for new projects
     fileUploadSection.style.display = 'block';
     
-    // Make file inputs required for new projects
-    dockerfilesInput.required = true;
-    dockerComposeFilesInput.required = true;
-    dockerImagesInput.required = true;
+    dockerfilesInput.required = false;
+    dockerComposeFilesInput.required = false;
+    dockerImagesInput.required = false;
     
     projectModal.show();
 }
@@ -497,16 +477,38 @@ function showEditProjectModal(project) {
     projectNameInput.value = project.name;
     projectDescriptionInput.value = project.description || '';
     
-    // Reset dropdown and custom vulnerability
-    vulnerabilityDropdown.textContent = 'Elegir';
-    selectedVulnerabilityInput.value = '';
-    customVulnerabilityInput.value = '';
-    document.getElementById('customVulnerabilityContainer').style.display = 'none';
+    const existingVulnerability = project.vulnerability_level || '';
+    if (existingVulnerability) {
+        const predefinedValues = {
+            'critical': 'Grado de vulnerabilidad crítico (8-10)',
+            'severe': 'Grado de vulnerabilidad severa (6-7)',
+            'mild': 'Grado de vulnerabilidad leve o medio (1-5)'
+        };
+        
+        if (predefinedValues[existingVulnerability]) {
+            vulnerabilityDropdown.textContent = predefinedValues[existingVulnerability];
+            selectedVulnerabilityInput.value = existingVulnerability;
+            customVulnerabilityInput.value = '';
+            document.getElementById('customVulnerabilityContainer').style.display = 'none';
+        } else {
+            vulnerabilityDropdown.textContent = 'Otro (especificar)';
+            selectedVulnerabilityInput.value = existingVulnerability;
+            customVulnerabilityInput.value = existingVulnerability;
+            document.getElementById('customVulnerabilityContainer').style.display = 'block';
+        }
+    } else {
+        vulnerabilityDropdown.textContent = 'Elegir';
+        selectedVulnerabilityInput.value = '';
+        customVulnerabilityInput.value = '';
+        document.getElementById('customVulnerabilityContainer').style.display = 'none';
+    }
     
-    // Hide file upload section for editing existing projects
-    fileUploadSection.style.display = 'none';
+    dockerfilesInput.value = '';
+    dockerComposeFilesInput.value = '';
+    dockerImagesInput.value = '';
     
-    // Make file inputs not required for editing
+    fileUploadSection.style.display = 'block';
+    
     dockerfilesInput.required = false;
     dockerComposeFilesInput.required = false;
     dockerImagesInput.required = false;
@@ -564,23 +566,38 @@ async function saveProject() {
 
         data = await response.json();
         
-        if (!isEditMode) {
-            // Upload files for new projects
+        // Upload files if any are selected (for both create and edit modes)
+        const hasFiles = dockerfilesInput.files.length > 0 || 
+                         dockerComposeFilesInput.files.length > 0 || 
+                         dockerImagesInput.files.length > 0;
+        
+        if (hasFiles) {
             try {
-                await uploadFiles(data.uuid);
+                const projectUuid = isEditMode ? uuid : data.uuid;
+                await uploadFiles(projectUuid);
+            } catch (uploadError) {
+                const message = isEditMode ? 
+                    'Proyecto actualizado, pero hubo un error al subir algunos archivos: ' + uploadError.message :
+                    'Proyecto creado, pero hubo un error al subir algunos archivos: ' + uploadError.message;
+                
+                show_warning(message + ' Puedes intentar subir los archivos editando el proyecto.');
                 projectModal.hide();
                 await get_projects();
-                load_project(data.uuid);
-            } catch (uploadError) {
-                // If file upload fails, delete the created project
-                await fetch(`/sql/projects/${data.uuid}`, { method: 'DELETE' });
-                throw new Error('Error al subir archivos: ' + uploadError.message);
+                
+                if (!isEditMode) {
+                    load_project(data.uuid);
+                }
+                return;
             }
-        } else {
-            projectModal.hide();
-            // For edited projects, refresh the list
-            get_projects();
         }
+        
+        projectModal.hide();
+        await get_projects();
+        
+        if (!isEditMode) {
+            load_project(data.uuid);
+        }
+        
     } catch (error) {
         console.error('Error saving project:', error);
         show_warning("Error al guardar el proyecto: " + error.message);

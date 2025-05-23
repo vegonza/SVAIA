@@ -35,26 +35,27 @@
                         <input type="hidden" id="selectedVulnerability" name="vulnerabilityLevel">
                     </div>
                     
-                    <!-- File Upload Section - Only shown for new projects -->
+                    <!-- File Upload Section -->
                     <div id="fileUploadSection">
                         <hr class="my-4">
-                        <h6 class="mb-3">Archivos del Proyecto <span class="text-danger">*</span></h6>
+                        <h6 class="mb-3">Archivos del Proyecto</h6>
+                        <p class="text-muted small mb-3">Puedes subir archivos ahora o añadir más posteriormente editando el proyecto.</p>
                         
                         <div class="mb-3">
-                            <label for="dockerfiles" class="form-label">Dockerfiles <span class="text-danger">*</span></label>
-                            <input type="file" class="form-control" id="dockerfiles" name="dockerfiles" multiple required>
+                            <label for="dockerfiles" class="form-label">Dockerfiles</label>
+                            <input type="file" class="form-control" id="dockerfiles" name="dockerfiles" multiple>
                             <div class="form-text">Sube uno o más Dockerfiles.</div>
                         </div>
                         
                         <div class="mb-3">
-                            <label for="dockerComposeFiles" class="form-label">Archivos Docker Compose <span class="text-danger">*</span></label>
-                            <input type="file" class="form-control" id="dockerComposeFiles" name="docker_compose_files" multiple accept=".yml,.yaml" required>
+                            <label for="dockerComposeFiles" class="form-label">Archivos Docker Compose</label>
+                            <input type="file" class="form-control" id="dockerComposeFiles" name="docker_compose_files" multiple accept=".yml,.yaml">
                             <div class="form-text">Sube uno o más archivos docker-compose. Formatos aceptados: .yml, .yaml</div>
                         </div>
                         
                         <div class="mb-3">
-                            <label for="dockerImages" class="form-label">Imágenes Docker <span class="text-danger">*</span></label>
-                            <input type="file" class="form-control" id="dockerImages" name="images" multiple accept=".tar" required>
+                            <label for="dockerImages" class="form-label">Imágenes Docker</label>
+                            <input type="file" class="form-control" id="dockerImages" name="images" multiple accept=".tar">
                             <div class="form-text">
                                 Sube una o más imágenes Docker exportadas como archivos .tar<br>
                                 <strong>Para generar el archivo .tar:</strong> <code>docker save myapp:latest -o myapp.tar</code>
