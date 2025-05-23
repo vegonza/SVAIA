@@ -48,9 +48,19 @@
                         
                         <!-- History for mobile -->
                         <div class="d-block d-md-none">
-                            <select id="mobile-project-list" class="form-select">
-                                <option value="" disabled selected>Select a project</option>
-                            </select>
+                            <div class="mb-2">
+                                <select id="mobile-project-list" class="form-select mobile-project-select">
+                                    <option value="" disabled selected>Seleccionar proyecto</option>
+                                </select>
+                            </div>
+                            <div class="d-flex justify-content-center gap-2 mb-2" id="mobile-project-actions" style="display: none;">
+                                <button class="btn btn-sm btn-warning text-white" id="edit-current-mobile-project" title="Editar proyecto actual">
+                                    <i class="bi bi-pencil"></i> Editar
+                                </button>
+                                <button class="btn btn-sm btn-danger" id="delete-current-mobile-project" title="Eliminar proyecto actual">
+                                    <i class="bi bi-trash"></i> Eliminar
+                                </button>
+                            </div>
                             <template id="mobile-project-template">
                                 <option value="" class="project-option"></option>
                             </template>

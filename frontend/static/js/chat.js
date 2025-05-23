@@ -44,6 +44,21 @@ function initializeDropdown() {
     const dropdownContent = document.querySelector('.dropdown-content');
     const dropdownOptions = dropdownContent.querySelectorAll('a[data-value]');
     const customVulnerabilityContainer = document.getElementById('customVulnerabilityContainer');
+    const dropdown = document.querySelector('.dropdown');
+    
+    // Toggle dropdown on button click
+    vulnerabilityDropdown.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        dropdown.classList.toggle('show');
+    });
+    
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!dropdown.contains(e.target)) {
+            dropdown.classList.remove('show');
+        }
+    });
     
     dropdownOptions.forEach(option => {
         option.addEventListener('click', function(e) {
@@ -67,6 +82,8 @@ function initializeDropdown() {
                 selectedVulnerabilityInput.value = value;
                 customVulnerabilityInput.value = '';
             }
+            
+            dropdown.classList.remove('show');
         });
     });
     
@@ -361,6 +378,7 @@ async function get_projects() {
     try {
         const response = await fetch("/sql/projects");
         const projects = await response.json();
+        let currentProject = null;
 
         projects.forEach((project, index) => {
             // Desktop version
@@ -372,7 +390,6 @@ async function get_projects() {
 
             project_name.textContent = project.name;
             project_description.textContent = project.description;
-
 
             if (index % 2 !== 0) {
                 project_div.classList.add("active");
@@ -405,38 +422,83 @@ async function get_projects() {
 
             delete_btn.addEventListener("click", (e) => {
                 e.stopPropagation();
-                if (confirm("Confirmar")) {
+                if (confirm("¿Estás seguro de que deseas eliminar este proyecto?")) {
                     delete_project(project.uuid);
                 }
             });
 
             project_list.appendChild(clone);
 
-            // Mobile version
+            // Mobile version - dropdown with styled options
             const mobile_clone = mobile_project_template.content.cloneNode(true);
             const mobile_option = mobile_clone.querySelector(".project-option");
             mobile_option.value = project.uuid;
-            mobile_option.textContent = project.name;
+            
+            // Apply alternating styles to option text
+            if (index % 2 !== 0) {
+                mobile_option.textContent = `🔹 ${project.name}`;
+                mobile_option.style.backgroundColor = '#f8f9fa';
+            } else {
+                mobile_option.textContent = `⚪ ${project.name}`;
+                mobile_option.style.backgroundColor = '#ffffff';
+            }
 
             if (project.uuid === current_project_uuid) {
                 mobile_option.selected = true;
+                currentProject = project;
             }
 
             mobile_project_list.appendChild(mobile_clone);
         });
 
+        // Handle mobile project selection and action buttons
+        const mobileProjectActions = document.getElementById('mobile-project-actions');
+        const editCurrentBtn = document.getElementById('edit-current-mobile-project');
+        const deleteCurrentBtn = document.getElementById('delete-current-mobile-project');
+
         // Remove existing event listeners by cloning and replacing the element
         const new_mobile_list = mobile_project_list.cloneNode(true);
         mobile_project_list.parentNode.replaceChild(new_mobile_list, mobile_project_list);
-        mobile_project_list = new_mobile_list; // Update the reference
+        mobile_project_list = new_mobile_list;
 
-        // Add the event listener only once
+        // Add the event listener for project selection
         mobile_project_list.addEventListener('change', function () {
             const selected_uuid = this.value;
             if (selected_uuid) {
                 load_project(selected_uuid);
+                // Show action buttons when a project is selected
+                mobileProjectActions.style.display = 'flex';
+                
+                // Update current project reference
+                currentProject = projects.find(p => p.uuid === selected_uuid);
+            } else {
+                mobileProjectActions.style.display = 'none';
+                currentProject = null;
             }
         });
+
+        // Show/hide action buttons based on current selection
+        if (currentProject) {
+            mobileProjectActions.style.display = 'flex';
+        } else {
+            mobileProjectActions.style.display = 'none';
+        }
+
+        // Add event listeners for action buttons
+        editCurrentBtn.addEventListener('click', () => {
+            if (currentProject) {
+                showEditProjectModal(currentProject);
+            }
+        });
+
+        deleteCurrentBtn.addEventListener('click', () => {
+            if (currentProject) {
+                if (confirm("¿Estás seguro de que deseas eliminar este proyecto?")) {
+                    delete_project(currentProject.uuid);
+                }
+            }
+        });
+
     } catch (error) {
         console.error('Error loading projects:', error);
         show_warning("Error al cargar los proyectos.");

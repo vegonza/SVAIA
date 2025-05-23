@@ -18,12 +18,10 @@ const projectDescriptionInput = document.getElementById('projectDescription');
 const saveProjectBtn = document.getElementById('saveProjectBtn');
 const projectModalLabel = document.getElementById('projectModalLabel');
 
-// Vulnerability dropdown elements
 const vulnerabilityDropdown = document.getElementById('vulnerabilityDropdown');
 const selectedVulnerabilityInput = document.getElementById('selectedVulnerability');
 const customVulnerabilityInput = document.getElementById('customVulnerability');
 
-// File upload section (hidden in admin view)
 const fileUploadSection = document.getElementById('fileUploadSection');
 
 function initializeDropdown() {
@@ -34,6 +32,21 @@ function initializeDropdown() {
     
     const dropdownOptions = dropdownContent.querySelectorAll('a[data-value]');
     const customVulnerabilityContainer = document.getElementById('customVulnerabilityContainer');
+    const dropdown = document.querySelector('.dropdown');
+    
+    vulnerabilityDropdown.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (dropdown) {
+            dropdown.classList.toggle('show');
+        }
+    });
+    
+    document.addEventListener('click', function(e) {
+        if (dropdown && !dropdown.contains(e.target)) {
+            dropdown.classList.remove('show');
+        }
+    });
     
     dropdownOptions.forEach(option => {
         option.addEventListener('click', function(e) {
@@ -62,6 +75,10 @@ function initializeDropdown() {
                 if (customVulnerabilityInput) {
                     customVulnerabilityInput.value = '';
                 }
+            }
+            
+            if (dropdown) {
+                dropdown.classList.remove('show');
             }
         });
     });
@@ -103,7 +120,6 @@ function formatDateTime(isoString) {
 
 async function loadUserProjects() {
     try {
-        // First, get user info to display name
         const userResponse = await fetch(`/sql/users/all`);
         if (!userResponse.ok) {
             throw new Error(`HTTP error! status: ${userResponse.status}`);
@@ -225,7 +241,6 @@ function showEditProjectModal(project) {
         }
     }
     
-    // Reset file inputs for new uploads
     const dockerfilesInput = document.getElementById('dockerfiles');
     const dockerComposeFilesInput = document.getElementById('dockerComposeFiles');
     const dockerImagesInput = document.getElementById('dockerImages');
