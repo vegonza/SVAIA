@@ -16,6 +16,22 @@
                         <label for="projectDescription" class="form-label">Descripción</label>
                         <textarea class="form-control" id="projectDescription" rows="3"></textarea>
                     </div>
+                    <div class="mb-3">
+                        <label for="projectStartDate" class="form-label">Grado de vulnerabilidad máximo permitido</label>
+                        <div class="dropdown-contenedor">
+                            <div class="dropdown">
+                            <button class="dropdown-button">Elegir</button>
+                                <div class="dropdown-content">
+                                    <a href="#">Grado de vulnerabilidad crítico (8-10)</a>
+                                    <a href="#">Grado de vulnerabilidad severa (6-7)</a>
+                                    <a href="#">Grado de vulnerabilidad leve o medio (1-5)</a>
+                                </div>
+                            <div class="dropdown-item-editable">
+                                <input type="text" class="editable-input" placeholder="Otro (especificar)" onclick="event.stopPropagation(); this.focus();">
+                            </div>
+                            </div>
+                        </div>
+                    </div>
                 </form>
             </div>
             <div class="modal-footer">

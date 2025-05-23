@@ -299,3 +299,118 @@
 .markdown-body p:last-child {
     margin-bottom: 0;
 }
+
+/*Dropdown menu for each project*/
+.dropdown-contenedor {
+  /* Eliminamos el padding para que el dropdown pueda ocupar todo el ancho */
+  /* padding: 50px; */
+  text-align: start;
+  /* Añadimos position relative para el posicionamiento del contenido del dropdown */
+  position: relative;
+}
+
+.dropdown {
+  position: relative;
+  /* Hacemos que el contenedor del botón ocupe todo el ancho disponible */
+  display: block;
+}
+
+.dropdown-button {
+  background-color: #ffffff; /* Cambiado: Fondo del botón a blanco */
+  color: #000000;             /* Cambiado: Color del texto a negro */
+  padding: 12px 24px;
+  font-size: 18px;
+  width: 100%;
+  border: 1px solid #cccccc; /* Añadido: Borde sutil para que el botón blanco no se pierda en fondos blancos */
+  cursor: pointer;
+  border-radius: 8px;
+  text-align: left;
+  transition: background-color 0.3s ease, border-color 0.3s ease; /* Transición suave para el hover */
+}
+
+.dropdown-button:focus,
+.dropdown-button:hover {
+  background-color: #f0f0f0; /* Cambiado: Fondo en hover a un gris claro */
+  border-color: #bbbbbb;     /* Cambiado: Borde ligeramente más oscuro en hover */
+  color: #000000;             /* Mantenemos el texto en negro */
+  outline: none;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #ffffff;
+  width: 100%;
+  left: 0;
+  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  border-radius: 0 0 8px 8px;
+  overflow: hidden;
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dropdown-content a {
+  color: #333;
+  padding: 14px 24px;
+  text-decoration: none;
+  display: block;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.dropdown-content a:hover {
+  background-color: #f0f0f0;
+  color: #2980b9; /* Puedes mantener este color o cambiarlo si prefieres */
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+/* Estilos para el contenedor del input "Otro" */
+.dropdown-item-editable {
+  padding: 0; /* El padding se manejará en el input directamente */
+  display: block; /* Para que ocupe el ancho como los <a> */
+}
+
+/* Estilos para el campo de input "Otro" */
+.editable-input {
+  width: 100%;
+  padding: 12px 16px; /* Emparejar con el padding de .dropdown-content a */
+  font-family: inherit; /* Heredar la fuente del dropdown */
+  font-size: inherit;   /* Heredar el tamaño de fuente */
+  color: #333;         /* Color de texto similar a los enlaces */
+  border: none;
+  box-sizing: border-box; /* Para que el padding no afecte el ancho total */
+  background-color: white; /* Fondo del input */
+}
+
+.editable-input::placeholder {
+  color: #999; /* Color del placeholder */
+  opacity: 1; /* Asegurar visibilidad en todos los navegadores */
+}
+
+.editable-input:focus {
+  outline: none; /* Quitar el borde de foco por defecto */
+  background-color: #f8f8f8; /* Un ligero cambio de fondo al enfocar */
+}
+
+/* Efecto hover para el contenedor del input "Otro", similar a los enlaces */
+.dropdown-item-editable:hover {
+  background-color: #f0f0f0; /* Emparejar con el hover de .dropdown-content a:hover */
+}
+
+/* Asegurar que el input también cambie su fondo si está dentro del hover del contenedor */
+.dropdown-item-editable:hover .editable-input {
+  background-color: #f0f0f0; /* Emparejar con el hover de .dropdown-content a:hover */
+}
