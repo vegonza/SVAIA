@@ -22,7 +22,7 @@ client = OpenAI(
 
 def get_response(message: str, project_uuid: Optional[str] = None):
     stream = client.chat.completions.create(
-        model="Gemini 2.5 Flash Preview 05-20",
+        model="gemini-2.5-pro-preview-05-06",
         messages=[
             {
                 "role": "system",
