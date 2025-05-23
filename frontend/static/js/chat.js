@@ -13,6 +13,21 @@ const projectDescriptionInput = document.getElementById('projectDescription');
 const saveProjectBtn = document.getElementById('saveProjectBtn');
 const projectModalLabel = document.getElementById('projectModalLabel');
 
+// File upload elements
+const fileUploadSection = document.getElementById('fileUploadSection');
+const dockerfilesInput = document.getElementById('dockerfiles');
+const dockerComposeFilesInput = document.getElementById('dockerComposeFiles');
+const dockerImagesInput = document.getElementById('dockerImages');
+
+// Vulnerability dropdown elements
+const vulnerabilityDropdown = document.getElementById('vulnerabilityDropdown');
+const selectedVulnerabilityInput = document.getElementById('selectedVulnerability');
+const customVulnerabilityInput = document.getElementById('customVulnerability');
+
+// Save button elements
+const saveButtonText = document.getElementById('saveButtonText');
+const saveButtonSpinner = document.getElementById('saveButtonSpinner');
+
 const user_template = document.getElementById("user-message-template");
 const ai_template = document.getElementById("ai-message-template");
 const project_template = document.getElementById("project-template");
@@ -23,6 +38,153 @@ let loading = false;
 let current_project_uuid = null;
 let isEditMode = false;
 let mobile_project_list = document.getElementById("mobile-project-list");
+
+// Initialize dropdown functionality
+function initializeDropdown() {
+    const dropdownContent = document.querySelector('.dropdown-content');
+    const dropdownOptions = dropdownContent.querySelectorAll('a[data-value]');
+    const customVulnerabilityContainer = document.getElementById('customVulnerabilityContainer');
+    
+    dropdownOptions.forEach(option => {
+        option.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const value = this.getAttribute('data-value');
+            const text = this.textContent.trim();
+            
+            vulnerabilityDropdown.textContent = text;
+            
+            if (value === 'custom') {
+                // Show custom input and clear the hidden field
+                customVulnerabilityContainer.style.display = 'block';
+                selectedVulnerabilityInput.value = '';
+                customVulnerabilityInput.value = '';
+                customVulnerabilityInput.focus();
+            } else {
+                // Hide custom input and set the selected value
+                customVulnerabilityContainer.style.display = 'none';
+                selectedVulnerabilityInput.value = value;
+                customVulnerabilityInput.value = '';
+            }
+        });
+    });
+    
+    customVulnerabilityInput.addEventListener('input', function() {
+        if (this.value.trim()) {
+            selectedVulnerabilityInput.value = this.value.trim();
+        } else {
+            selectedVulnerabilityInput.value = '';
+        }
+    });
+}
+
+function validateForm() {
+    const name = projectNameInput.value.trim();
+    const vulnerabilityLevel = selectedVulnerabilityInput.value.trim() || customVulnerabilityInput.value.trim();
+    
+    if (!name) {
+        alert('El nombre del proyecto es obligatorio');
+        return false;
+    }
+    
+    if (!vulnerabilityLevel) {
+        alert('Debe seleccionar un grado de vulnerabilidad');
+        return false;
+    }
+    
+    if (!isEditMode) {
+        // Validate file uploads for new projects
+        if (!dockerfilesInput.files.length) {
+            alert('Debe subir al menos un Dockerfile');
+            return false;
+        }
+        
+        if (!dockerComposeFilesInput.files.length) {
+            alert('Debe subir al menos un archivo Docker Compose');
+            return false;
+        }
+        
+        if (!dockerImagesInput.files.length) {
+            alert('Debe subir al menos una imagen Docker');
+            return false;
+        }
+    }
+    
+    return true;
+}
+
+async function uploadFiles(projectUuid) {
+    try {
+        // Upload Dockerfiles
+        if (dockerfilesInput.files.length > 0) {
+            const dockerfileFormData = new FormData();
+            for (let file of dockerfilesInput.files) {
+                dockerfileFormData.append('dockerfiles', file);
+            }
+            
+            const dockerfileResponse = await fetch(`/sql/projects/upload/dockerfiles/${projectUuid}`, {
+                method: 'POST',
+                body: dockerfileFormData
+            });
+            
+            if (!dockerfileResponse.ok) {
+                throw new Error('Error al subir Dockerfiles');
+            }
+        }
+        
+        // Upload Docker Compose files
+        if (dockerComposeFilesInput.files.length > 0) {
+            const composeFormData = new FormData();
+            for (let file of dockerComposeFilesInput.files) {
+                composeFormData.append('docker_compose_files', file);
+            }
+            
+            const composeResponse = await fetch(`/sql/projects/upload/docker-compose-files/${projectUuid}`, {
+                method: 'POST',
+                body: composeFormData
+            });
+            
+            if (!composeResponse.ok) {
+                throw new Error('Error al subir archivos Docker Compose');
+            }
+        }
+        
+        // Upload Docker images
+        if (dockerImagesInput.files.length > 0) {
+            const imagesFormData = new FormData();
+            for (let file of dockerImagesInput.files) {
+                imagesFormData.append('images', file);
+            }
+            
+            const imagesResponse = await fetch(`/sql/projects/upload/docker-image/${projectUuid}`, {
+                method: 'POST',
+                body: imagesFormData
+            });
+            
+            if (!imagesResponse.ok) {
+                throw new Error('Error al subir imágenes Docker');
+            }
+        }
+        
+        return true;
+    } catch (error) {
+        console.error('Error uploading files:', error);
+        throw error;
+    }
+}
+
+function setSaveButtonLoading(loading) {
+    if (loading) {
+        saveButtonText.textContent = 'Guardando...';
+        saveButtonSpinner.classList.remove('d-none');
+        saveProjectBtn.disabled = true;
+    } else {
+        saveButtonText.textContent = 'Guardar';
+        saveButtonSpinner.classList.add('d-none');
+        saveProjectBtn.disabled = false;
+    }
+}
 
 function show_warning(message) {
     warning_message.textContent = message;
@@ -305,6 +467,26 @@ function showCreateProjectModal() {
     projectUuidInput.value = '';
     projectNameInput.value = '';
     projectDescriptionInput.value = '';
+    
+    // Reset dropdown and custom vulnerability
+    vulnerabilityDropdown.textContent = 'Elegir';
+    selectedVulnerabilityInput.value = '';
+    customVulnerabilityInput.value = '';
+    document.getElementById('customVulnerabilityContainer').style.display = 'none';
+    
+    // Reset file inputs
+    dockerfilesInput.value = '';
+    dockerComposeFilesInput.value = '';
+    dockerImagesInput.value = '';
+    
+    // Show file upload section for new projects
+    fileUploadSection.style.display = 'block';
+    
+    // Make file inputs required for new projects
+    dockerfilesInput.required = true;
+    dockerComposeFilesInput.required = true;
+    dockerImagesInput.required = true;
+    
     projectModal.show();
 }
 
@@ -314,17 +496,34 @@ function showEditProjectModal(project) {
     projectUuidInput.value = project.uuid;
     projectNameInput.value = project.name;
     projectDescriptionInput.value = project.description || '';
+    
+    // Reset dropdown and custom vulnerability
+    vulnerabilityDropdown.textContent = 'Elegir';
+    selectedVulnerabilityInput.value = '';
+    customVulnerabilityInput.value = '';
+    document.getElementById('customVulnerabilityContainer').style.display = 'none';
+    
+    // Hide file upload section for editing existing projects
+    fileUploadSection.style.display = 'none';
+    
+    // Make file inputs not required for editing
+    dockerfilesInput.required = false;
+    dockerComposeFilesInput.required = false;
+    dockerImagesInput.required = false;
+    
     projectModal.show();
 }
 
 async function saveProject() {
-    const name = projectNameInput.value.trim();
-    if (!name) {
-        alert('El nombre del proyecto es obligatorio');
+    if (!validateForm()) {
         return;
     }
-
+    
+    setSaveButtonLoading(true);
+    
+    const name = projectNameInput.value.trim();
     const description = projectDescriptionInput.value.trim();
+    const vulnerabilityLevel = selectedVulnerabilityInput.value.trim() || customVulnerabilityInput.value.trim();
     const uuid = projectUuidInput.value;
 
     try {
@@ -340,7 +539,8 @@ async function saveProject() {
                 },
                 body: JSON.stringify({
                     name: name,
-                    description: description
+                    description: description,
+                    vulnerability_level: vulnerabilityLevel
                 })
             });
         } else {
@@ -352,7 +552,8 @@ async function saveProject() {
                 },
                 body: JSON.stringify({
                     name: name,
-                    description: description
+                    description: description,
+                    vulnerability_level: vulnerabilityLevel
                 })
             });
         }
@@ -362,18 +563,29 @@ async function saveProject() {
         }
 
         data = await response.json();
-        projectModal.hide();
-
+        
         if (!isEditMode) {
-            await get_projects();
-            load_project(data.uuid);
+            // Upload files for new projects
+            try {
+                await uploadFiles(data.uuid);
+                projectModal.hide();
+                await get_projects();
+                load_project(data.uuid);
+            } catch (uploadError) {
+                // If file upload fails, delete the created project
+                await fetch(`/sql/projects/${data.uuid}`, { method: 'DELETE' });
+                throw new Error('Error al subir archivos: ' + uploadError.message);
+            }
         } else {
+            projectModal.hide();
             // For edited projects, refresh the list
             get_projects();
         }
     } catch (error) {
         console.error('Error saving project:', error);
         show_warning("Error al guardar el proyecto: " + error.message);
+    } finally {
+        setSaveButtonLoading(false);
     }
 }
 
@@ -436,6 +648,7 @@ new_chat_btn.addEventListener("click", () => {
 saveProjectBtn.addEventListener('click', saveProject);
 
 document.addEventListener("DOMContentLoaded", function () {
+    initializeDropdown();
     get_projects();
     check_url_for_project();
 });

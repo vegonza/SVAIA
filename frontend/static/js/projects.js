@@ -18,6 +18,65 @@ const projectDescriptionInput = document.getElementById('projectDescription');
 const saveProjectBtn = document.getElementById('saveProjectBtn');
 const projectModalLabel = document.getElementById('projectModalLabel');
 
+// Vulnerability dropdown elements
+const vulnerabilityDropdown = document.getElementById('vulnerabilityDropdown');
+const selectedVulnerabilityInput = document.getElementById('selectedVulnerability');
+const customVulnerabilityInput = document.getElementById('customVulnerability');
+
+// File upload section (hidden in admin view)
+const fileUploadSection = document.getElementById('fileUploadSection');
+
+function initializeDropdown() {
+    if (!vulnerabilityDropdown) return;
+    
+    const dropdownContent = document.querySelector('.dropdown-content');
+    if (!dropdownContent) return;
+    
+    const dropdownOptions = dropdownContent.querySelectorAll('a[data-value]');
+    const customVulnerabilityContainer = document.getElementById('customVulnerabilityContainer');
+    
+    dropdownOptions.forEach(option => {
+        option.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const value = this.getAttribute('data-value');
+            const text = this.textContent.trim();
+            
+            vulnerabilityDropdown.textContent = text;
+            
+            if (value === 'custom') {
+                if (customVulnerabilityContainer) {
+                    customVulnerabilityContainer.style.display = 'block';
+                }
+                selectedVulnerabilityInput.value = '';
+                if (customVulnerabilityInput) {
+                    customVulnerabilityInput.value = '';
+                    customVulnerabilityInput.focus();
+                }
+            } else {
+                if (customVulnerabilityContainer) {
+                    customVulnerabilityContainer.style.display = 'none';
+                }
+                selectedVulnerabilityInput.value = value;
+                if (customVulnerabilityInput) {
+                    customVulnerabilityInput.value = '';
+                }
+            }
+        });
+    });
+    
+    if (customVulnerabilityInput) {
+        customVulnerabilityInput.addEventListener('input', function() {
+            if (this.value.trim()) {
+                selectedVulnerabilityInput.value = this.value.trim();
+            } else {
+                selectedVulnerabilityInput.value = '';
+            }
+        });
+    }
+}
+
 function createAlert(message, category = 'danger') {
     const alertNode = alertTemplate.content.cloneNode(true);
     const alertDiv = alertNode.querySelector('.alert');
@@ -121,6 +180,25 @@ function showEditProjectModal(project) {
     projectUuidInput.value = project.uuid;
     projectNameInput.value = project.name;
     projectDescriptionInput.value = project.description || '';
+    
+    // Reset dropdown and custom vulnerability
+    if (vulnerabilityDropdown) {
+        vulnerabilityDropdown.textContent = 'Elegir';
+        selectedVulnerabilityInput.value = '';
+    }
+    if (customVulnerabilityInput) {
+        customVulnerabilityInput.value = '';
+    }
+    const customVulnerabilityContainer = document.getElementById('customVulnerabilityContainer');
+    if (customVulnerabilityContainer) {
+        customVulnerabilityContainer.style.display = 'none';
+    }
+    
+    // Hide file upload section in admin view
+    if (fileUploadSection) {
+        fileUploadSection.style.display = 'none';
+    }
+    
     projectModal.show();
 }
 
@@ -130,20 +208,29 @@ async function saveProject() {
         alert('El nombre del proyecto es obligatorio');
         return;
     }
+    
+    const vulnerabilityLevel = selectedVulnerabilityInput ? 
+        (selectedVulnerabilityInput.value.trim() || customVulnerabilityInput?.value.trim()) : '';
 
     const description = projectDescriptionInput.value.trim();
     const uuid = projectUuidInput.value;
 
     try {
+        const requestBody = {
+            name: name,
+            description: description
+        };
+        
+        if (vulnerabilityLevel) {
+            requestBody.vulnerability_level = vulnerabilityLevel;
+        }
+        
         const response = await fetch(`/sql/projects/${uuid}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
-                name: name,
-                description: description
-            })
+            body: JSON.stringify(requestBody)
         });
 
         if (!response.ok) {
@@ -203,4 +290,7 @@ async function deleteProject(projectUuid, button) {
 // Event listeners
 saveProjectBtn.addEventListener('click', saveProject);
 
-document.addEventListener('DOMContentLoaded', loadUserProjects);
+document.addEventListener('DOMContentLoaded', function() {
+    initializeDropdown();
+    loadUserProjects();
+});

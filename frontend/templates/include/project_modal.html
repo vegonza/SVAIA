@@ -1,15 +1,15 @@
 <div class="modal fade" id="projectModal" tabindex="-1" aria-labelledby="projectModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="projectModalLabel">Proyecto</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="projectForm">
+                <form id="projectForm" enctype="multipart/form-data">
                     <input type="hidden" id="projectUuid" value="">
                     <div class="mb-3">
-                        <label for="projectName" class="form-label">Nombre del Proyecto</label>
+                        <label for="projectName" class="form-label">Nombre del Proyecto <span class="text-danger">*</span></label>
                         <input type="text" class="form-control" id="projectName" required>
                     </div>
                     <div class="mb-3">
@@ -17,18 +17,47 @@
                         <textarea class="form-control" id="projectDescription" rows="3"></textarea>
                     </div>
                     <div class="mb-3">
-                        <label for="projectStartDate" class="form-label">Grado de vulnerabilidad máximo permitido</label>
+                        <label for="projectStartDate" class="form-label">Grado de vulnerabilidad máximo permitido <span class="text-danger">*</span></label>
                         <div class="dropdown-contenedor">
                             <div class="dropdown">
-                            <button class="dropdown-button">Elegir</button>
+                            <button type="button" class="dropdown-button" id="vulnerabilityDropdown">Elegir</button>
                                 <div class="dropdown-content">
-                                    <a href="#">Grado de vulnerabilidad crítico (8-10)</a>
-                                    <a href="#">Grado de vulnerabilidad severa (6-7)</a>
-                                    <a href="#">Grado de vulnerabilidad leve o medio (1-5)</a>
+                                    <a href="#" data-value="critical">Grado de vulnerabilidad crítico (8-10)</a>
+                                    <a href="#" data-value="severe">Grado de vulnerabilidad severa (6-7)</a>
+                                    <a href="#" data-value="mild">Grado de vulnerabilidad leve o medio (1-5)</a>
+                                    <a href="#" data-value="custom">Otro (especificar)</a>
                                 </div>
-                            <div class="dropdown-item-editable">
-                                <input type="text" class="editable-input" placeholder="Otro (especificar)" onclick="event.stopPropagation(); this.focus();">
                             </div>
+                        </div>
+                        <div class="mt-2" id="customVulnerabilityContainer" style="display: none;">
+                            <input type="text" class="form-control" id="customVulnerability" placeholder="Especifica tu propio nivel de vulnerabilidad">
+                        </div>
+                        <input type="hidden" id="selectedVulnerability" name="vulnerabilityLevel">
+                    </div>
+                    
+                    <!-- File Upload Section - Only shown for new projects -->
+                    <div id="fileUploadSection">
+                        <hr class="my-4">
+                        <h6 class="mb-3">Archivos del Proyecto <span class="text-danger">*</span></h6>
+                        
+                        <div class="mb-3">
+                            <label for="dockerfiles" class="form-label">Dockerfiles <span class="text-danger">*</span></label>
+                            <input type="file" class="form-control" id="dockerfiles" name="dockerfiles" multiple required>
+                            <div class="form-text">Sube uno o más Dockerfiles.</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="dockerComposeFiles" class="form-label">Archivos Docker Compose <span class="text-danger">*</span></label>
+                            <input type="file" class="form-control" id="dockerComposeFiles" name="docker_compose_files" multiple accept=".yml,.yaml" required>
+                            <div class="form-text">Sube uno o más archivos docker-compose. Formatos aceptados: .yml, .yaml</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="dockerImages" class="form-label">Imágenes Docker <span class="text-danger">*</span></label>
+                            <input type="file" class="form-control" id="dockerImages" name="images" multiple accept=".tar" required>
+                            <div class="form-text">
+                                Sube una o más imágenes Docker exportadas como archivos .tar<br>
+                                <strong>Para generar el archivo .tar:</strong> <code>docker save myapp:latest -o myapp.tar</code>
                             </div>
                         </div>
                     </div>
@@ -36,7 +65,10 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-primary" id="saveProjectBtn">Guardar</button>
+                <button type="button" class="btn btn-primary" id="saveProjectBtn">
+                    <span id="saveButtonText">Guardar</span>
+                    <span id="saveButtonSpinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                </button>
             </div>
         </div>
     </div>
