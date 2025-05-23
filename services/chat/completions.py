@@ -9,7 +9,8 @@ from openai import OpenAI
 
 from services.sql.models import Message, Project, db
 
-from .prompts import SYSTEM_MESSAGE
+from .prompts import SYSTEM_MESSAGE, FilesFormat
+from .types import ChatMessage, File
 
 load_dotenv(find_dotenv())
 
@@ -20,14 +21,17 @@ client = OpenAI(
 )
 
 
-def get_response(message: str, project_uuid: Optional[str] = None):
+def get_response(message: str, requisitos: str, history: list[ChatMessage], archivos: list[File], project_uuid: Optional[str] = None):
+    archivos_str = FilesFormat(archivos)
+    #llamada a funcion para obtener vulnerabilidades de CVE
     stream = client.chat.completions.create(
         model="gemini-2.5-flash-preview-05-20",
         messages=[
             {
                 "role": "system",
-                "content": SYSTEM_MESSAGE
+                "content": SYSTEM_MESSAGE.format(requisitos=requisitos, archivos=archivos_str)
             },
+            *history,
             {
                 "role": "user",
                 "content": message
