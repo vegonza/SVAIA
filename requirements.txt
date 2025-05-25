@@ -7,3 +7,4 @@ Flask-SQLAlchemy
 Flask-Login
 pymysql
 nvdlib
+openai-swarm

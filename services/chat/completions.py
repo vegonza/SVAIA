@@ -6,20 +6,18 @@ from typing import Optional
 from dotenv import find_dotenv, load_dotenv
 from flask import Response, stream_with_context
 from openai import OpenAI
+from swarm import Swarm
 
 from services.sql.models import Message, Project, db
 
+from .agent_manager import cve_agent
 from .prompts import SYSTEM_MESSAGE, FilesFormat
 from .types import ChatMessage, File
 
-
 load_dotenv(find_dotenv())
 
-api_key = os.environ.get("AI_API_KEY")
-client = OpenAI(
-    base_url="https://generativelanguage.googleapis.com/v1beta/openai/",
-    api_key=api_key,
-)
+client = Swarm(OpenAI(base_url="https://generativelanguage.googleapis.com/v1beta/openai/",
+               api_key=os.environ["AI_API_KEY"]))
 
 sbom = {
     "bomFormat": "CycloneDX",
@@ -33,7 +31,7 @@ sbom = {
             "purl": "pkg:pypi/django@3.2.4"
         },
         {
-            "type": "library", 
+            "type": "library",
             "name": "requests",
             "version": "2.26.0",
             "purl": "pkg:pypi/requests@2.26.0"
@@ -67,13 +65,11 @@ sbom = {
     ]
 }
 
+
 def get_response(message: str, requisitos: str, history: list[ChatMessage], archivos: list[File], project_uuid: Optional[str] = None):
     archivos_str = FilesFormat(archivos)
-    #llamada a funcion para obtener vulnerabilidades de CVE
-    
-    
-    stream = client.chat.completions.create(
-        model="gemini-2.5-flash-preview-05-20",
+    stream = client.run_and_stream(
+        agent=cve_agent,
         messages=[
             {
                 "role": "system",
@@ -85,20 +81,36 @@ def get_response(message: str, requisitos: str, history: list[ChatMessage], arch
                 "content": message
             }
         ],
-        stream=True
     )
 
     def generate():
-        collected_chunks = []
         collected_content = ""
 
+        already_calling = False
         for chunk in stream:
-            content = chunk.choices[0].delta.content
-            if content is not None:
-                collected_chunks.append(content)
-                collected_content += content
+            content = chunk.get('content')
+            error = chunk.get('error')
+            if error:
+                data = {'type': 'error', 'content': error}
+                collected_content += data
+                data = f"data: {json.dumps(data)}\n\n"
 
-                yield f"data: {json.dumps({'chunk': content, 'full_content': collected_content})}\n\n"
+            if content:
+                already_calling = False
+                data = {'type': 'text', 'content': content}
+                collected_content += data
+                data = f"data: {json.dumps(data)}\n\n"
+
+            tools = chunk.get('tool_calls')
+            if tools:
+                for tool in tools:
+                    function = tool.get('function', {})
+                    if name := function.get("name"):
+                        if not already_calling:
+                            data = {'type': 'tool_call', 'tool_name': name}
+                            collected_content += data
+                            data = f"data: {json.dumps(data)}\n\n"
+                            already_calling = True
 
         if project_uuid:
             ai_message = Message(
