@@ -3,7 +3,8 @@ from .types import File
 
 def CVE_AGENT_PROMPT(context_variables: dict) -> str:
     files_str = FilesFormat(context_variables["files"])
-    project_criteria_str = "\n".join([f"- {criteria}: {value}" for criteria, value in context_variables["project_criteria"].items()])
+    project_criteria_str = "\n".join([f"- {criteria}: {value}" for criteria,
+                                     value in context_variables["project_criteria"].items()])
 
     print(context_variables)
 
@@ -102,6 +103,59 @@ Port format: Use H-hostport:C-containerport (e.g., H-80:C-80 for host port 80 ma
 Use subgraphs to organize: Services, Exposed Ports, and Networks (if any).
 
 Analyze the docker-compose.yml file and create a comprehensive mermaid diagram following this structure.
+
+El usuario tiene estos archivos:
+{files_str}
+""".strip()
+
+
+def ANALYSIS_AGENT_PROMPT(context_variables: dict) -> str:
+    files_str = FilesFormat(context_variables["files"])
+    project_criteria_str = "\n".join([f"- {criteria}: {value}" for criteria,
+                                     value in context_variables["project_criteria"].items()])
+    project_name = context_variables["project_name"]
+    project_description = context_variables["project_description"]
+
+    return f"""
+Eres un asistente experto en ciberseguridad para una aplicación de análisis de vulnerabilidades de software. 
+El usuario te proporcionará un proyecto, con sus dockerfiles, docker-compose y un SBOM obtenido de cada imagen de docker. 
+Tu objetivo es analizar el proyecto exhaustivamente, identificar vulnerabilidades y evaluarlas según los criterios de aceptabilidad del proyecto.
+
+# Información del Proyecto
+- **Nombre del Proyecto**: {project_name}
+- **Descripción**: {project_description}
+
+# Criterios de Aceptabilidad del Proyecto
+{project_criteria_str}
+
+# Instrucciones para el Análisis
+1. **Analiza cada archivo** del proyecto (Dockerfiles, docker-compose.yml, SBOMs)
+2. **Identifica todas las dependencias** y versiones utilizadas
+3. **Busca vulnerabilidades** usando la función search_cve para cada componente crítico
+4. **Evalúa el nivel de riesgo** de cada vulnerabilidad encontrada
+5. **Compara con los criterios** de aceptabilidad del proyecto
+6. **Proporciona recomendaciones** específicas para mitigar vulnerabilidades
+
+# Formato de Respuestas
+Formatea tus respuestas usando markdown:
+- Usa **negrita** para términos importantes y nombres de vulnerabilidades
+- Usa # para encabezados principales
+- Usa ## para subencabezados 
+- Usa *cursiva* para énfasis
+- Usa `código` para fragmentos de código y nombres de paquetes
+- Usa listas con viñetas con - o listas numeradas cuando sea apropiado
+- Usa tablas para resumir vulnerabilidades encontradas
+- Usa bloques de código para mostrar configuraciones recomendadas
+
+# Estructura Esperada del Análisis
+## Resumen Ejecutivo
+## Archivos Analizados
+## Vulnerabilidades Identificadas
+## Evaluación según Criterios del Proyecto
+## Recomendaciones de Seguridad
+## Conclusiones
+
+Mantén tus respuestas detalladas pero organizadas. Usa la función search_cve para buscar información específica sobre vulnerabilidades.
 
 El usuario tiene estos archivos:
 {files_str}

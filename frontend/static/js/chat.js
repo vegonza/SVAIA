@@ -43,6 +43,7 @@ let loading = false;
 let current_project_uuid = null;
 let isEditMode = false;
 let mobile_project_list = document.getElementById("mobile-project-list");
+let analyzing_project = false;  // New flag to track if project analysis is ongoing
 
 // Initialize mermaid with beautiful configuration
 if (window.mermaid) {
@@ -914,7 +915,11 @@ function display_messages(messages) {
 }
 
 async function send_message() {
-    if (loading || !current_project_uuid) {
+    if (loading || !current_project_uuid || analyzing_project) {
+        // Show a message to user if trying to send during analysis
+        if (analyzing_project) {
+            show_warning("Por favor, espere a que termine el análisis del proyecto antes de enviar mensajes.");
+        }
         return;
     }
 
@@ -1443,6 +1448,10 @@ async function load_project(uuid) {
     current_project_uuid = uuid;
     update_url(uuid);
 
+    // Reset analysis state when switching projects
+    analyzing_project = false;
+    updateInputState();
+
     try {
         const response = await fetch(`/sql/projects/${uuid}`);
         const data = await response.json();
@@ -1461,80 +1470,119 @@ async function load_project(uuid) {
 async function init_project_analysis(uuid, retryCount = 0) {
     if (!uuid) return;
 
+    // Set analysis flag to prevent user input
+    analyzing_project = true;
+    updateInputState();
+
     // Max retries for mermaid rendering
     const MAX_RETRIES = 3;
-    const loadingId = `loading-${Date.now()}`;
 
     try {
-        // Show a loading message with animation
-        const loadingMessage = document.createElement("div");
-        loadingMessage.id = loadingId;
-        loadingMessage.innerHTML = `
+        // Phase 1: Initialize project and generate mermaid diagram
+        console.log('Starting Phase 1: Mermaid diagram generation');
+        await execute_init_project_phase(uuid, retryCount);
+
+        // Phase 2: Analyze project vulnerabilities
+        console.log('Starting Phase 2: Vulnerability analysis');
+        await execute_analyze_project_phase(uuid);
+
+    } catch (error) {
+        console.error('Error during project analysis:', error);
+
+        // Show a comprehensive error message with retry option
+        const errorMessageDiv = document.createElement("div");
+        errorMessageDiv.innerHTML = `
             <li class="d-flex align-items-start mb-3 container-fluid pe-0">
                 <i class="bi bi-robot me-4"></i>
-                <div class="bg-secondary text-white p-4 rounded-2 container-fluid">
-                    <div class="d-flex align-items-center">
-                        <div class="spinner-border text-light me-3" role="status">
-                            <span class="visually-hidden">Loading...</span>
-                        </div>
-                        <span>${retryCount > 0 ? `Reintentando análisis (${retryCount}/${MAX_RETRIES})...` : 'Analizando proyecto y generando diagrama de arquitectura...'}</span>
+                <div class="bg-danger text-white p-4 rounded-2 container-fluid">
+                    <h6><i class="bi bi-exclamation-triangle"></i> Error en el Análisis del Proyecto</h6>
+                    <p><strong>Error:</strong> ${error.message}</p>
+                    <div class="mt-3">
+                        <button class="btn btn-light btn-sm me-2" onclick="init_project_analysis('${uuid}')">
+                            <i class="bi bi-arrow-clockwise"></i> Reintentar Análisis
+                        </button>
+                        <small class="text-light d-block mt-2">
+                            El análisis automático falló. Puedes reintentarlo o enviar mensajes manualmente para continuar.
+                        </small>
                     </div>
                 </div>
             </li>
         `;
 
-        // Remove any previous loading message if this is a retry
-        if (retryCount > 0) {
-            const messages = chat.children;
-            for (let i = 0; i < messages.length; i++) {
-                if (messages[i].id && messages[i].id.startsWith('loading-')) {
-                    chat.removeChild(messages[i]);
-                    break;
-                }
-            }
-        } else {
-            // Clear any previous message that might exist
-            const existingMessages = chat.querySelectorAll('div[id^="message-"]');
-            if (existingMessages.length > 0 && existingMessages[existingMessages.length - 1].querySelector('.message-content')?.textContent.includes('Iniciando análisis')) {
-                chat.removeChild(existingMessages[existingMessages.length - 1]);
-            }
-        }
-
-        chat.appendChild(loadingMessage);
+        chat.appendChild(errorMessageDiv);
         chat.scrollTop = chat.scrollHeight;
+    } finally {
+        // Always re-enable input after analysis completes or fails
+        analyzing_project = false;
+        updateInputState();
+        console.log('Project analysis completed, user input enabled');
+    }
+}
 
-        // Build request body
-        const requestBody = {
-            project_uuid: uuid
-        };
+async function execute_init_project_phase(uuid, retryCount = 0) {
+    const MAX_RETRIES = 3;
+    const loadingId = `loading-init-${Date.now()}`;
 
-        const response = await fetch('/chat/init-project', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(requestBody)
-        });
+    // Show loading message for Phase 1
+    const loadingMessage = document.createElement("div");
+    loadingMessage.id = loadingId;
+    loadingMessage.innerHTML = `
+        <li class="d-flex align-items-start mb-3 container-fluid pe-0">
+            <i class="bi bi-robot me-4"></i>
+            <div class="bg-primary text-white p-4 rounded-2 container-fluid">
+                <div class="d-flex align-items-center">
+                    <div class="spinner-border text-light me-3" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <span>${retryCount > 0 ? `Reintentando generación de diagrama (${retryCount}/${MAX_RETRIES})...` : 'Fase 1: Generando diagrama de arquitectura...'}</span>
+                </div>
+            </div>
+        </li>
+    `;
 
-        if (!response.ok) {
-            throw new Error(`Server responded with ${response.status}: ${response.statusText}`);
+    // Remove any previous loading message if this is a retry
+    if (retryCount > 0) {
+        const messages = chat.children;
+        for (let i = 0; i < messages.length; i++) {
+            if (messages[i].id && messages[i].id.startsWith('loading-')) {
+                chat.removeChild(messages[i]);
+                break;
+            }
         }
+    }
 
-        // Instead of streaming, collect the entire response
-        const reader = response.body.getReader();
-        const decoder = new TextDecoder();
-        let completeResponse = '';
-        let finalContent = '';
+    chat.appendChild(loadingMessage);
+    chat.scrollTop = chat.scrollHeight;
 
-        while (true) {
-            const { value, done } = await reader.read();
-            if (done) break;
+    const response = await fetch('/chat/init-project', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ project_uuid: uuid })
+    });
 
-            completeResponse += decoder.decode(value, { stream: true });
+    if (!response.ok) {
+        // Remove loading message before throwing error
+        const loadingElement = document.getElementById(loadingId);
+        if (loadingElement) {
+            chat.removeChild(loadingElement);
         }
+        throw new Error(`Fase 1 falló - Server responded with ${response.status}: ${response.statusText}`);
+    }
 
-        // Process the collected SSE data to extract the final content
-        const lines = completeResponse.split('\n\n');
+    // Process the response
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let finalContent = '';
+
+    while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+
+        const chunk = decoder.decode(value, { stream: true });
+        const lines = chunk.split('\n\n');
+
         for (const line of lines) {
             if (line.startsWith('data: ')) {
                 try {
@@ -1552,86 +1600,279 @@ async function init_project_analysis(uuid, retryCount = 0) {
                 }
             }
         }
+    }
 
-        // Remove the loading message
-        const loadingElement = document.getElementById(loadingId);
-        if (loadingElement) {
-            chat.removeChild(loadingElement);
-        }
+    // Remove the loading message
+    const loadingElement = document.getElementById(loadingId);
+    if (loadingElement) {
+        chat.removeChild(loadingElement);
+    }
 
-        // Create the message with the complete content
-        const messageId = message_counter++;
-        const messageElement = document.createElement("div");
-        messageElement.id = `message-${messageId}`;
+    // Create the message with the complete content
+    const messageId = message_counter++;
+    const messageElement = document.createElement("div");
+    messageElement.id = `message-${messageId}`;
 
-        const template = ai_template.content.cloneNode(true);
-        const contentDiv = template.querySelector(".message-content");
-        contentDiv.id = `content-${messageId}`;
+    const template = ai_template.content.cloneNode(true);
+    const contentDiv = template.querySelector(".message-content");
+    contentDiv.id = `content-${messageId}`;
 
-        // Render markdown
-        if (window.marked) {
-            marked.setOptions({
-                breaks: true,
-                tables: true,
-                smartLists: true,
-                highlight: function (code, lang) {
-                    // Don't highlight mermaid code, let our renderer handle it
-                    if (lang === 'mermaid') {
-                        return code;
-                    }
+    // Render markdown
+    if (window.marked) {
+        marked.setOptions({
+            breaks: true,
+            tables: true,
+            smartLists: true,
+            highlight: function (code, lang) {
+                if (lang === 'mermaid') {
                     return code;
                 }
-            });
-            try {
-                contentDiv.innerHTML = marked.parse(finalContent);
-            } catch (error) {
-                console.error('Error parsing markdown:', error);
-                contentDiv.textContent = finalContent;
+                return code;
             }
-        } else {
+        });
+        try {
+            contentDiv.innerHTML = marked.parse(finalContent);
+        } catch (error) {
+            console.error('Error parsing markdown:', error);
             contentDiv.textContent = finalContent;
         }
+    } else {
+        contentDiv.textContent = finalContent;
+    }
 
-        messageElement.appendChild(template);
-        chat.appendChild(messageElement);
-        chat.scrollTop = chat.scrollHeight;
+    messageElement.appendChild(template);
+    chat.appendChild(messageElement);
+    chat.scrollTop = chat.scrollHeight;
 
-        // Now try to render mermaid diagrams
-        try {
-            await render_mermaid_diagrams(contentDiv);
-            console.log('Successfully rendered all mermaid diagrams');
-        } catch (mermaidError) {
-            console.error('Error rendering mermaid diagram:', mermaidError);
+    // Try to render mermaid diagrams
+    try {
+        await render_mermaid_diagrams(contentDiv);
+        console.log('Successfully rendered all mermaid diagrams in Phase 1');
+    } catch (mermaidError) {
+        console.error('Error rendering mermaid diagram:', mermaidError);
 
-            // If we haven't reached max retries, try again
-            if (retryCount < MAX_RETRIES - 1) {
-                // Remove the message that failed rendering
-                chat.removeChild(messageElement);
+        // If we haven't reached max retries, try again
+        if (retryCount < MAX_RETRIES - 1) {
+            // Remove the message that failed rendering
+            chat.removeChild(messageElement);
 
-                console.log(`Retrying mermaid rendering (${retryCount + 1}/${MAX_RETRIES})...`);
+            console.log(`Retrying mermaid rendering (${retryCount + 1}/${MAX_RETRIES})...`);
 
-                // Wait a short delay before retrying
-                setTimeout(() => {
-                    init_project_analysis(uuid, retryCount + 1);
-                }, 1000);
-            } else {
-                console.error(`Failed to render mermaid diagram after ${MAX_RETRIES} attempts`);
-                // Keep the last attempt's content visible to the user
-            }
+            // Wait a short delay before retrying
+            setTimeout(() => {
+                execute_init_project_phase(uuid, retryCount + 1);
+            }, 1000);
+            return; // Exit early, retry will handle the rest
+        } else {
+            console.error(`Failed to render mermaid diagram after ${MAX_RETRIES} attempts`);
+            // Keep the last attempt's content visible to the user
         }
+    }
+}
 
-    } catch (error) {
-        console.error('Error initializing project analysis:', error);
+async function execute_analyze_project_phase(uuid) {
+    const loadingId = `loading-analyze-${Date.now()}`;
 
-        // Remove loading message if it exists
+    // Show loading message for Phase 2
+    const loadingMessage = document.createElement("div");
+    loadingMessage.id = loadingId;
+    loadingMessage.innerHTML = `
+        <li class="d-flex align-items-start mb-3 container-fluid pe-0">
+            <i class="bi bi-robot me-4"></i>
+            <div class="bg-warning text-dark p-4 rounded-2 container-fluid">
+                <div class="d-flex align-items-center">
+                    <div class="spinner-border text-dark me-3" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <span>Fase 2: Analizando vulnerabilidades del proyecto...</span>
+                </div>
+            </div>
+        </li>
+    `;
+
+    chat.appendChild(loadingMessage);
+    chat.scrollTop = chat.scrollHeight;
+
+    const response = await fetch('/chat/analyze-project', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ project_uuid: uuid })
+    });
+
+    if (!response.ok) {
+        // Remove loading message before throwing error
         const loadingElement = document.getElementById(loadingId);
         if (loadingElement) {
             chat.removeChild(loadingElement);
         }
-
-        // Show error message
-        create_message(`❌ Error al inicializar el análisis del proyecto: ${error.message}. Puedes intentar enviar un mensaje manualmente para continuar.`, false);
+        throw new Error(`Fase 2 falló - Server responded with ${response.status}: ${response.statusText}`);
     }
+
+    // Remove the loading message
+    const loadingElement = document.getElementById(loadingId);
+    if (loadingElement) {
+        chat.removeChild(loadingElement);
+    }
+
+    // Stream the analysis response
+    const response_id = message_counter++;
+    const placeholder = document.createElement("div");
+    placeholder.id = `message-${response_id}`;
+
+    const template = ai_template.content.cloneNode(true);
+    const message_div = template.querySelector(".message-content");
+    message_div.id = `content-${response_id}`;
+
+    placeholder.appendChild(template);
+    chat.appendChild(placeholder);
+    chat.scrollTop = chat.scrollHeight;
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let full_content = '';
+    let is_in_tool_call = false;
+
+    while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+
+        const chunk = decoder.decode(value, { stream: true });
+        const lines = chunk.split('\n\n');
+
+        for (const line of lines) {
+            if (line.startsWith('data: ')) {
+                try {
+                    const data = JSON.parse(line.substring(6));
+                    const content_div = document.getElementById(`content-${response_id}`);
+
+                    if (data.done) {
+                        if (content_div) {
+                            // Remove all tool call indicators
+                            const toolIndicators = content_div.querySelectorAll('.tool-call-indicator');
+                            toolIndicators.forEach(indicator => indicator.remove());
+
+                            // Clean the full content and render final markdown
+                            try {
+                                if (window.marked) {
+                                    marked.setOptions({
+                                        breaks: true,
+                                        tables: true,
+                                        smartLists: true,
+                                        highlight: function (code, lang) {
+                                            if (lang === 'mermaid') {
+                                                return code;
+                                            }
+                                            return code;
+                                        }
+                                    });
+                                    content_div.innerHTML = marked.parse(full_content);
+                                    // Render mermaid diagrams in the final content
+                                    render_mermaid_diagrams(content_div);
+                                } else {
+                                    content_div.textContent = full_content;
+                                }
+                            } catch (error) {
+                                console.error('Error parsing markdown:', error);
+                                content_div.textContent = full_content;
+                            }
+                        }
+                        break;
+                    }
+
+                    if (data.type === 'text' && data.content) {
+                        full_content += data.content;
+                        is_in_tool_call = false;
+
+                        if (content_div) {
+                            try {
+                                if (window.marked) {
+                                    marked.setOptions({
+                                        breaks: true,
+                                        tables: true,
+                                        smartLists: true,
+                                    });
+                                    content_div.innerHTML = marked.parse(full_content) + "<span class='typing-cursor'>▋</span>";
+                                } else {
+                                    content_div.textContent = full_content + "▋";
+                                }
+                            } catch (error) {
+                                console.error('Error parsing markdown:', error);
+                                content_div.textContent = full_content + "▋";
+                            }
+
+                            chat.scrollTop = chat.scrollHeight;
+                        }
+                    }
+
+                    if (data.type === 'tool_call' && data.tool_name) {
+                        if (!is_in_tool_call) {
+                            is_in_tool_call = true;
+
+                            if (content_div) {
+                                // Create tool call indicator
+                                const tool_indicator = document.createElement('div');
+                                tool_indicator.className = 'tool-call-indicator mb-2 p-2 rounded';
+                                tool_indicator.style.cssText = `
+                                    background: rgba(255, 193, 7, 0.1);
+                                    border: 1px solid rgba(255, 193, 7, 0.3);
+                                    color: #856404;
+                                    font-size: 0.9em;
+                                    display: flex;
+                                    align-items: center;
+                                    gap: 8px;
+                                `;
+
+                                tool_indicator.innerHTML = `
+                                    <i class="bi bi-tools" style="color: #ffc107;"></i>
+                                    <span>Buscando información de CVE: <strong>${data.tool_name}</strong></span>
+                                    <div class="spinner-border spinner-border-sm text-warning" role="status" style="width: 16px; height: 16px;">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                `;
+
+                                content_div.appendChild(tool_indicator);
+                                chat.scrollTop = chat.scrollHeight;
+                            }
+                        }
+                    }
+
+                    if (data.type === 'error' && data.content) {
+                        if (content_div) {
+                            const error_div = document.createElement('div');
+                            error_div.className = 'alert alert-danger mt-2';
+                            error_div.innerHTML = `<i class="bi bi-exclamation-triangle"></i> Error: ${data.content}`;
+                            content_div.appendChild(error_div);
+                            chat.scrollTop = chat.scrollHeight;
+                        }
+                    }
+
+                } catch (e) {
+                    console.error('Error parsing SSE data:', e, line);
+                }
+            }
+        }
+    }
+
+    console.log('Phase 2 completed: Vulnerability analysis finished');
+
+    // Show completion message
+    const completionMessageDiv = document.createElement("div");
+    completionMessageDiv.innerHTML = `
+        <li class="d-flex align-items-start mb-3 container-fluid pe-0">
+            <i class="bi bi-robot me-4"></i>
+            <div class="bg-success text-white p-4 rounded-2 container-fluid">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-check-circle me-3 fs-5"></i>
+                    <span><strong>Análisis Completado</strong> - Ahora puedes enviar mensajes para hacer preguntas sobre el proyecto y sus vulnerabilidades.</span>
+                </div>
+            </div>
+        </li>
+    `;
+
+    chat.appendChild(completionMessageDiv);
+    chat.scrollTop = chat.scrollHeight;
 }
 
 async function delete_project(uuid) {
@@ -1658,14 +1899,35 @@ async function delete_project(uuid) {
     }
 }
 
+// Function to update input state based on analysis status
+function updateInputState() {
+    const sendButton = document.getElementById('send-message');
+
+    if (analyzing_project) {
+        input_text.disabled = true;
+        input_text.placeholder = "Analizando proyecto... Por favor espere.";
+        sendButton.disabled = true;
+        sendButton.innerHTML = '<i class="bi bi-hourglass-split"></i> Analizando...';
+    } else {
+        input_text.disabled = false;
+        input_text.placeholder = "Escribe tu mensaje...";
+        sendButton.disabled = false;
+        sendButton.innerHTML = 'Enviar';
+    }
+}
+
 // Event listeners
 input_text.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
+    if (e.key === 'Enter' && !analyzing_project) {
         send_message();
     }
 });
 
-document.getElementById('send-message').addEventListener('click', send_message);
+document.getElementById('send-message').addEventListener('click', () => {
+    if (!analyzing_project) {
+        send_message();
+    }
+});
 
 new_chat_btn.addEventListener("click", () => {
     showCreateProjectModal();
@@ -1676,6 +1938,7 @@ saveProjectBtn.addEventListener('click', saveProject);
 document.addEventListener("DOMContentLoaded", function () {
     addMermaidAnimations();
     initializeDropdown();
+    updateInputState(); // Initialize input state
     get_projects();
     check_url_for_project();
 });

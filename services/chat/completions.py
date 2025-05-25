@@ -10,7 +10,8 @@ from swarm import Swarm
 
 from services.sql.models import Message, Project, db
 
-from .agent_manager import cve_agent, mermaid_agent
+from .agent_manager import analysis_agent, cve_agent, mermaid_agent
+from .prompts import FilesFormat
 from .types import ChatMessage, File
 
 load_dotenv(find_dotenv())
@@ -112,6 +113,7 @@ def generate(stream, project_uuid: Optional[str]):
     yield f"data: {json.dumps({'done': True, 'full_content': collected_content})}\n\n"
 
 
+# ---------------- generator wrappers ---------------- #
 def get_cve_agent_response(message: str, history: list[ChatMessage], files: list[File], project_uuid: Optional[str], project_name: str, project_description: str, project_criteria: dict):
     stream = client.run_and_stream(
         agent=cve_agent,
@@ -152,6 +154,26 @@ def get_mermaid_response(files: list[File], project_uuid: Optional[str]):
             {
                 "role": "user",
                 "content": "Analiza el contenido de mis archivos y genera un diagrama"
+            }
+        ],
+    )
+
+    return Response(stream_with_context(generate(stream, project_uuid)), mimetype='text/event-stream')
+
+
+def get_analysis_response(files: list[File], project_uuid: Optional[str], project_name: str, project_description: str, project_criteria: dict):
+    stream = client.run_and_stream(
+        agent=analysis_agent,
+        context_variables={
+            "project_name": project_name,
+            "project_description": project_description,
+            "project_criteria": project_criteria,
+            "files": files
+        },
+        messages=[
+            {
+                "role": "user",
+                "content": f"This are my files:\n{FilesFormat(files)}"
             }
         ],
     )

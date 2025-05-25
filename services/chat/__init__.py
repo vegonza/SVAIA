@@ -5,7 +5,8 @@ from flask_login import login_required
 
 from services.sql.models import Message, Project, db
 
-from .completions import get_cve_agent_response, get_mermaid_response
+from .completions import (get_analysis_response, get_cve_agent_response,
+                          get_mermaid_response)
 from .utils import collect_project_files, get_project_criteria
 
 chat_bp = Blueprint("chat", __name__)
@@ -41,6 +42,32 @@ def init_project():
     files = collect_project_files(project)
 
     return get_mermaid_response(files, project_uuid)
+
+
+@chat_bp.route("/analyze-project", methods=["POST"])
+def analyze_project():
+    data: dict = request.json
+    project_uuid = data.get("project_uuid")
+
+    if not project_uuid:
+        return jsonify({"error": "missing project_uuid"}), 400
+
+    project: Project = Project.query.filter_by(uuid=project_uuid).first()
+    if not project:
+        return jsonify({"error": "project not found"}), 404
+
+    project.updated_at = datetime.utcnow()
+    db.session.commit()
+
+    files = collect_project_files(project)
+
+    return get_analysis_response(
+        files=files,
+        project_uuid=project_uuid,
+        project_name=project.name,
+        project_description=project.description,
+        project_criteria=get_project_criteria(project)
+    )
 
 
 @chat_bp.route("/completion", methods=["POST"])
