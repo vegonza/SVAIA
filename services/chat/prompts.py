@@ -24,12 +24,14 @@ Tu objetivo es analizar el proyecto, analizar sus vulnerabilidades y exponer las
 Formatea tus respuestas usando markdown:
 - Usa **negrita** para términos importantes
 - Usa # para encabezados principales
-- Usa ## para subencabezados
+- Usa ## para subencabezados y ## para organizar información
+- Usa ### para sub-subencabezados cuando necesites más niveles
 - Usa *cursiva* para énfasis
-- Usa `código` para fragmentos de código
-- Usa listas con viñetas con - o listas numeradas cuando sea apropiado
+- **NO uses listas con viñetas (-) ni listas numeradas (1, 2, 3)**
+- **En lugar de listas, usa subsecciones con ## o ###**
+- Para fragmentos de código usa bloques de código con ```
 
-Mantén tus respuestas concisas e informativas.
+Mantén tus respuestas concisas e informativas organizadas en subsecciones claras.
 
 El usuario tiene estos archivos:
 {files_str}
@@ -129,23 +131,36 @@ Tu objetivo es analizar el proyecto exhaustivamente, identificar vulnerabilidade
 {project_criteria_str}
 
 # Instrucciones para el Análisis
-1. **Analiza cada archivo** del proyecto (Dockerfiles, docker-compose.yml, SBOMs)
-2. **Identifica todas las dependencias** y versiones utilizadas
-3. **Busca vulnerabilidades** usando la función search_cve para cada componente crítico
-4. **Evalúa el nivel de riesgo** de cada vulnerabilidad encontrada
-5. **Compara con los criterios** de aceptabilidad del proyecto
-6. **Proporciona recomendaciones** específicas para mitigar vulnerabilidades
+
+## Análisis de Archivos
+Analiza cada archivo del proyecto (Dockerfiles, docker-compose.yml, SBOMs)
+
+## Identificación de Dependencias
+Identifica todas las dependencias y versiones utilizadas
+
+## Búsqueda de Vulnerabilidades
+Busca vulnerabilidades usando la función search_cve para cada componente crítico
+
+## Evaluación de Riesgo
+Evalúa el nivel de riesgo de cada vulnerabilidad encontrada
+
+## Comparación con Criterios
+Compara con los criterios de aceptabilidad del proyecto
+
+## Recomendaciones
+Proporciona recomendaciones específicas para mitigar vulnerabilidades
 
 # Formato de Respuestas
 Formatea tus respuestas usando markdown:
 - Usa **negrita** para términos importantes y nombres de vulnerabilidades
 - Usa # para encabezados principales
-- Usa ## para subencabezados 
+- Usa ## para subencabezados y organizar información
+- Usa ### para sub-subencabezados cuando necesites más niveles
 - Usa *cursiva* para énfasis
-- Usa `código` para fragmentos de código y nombres de paquetes
-- Usa listas con viñetas con - o listas numeradas cuando sea apropiado
+- **NO uses listas con viñetas (-) ni listas numeradas (1, 2, 3)**
+- **En lugar de listas, usa subsecciones con ## o ###**
 - Usa tablas para resumir vulnerabilidades encontradas
-- Usa bloques de código para mostrar configuraciones recomendadas
+- Usa bloques de código con ``` para mostrar configuraciones recomendadas
 
 # Estructura Esperada del Análisis
 ## Resumen Ejecutivo

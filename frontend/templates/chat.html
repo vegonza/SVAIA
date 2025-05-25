@@ -4,6 +4,27 @@
     <title>SVAIA - Chat</title>
     <link href="{{ url_for('static', filename='css/chat.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        /* Style inline code elements as italics instead of monospace */
+        .message-content code {
+            font-family: inherit !important;
+            font-style: italic !important;
+            background: none !important;
+            padding: 0 !important;
+            border: none !important;
+            color: inherit !important;
+        }
+        
+        /* Keep code blocks as normal monospace */
+        .message-content pre code {
+            font-family: 'Courier New', Courier, monospace !important;
+            font-style: normal !important;
+            background: rgba(0, 0, 0, 0.1) !important;
+            padding: 0.5rem !important;
+            border-radius: 4px !important;
+            display: block !important;
+        }
+    </style>
 {% endblock %}
 
 {% block content %}

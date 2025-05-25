@@ -943,6 +943,11 @@ async function send_message() {
         const message_div = template.querySelector(".message-content");
         message_div.id = `content-${response_id}`;
 
+        // Ensure the message div has the proper styling from the start
+        if (!message_div.classList.contains('bg-secondary')) {
+            message_div.classList.add('bg-secondary', 'text-white');
+        }
+
         placeholder.appendChild(template);
         chat.appendChild(placeholder);
         chat.scrollTop = chat.scrollHeight;
@@ -1019,23 +1024,10 @@ async function send_message() {
                             is_in_tool_call = false;
 
                             if (content_div) {
-                                try {
-                                    if (window.marked) {
-                                        marked.setOptions({
-                                            breaks: true,
-                                            tables: true,
-                                            smartLists: true,
-                                        });
-                                        content_div.innerHTML = marked.parse(full_content) + "<span class='typing-cursor'>▋</span>";
-                                        // Only render mermaid for final content to avoid flickering
-                                    } else {
-                                        content_div.textContent = full_content + "▋";
-                                    }
-                                } catch (error) {
-                                    console.error('Error parsing markdown:', error);
-                                    content_div.textContent = full_content + "▋";
-                                }
-
+                                // During streaming, show raw text to avoid markdown parsing issues
+                                // We'll parse the complete markdown only when done
+                                const displayContent = full_content.replace(/\n/g, '<br>');
+                                content_div.innerHTML = displayContent + "<span class='typing-cursor'>▋</span>";
                                 chat.scrollTop = chat.scrollHeight;
                             }
                         }
@@ -1725,6 +1717,11 @@ async function execute_analyze_project_phase(uuid) {
     const message_div = template.querySelector(".message-content");
     message_div.id = `content-${response_id}`;
 
+    // Ensure the message div has the proper styling from the start
+    if (!message_div.classList.contains('bg-secondary')) {
+        message_div.classList.add('bg-secondary', 'text-white');
+    }
+
     placeholder.appendChild(template);
     chat.appendChild(placeholder);
     chat.scrollTop = chat.scrollHeight;
@@ -1786,22 +1783,10 @@ async function execute_analyze_project_phase(uuid) {
                         is_in_tool_call = false;
 
                         if (content_div) {
-                            try {
-                                if (window.marked) {
-                                    marked.setOptions({
-                                        breaks: true,
-                                        tables: true,
-                                        smartLists: true,
-                                    });
-                                    content_div.innerHTML = marked.parse(full_content) + "<span class='typing-cursor'>▋</span>";
-                                } else {
-                                    content_div.textContent = full_content + "▋";
-                                }
-                            } catch (error) {
-                                console.error('Error parsing markdown:', error);
-                                content_div.textContent = full_content + "▋";
-                            }
-
+                            // During streaming, show raw text to avoid markdown parsing issues
+                            // We'll parse the complete markdown only when done
+                            const displayContent = full_content.replace(/\n/g, '<br>');
+                            content_div.innerHTML = displayContent + "<span class='typing-cursor'>▋</span>";
                             chat.scrollTop = chat.scrollHeight;
                         }
                     }
@@ -1896,6 +1881,45 @@ async function delete_project(uuid) {
     } catch (error) {
         console.error('Error deleting project:', error);
         show_warning("Error al eliminar el proyecto: " + error.message);
+    }
+}
+
+// Helper function to safely parse markdown
+function parseMarkdownSafely(content, contentDiv) {
+    try {
+        if (window.marked && content.trim()) {
+            marked.setOptions({
+                breaks: true,
+                tables: true,
+                smartLists: true,
+                sanitize: false,
+                gfm: true,
+                highlight: function (code, lang) {
+                    if (lang === 'mermaid') {
+                        return code;
+                    }
+                    return code;
+                }
+            });
+
+            // Clean up the content before parsing
+            const cleanContent = content
+                .replace(/\r\n/g, '\n')
+                .replace(/\r/g, '\n');
+
+            contentDiv.innerHTML = marked.parse(cleanContent);
+
+            // Render mermaid diagrams in the final content
+            render_mermaid_diagrams(contentDiv).catch(mermaidError => {
+                console.error('Mermaid rendering error:', mermaidError);
+            });
+        } else {
+            contentDiv.textContent = content;
+        }
+    } catch (error) {
+        console.error('Error parsing markdown:', error);
+        // Fallback to simple text with line breaks
+        contentDiv.innerHTML = content.replace(/\n/g, '<br>');
     }
 }
 
