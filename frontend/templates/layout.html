@@ -94,80 +94,76 @@
     <!-- Footer -->
     <footer>
         <div class="container-fluid bg-primary">
-            <div class="row justify-content-center px-3 px-md-5 pt-5">
-                <div class="col-12 col-md-6 col-lg-3 mb-4">
-                    <div class="card bg-primary text-white" style="border: 0;">
-                        <div class="card-header"><h4>Redes Sociales</h4></div>
-                        <div class="card-body">
-                            <div class="row g-0 justify-content-start">
-                                <div class="col-auto me-4">
-                                    <a href="#" class="fs-3"><i class="fab fa-twitter"></i></a>
-                                </div>
-                                <div class="col-auto me-4">
-                                    <a href="#" class="fs-3"><i class="fab fa-facebook"></i></a>
-                                </div>
-                                <div class="col-auto me-4">
-                                    <a href="#" class="fs-3"><i class="fab fa-linkedin"></i></a>
-                                </div>
-                                <div class="col-auto">
-                                    <a href="#" class="fs-3"><i class="fab fa-discord"></i></a>
-                                </div>
+            <div class="row justify-content-center px-5 pt-5">
+                <div class="col-3 card bg-primary text-white mb-3 px-0" style="max-width: 20rem; border: 0;">
+                    <div class="card-header"><h4>Redes Sociales</h4></div>
+                    <div class="card-body">
+                        <div class="row row-cols-2 row-cols-sm-4 g-0 ">
+                            <div class="col d-flex d-block justify-content-center g-2 p-0 m-0"style="flex: 0 0 auto; width: auto;">
+                                <a href="#" class="fs-3"><i class="fab fa-twitter"></i></a>
+                            </div>
+                            <div class="col d-flex d-block justify-content-center g-2 p-0 m-0"style="flex: 0 0 auto; width: auto;">
+                                <a href="#" class="fs-3"><i class="fab fa-facebook"></i></a>
+                            </div>
+                            <div class="col d-flex d-block justify-content-center g-2 p-0 m-0"style="flex: 0 0 auto; width: auto;">
+                                <a href="#" class="fs-3"><i class="fab fa-linkedin"></i></a>
+                            </div>
+                            <div class="col d-flex d-block justify-content-center g-2 p-0 m-0"style="flex: 0 0 auto; width: auto;">
+                                <a href="#" class="fs-3"><i class="fab fa-discord"></i></a>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="col-12 col-md-6 col-lg-3 mb-4">
-                    <div class="card bg-primary text-white" style="border: 0;">
+                <div class="col-3 card bg-primary text-white mb-3" style="max-width: 20rem; border: 0;">
                         <div class="card-header"><h4>SVAIA</h4></div>
                         <div class="card-body">
-                            <p class="nav-link text-success">ETSI Informática</p>    
+                            <p class="nav-link text-success">ETSI Informática</p> 
+                            <p></p>   
                             <p class="text-success mb-0">Universidad de Málaga</p>
                             <p class="text-success mb-0">Bulevar Louis Pasteur, 35</p>
                             <p class="text-success mb-0">29071 Málaga</p>
                             <p class="text-success mb-0">España</p>
                             <hr style="color: black">
                         </div>
-                    </div>
+                        
+                        <!-- Map moved to separate row -->
                 </div>
 
-                <div class="col-12 col-md-6 col-lg-3 mb-4">
-                    <div class="card bg-primary text-white" style="border: 0;">
+                <div class="col-3 card bg-primary text-white mb-3" style="max-width: 20rem; border: 0;">
                         <div class="card-header"><h4>Producto</h4></div>
                         <div class="card-body">
-                            <a class="text-decoration-none text-success" href="{{ url_for('chat.index') }}"><p class="mb-0">Chat</p></a>
-                            <a class="text-decoration-none text-success" href="#"><p class="mb-0">SVAIA API</p></a>
-                            <a class="text-decoration-none text-success" href="#"><p class="mb-0">Vulnerabilidades</p></a>
-                            <a class="text-decoration-none text-success" href="#"><p class="mb-0">Precios</p></a>
-                            <a class="text-decoration-none text-success" href="#"><p class="mb-0">Estado del servicio</p></a>
+                            <a class="text-decoration-none text-success" href="{{ url_for('chat.index') }}"> <p class="mb-0">Chat</p> </a>
+                            <a class="text-decoration-none text-success" href="#"> <p class="mb-0">SVAIA API</p></a>
+                            <a class="text-decoration-none text-success" href="#"> <p class="mb-0">Vulnerabilidades </p> </a>
+                            <a class="text-decoration-none text-success" href="#"> <p class="mb-0">Precios </p></a>
+                            <a class="text-decoration-none text-success" href="#"> <p class="mb-0">Estado del servicio </p></a>
                         </div>
-                    </div>
                 </div>
 
-                <div class="col-12 col-md-6 col-lg-3 mb-4">
-                    <div class="card bg-primary text-white" style="border: 0;">
-                        <div class="card-header"><h4>Legal</h4></div>
-                        <div class="card-body">
-                            <p class="text-success mb-0">Política de privacidad</p>
-                            <p class="text-success mb-0">Términos de uso</p>
-                            <p class="text-success mb-0">Trabaja con nosotros</p>
-                            <hr style="color:black">
-                            <p class="text-success">Contacto</p>
-                        </div>
+                <div class="col-3 card bg-primary text-white mb-3" style="max-width: 20rem; border:0;">
+                    <div class="card-header"><h4>Legal</h4></div>
+                    <div class="card-body">
+                        <p class="text-success mb-0" href="#">Política de privacidad</p>
+                        <p class="text-success mb-0" href="#">Términos de uso</p>
+                        <p class="text-success mb-0" href="#">Trabaja con nosotros</p>
+                        <hr style="color:black">
+                        <p class="text-success"> Contacto</p>
                     </div>
-                </div>
+                    
+                    
+                </div>   
             </div>
-
             <!-- Map row -->
-            <div class="row justify-content-center pb-5">
-                <div class="col-12 col-md-8 col-lg-6">
-                    <div class="card bg-primary text-white" style="border: 0;">
-                        <div class="map-container" style="overflow: hidden; height: 300px;">
+            <div class="row pb-5">
+                <div class="col-12 d-flex justify-content-start" style="padding-left: calc(25% + 48px);">
+                    <div class="card bg-primary text-white" style="width: 20rem; border: 0;">
+                        <div class="map-container position-relative" style="height: 300px;">
                             <iframe
                                 width="100%"
-                                height="300"
+                                height="100%"
+                                style="border: 0;"
                                 frameborder="0"
-                                style="border: 0"
                                 allowfullscreen=""
                                 loading="lazy"
                                 referrerpolicy="no-referrer-when-downgrade"
@@ -179,10 +175,8 @@
             </div>
         </div>
         <div class="container">
-            <div class="row py-3">
-                <div class="col-12 text-center">
-                    <p class="mb-0">© 2025 SVAIA. Todos los derechos reservados.</p>
-                </div>
+            <div class="d-flex row-12 justify-content-center">
+                <p class=""> © 2025 SVAIA. Todos los derechos reservados.</p>
             </div>
         </div>
     </footer>

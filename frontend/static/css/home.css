@@ -1,13 +1,6 @@
 #imagen_chat {
     padding-right: 10px;
     margin-top: 0px;
-    max-width: 100%;
-}
-
-#imagen_chat img {
-    max-width: 100%;
-    height: auto;
-    object-fit: contain;
 }
 
 #lista_imagen {
@@ -47,56 +40,7 @@
     flex-shrink: 0;
 }
 
-/* Responsive pricing section */
 #pricing {
     clip-path: ellipse(2200px 800px at 50% 800px);
     padding-top: 50px;
-    width: 100%;
-    overflow: hidden;
-}
-
-#pricing .card {
-    margin: 1rem auto;
-    width: 100%;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    .texto_num {
-        font-size: 20px;
-    }
-    
-    .texto_sec {
-        font-size: 15px;
-    }
-    
-    .circulo {
-        width: 35px;
-        height: 35px;
-        font-size: 20px;
-    }
-    
-    #pricing-title {
-        padding: 0 15px;
-    }
-    
-    #pricing-title h1 {
-        font-size: 2rem;
-    }
-    
-    #pricing-title .lead {
-        font-size: 1rem;
-    }
-}
-
-@media (max-width: 576px) {
-    #imagen_chat {
-        padding-right: 0;
-        margin-bottom: 2rem;
-    }
-    
-    .row > [class*='col-'] {
-        padding-left: 15px;
-        padding-right: 15px;
-    }
 }
