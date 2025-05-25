@@ -12,6 +12,7 @@ from services.sql.models import Message, Project, db
 from .prompts import SYSTEM_MESSAGE, FilesFormat
 from .types import ChatMessage, File
 
+
 load_dotenv(find_dotenv())
 
 api_key = os.environ.get("AI_API_KEY")
@@ -20,10 +21,57 @@ client = OpenAI(
     api_key=api_key,
 )
 
+sbom = {
+    "bomFormat": "CycloneDX",
+    "specVersion": "1.4",
+    "version": 1,
+    "components": [
+        {
+            "type": "library",
+            "name": "django",
+            "version": "3.2.4",
+            "purl": "pkg:pypi/django@3.2.4"
+        },
+        {
+            "type": "library", 
+            "name": "requests",
+            "version": "2.26.0",
+            "purl": "pkg:pypi/requests@2.26.0"
+        },
+        {
+            "type": "library",
+            "name": "numpy",
+            "version": "1.19.5",
+            "purl": "pkg:pypi/numpy@1.19.5"
+        },
+        {
+            "type": "container",
+            "name": "python",
+            "version": "3.9-slim",
+            "purl": "pkg:docker/python@3.9-slim"
+        }
+    ],
+    "dependencies": [
+        {
+            "ref": "pkg:pypi/django@3.2.4",
+            "dependsOn": []
+        },
+        {
+            "ref": "pkg:pypi/requests@2.26.0",
+            "dependsOn": []
+        },
+        {
+            "ref": "pkg:pypi/numpy@1.19.5",
+            "dependsOn": []
+        }
+    ]
+}
 
 def get_response(message: str, requisitos: str, history: list[ChatMessage], archivos: list[File], project_uuid: Optional[str] = None):
     archivos_str = FilesFormat(archivos)
     #llamada a funcion para obtener vulnerabilidades de CVE
+    
+    
     stream = client.chat.completions.create(
         model="gemini-2.5-flash-preview-05-20",
         messages=[

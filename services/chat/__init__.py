@@ -41,4 +41,4 @@ def completion():
 
     db.session.commit()
 
-    return get_response(message, project_uuid)
+    return get_response(message, project_uuid,[] , [])
