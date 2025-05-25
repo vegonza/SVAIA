@@ -967,7 +967,7 @@ async function saveProject() {
                 body: JSON.stringify({
                     name: name,
                     description: description,
-                    vulnerability_level: vulnerabilityLevel,
+                    max_vulnerability_level: vulnerabilityLevel,
                     total_vulnerabilities_criteria: totalVulnerabilities,
                     solvability_criteria: solvabilityCriteria
                 })
@@ -982,7 +982,7 @@ async function saveProject() {
                 body: JSON.stringify({
                     name: name,
                     description: description,
-                    vulnerability_level: vulnerabilityLevel,
+                    max_vulnerability_level: vulnerabilityLevel,
                     total_vulnerabilities_criteria: totalVulnerabilities,
                     solvability_criteria: solvabilityCriteria
                 })

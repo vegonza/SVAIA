@@ -6,7 +6,7 @@ from flask_login import login_required
 from services.sql.models import Message, Project, db
 
 from .completions import get_cve_agent_response, get_mermaid_response
-from .types import File
+from .utils import collect_project_files, get_project_criteria
 
 chat_bp = Blueprint("chat", __name__)
 
@@ -36,31 +36,9 @@ def init_project():
     project.updated_at = datetime.utcnow()
     db.session.commit()
 
-    # Collect all project files
-    archivos = []
+    files = collect_project_files(project)
 
-    # Add dockerfiles
-    for dockerfile in project.dockerfiles:
-        archivos.append(File(
-            name=f"dockerfile_{dockerfile.id}",
-            content=dockerfile.content
-        ))
-
-    # Add docker-compose files
-    for docker_compose in project.docker_composes:
-        archivos.append(File(
-            name="docker-compose.yml",
-            content=docker_compose.content
-        ))
-
-    # Add SBOMs
-    for sbom in project.sboms:
-        archivos.append(File(
-            name=f"sbom_{sbom.id}.json",
-            content=sbom.content
-        ))
-
-    return get_mermaid_response(archivos, project_uuid)
+    return get_mermaid_response(files, project_uuid)
 
 
 @chat_bp.route("/completion", methods=["POST"])
@@ -90,15 +68,14 @@ def completion():
     db.session.commit()
 
     history = Message.query.filter_by(project_uuid=project_uuid).order_by(Message.timestamp).all()
-
     history_dicts = [{"role": "user" if msg.is_user else "assistant", "content": msg.content} for msg in history]
-
-    requirements = f"project_solvability_criteria: {project.solvability_criteria}\nproject_max_vulnerability_level: {project.max_vulnerability_level}\nproject_total_vulnerabilities_criteria: {project.total_vulnerabilities_criteria}"
 
     return get_cve_agent_response(
         message=message,
         history=history_dicts,
-        archivos=[],
+        files=collect_project_files(project),
         project_uuid=project_uuid,
-        requisitos=requirements
+        project_name=project.name,
+        project_description=project.description,
+        project_criteria=get_project_criteria(project)
     )

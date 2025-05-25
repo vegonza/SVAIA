@@ -11,7 +11,6 @@ class Project(db.Model):
     uuid: Mapped[str] = mapped_column(db.String(36), primary_key=True, nullable=False)
     name: Mapped[str] = mapped_column(db.String(50), nullable=False)
     description: Mapped[str] = mapped_column(db.Text, nullable=True)
-    vulnerability_level: Mapped[str] = mapped_column(db.Text, nullable=True)
     total_vulnerabilities_criteria: Mapped[int] = mapped_column(db.Integer, nullable=True)
     solvability_criteria: Mapped[str] = mapped_column(db.String(20), nullable=True)
     max_vulnerability_level: Mapped[str] = mapped_column(db.Text, nullable=True)
@@ -28,7 +27,6 @@ class Project(db.Model):
             'uuid': self.uuid,
             'name': self.name,
             'description': self.description,
-            'vulnerability_level': self.vulnerability_level,
             'total_vulnerabilities_criteria': self.total_vulnerabilities_criteria,
             'solvability_criteria': self.solvability_criteria,
             'max_vulnerability_level': self.max_vulnerability_level,

@@ -2,19 +2,22 @@ from .types import File
 
 
 def CVE_AGENT_PROMPT(context_variables: dict) -> str:
-    archivos_str = FilesFormat(context_variables["archivos"])
+    files_str = FilesFormat(context_variables["files"])
+    project_criteria_str = "\n".join([f"- {criteria}: {value}" for criteria, value in context_variables["project_criteria"].items()])
+
+    print(context_variables)
 
     return """
-Eres un asistente útil para una plataforma de ciberseguridad.
+Eres un asistente experto en ciberseguridad para una aplicación de análisis de vulnerabilidades de software. 
+El usuario te proporcionará un proyecto, con sus dockerfiles, docker-compose y un SBOM obtenido de cada imagen de docker. 
+Tu objetivo es analizar el proyecto, analizar sus vulnerabilidades y exponer las vulnerabilidades encontradas en base a los criterios de aceptabilidad.
 
 # Información del Proyecto
 - **Nombre del Proyecto**: {project_name}
 - **Descripción**: {project_description}
 
 # Criterios de Aceptabilidad del Proyecto
-- **Nivel máximo de vulnerabilidad permitido**: {max_vulnerability_level}
-- **Número total máximo de vulnerabilidades**: {total_vulnerabilities_criteria}
-- **Criterio de solucionabilidad**: {solvability_criteria}
+{project_criteria_str}
 
 # Formato de Respuestas
 Formatea tus respuestas usando markdown:
@@ -28,12 +31,12 @@ Formatea tus respuestas usando markdown:
 Mantén tus respuestas concisas e informativas.
 
 El usuario tiene estos archivos:
-{archivos}
-""".format(**context_variables, archivos=archivos_str)
+{files_str}
+""".format(**context_variables, files_str=files_str, project_criteria_str=project_criteria_str)
 
 
 def MERMAID_AGENT_PROMPT(context_variables: dict) -> str:
-    archivos_str = FilesFormat(context_variables["archivos"])
+    files_str = FilesFormat(context_variables["files"])
 
     return f"""
 Create a mermaid chart for the docker compose configuration showing:
@@ -101,9 +104,9 @@ Use subgraphs to organize: Services, Exposed Ports, and Networks (if any).
 Analyze the docker-compose.yml file and create a comprehensive mermaid diagram following this structure.
 
 El usuario tiene estos archivos:
-{archivos_str}
+{files_str}
 """.strip()
 
 
-def FilesFormat(archivos: list[File]) -> str:
-    return "\n".join([f"Archivo: {archivo['name']}\nContenido: {archivo['content']}" for archivo in archivos])
+def FilesFormat(files: list[File]) -> str:
+    return "\n".join([f"Archivo: {file['name']}\nContenido: {file['content']}" for file in files])

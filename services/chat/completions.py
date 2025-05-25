@@ -112,56 +112,14 @@ def generate(stream, project_uuid: Optional[str]):
     yield f"data: {json.dumps({'done': True, 'full_content': collected_content})}\n\n"
 
 
-def get_response(message: str, user_name: str, history: list[ChatMessage], archivos: list[File], project_uuid: Optional[str], project_name: str, project_description: str, requisitos: str):
-    criteria_lines = requisitos.split('\n')
-    solvability_criteria = ""
-    max_vulnerability_level = ""
-    total_vulnerabilities_criteria = ""
-
-    for line in criteria_lines:
-        if line.startswith("project_solvability_criteria:"):
-            solvability_criteria = line.replace("project_solvability_criteria:", "").strip()
-        elif line.startswith("project_max_vulnerability_level:"):
-            max_vulnerability_level = line.replace("project_max_vulnerability_level:", "").strip()
-        elif line.startswith("project_total_vulnerabilities_criteria:"):
-            total_vulnerabilities_criteria = line.replace("project_total_vulnerabilities_criteria:", "").strip()
-
-    # Manejar valores nulos o vacíos con mensajes amigables
-    if not solvability_criteria or solvability_criteria == "None":
-        solvability_criteria = "No especificado"
-    if not max_vulnerability_level or max_vulnerability_level == "None":
-        max_vulnerability_level = "No especificado"
-    if not total_vulnerabilities_criteria or total_vulnerabilities_criteria == "None":
-        total_vulnerabilities_criteria = "No especificado"
-
-    # Traducir los criterios de solvability a textos más descriptivos
-    if solvability_criteria == "solvable":
-        solvability_criteria = "Solo vulnerabilidades solucionables"
-    elif solvability_criteria == "non_solvable":
-        solvability_criteria = "Permitir vulnerabilidades no solucionables"
-    elif solvability_criteria == "any":
-        solvability_criteria = "Sin restricciones de solucionabilidad"
-
-    stream = client.run_and_stream(
-        agent=cve_agent,
-        messages=[
-            *history,
-            {
-                "role": "user",
-                "content": message
-            }
-        ],
-    )
-
-    return Response(stream_with_context(generate(stream, project_uuid)), mimetype='text/event-stream')
-
-
-def get_cve_agent_response(message: str, requisitos: str, history: list[ChatMessage], archivos: list[File], project_uuid: Optional[str]):
+def get_cve_agent_response(message: str, history: list[ChatMessage], files: list[File], project_uuid: Optional[str], project_name: str, project_description: str, project_criteria: dict):
     stream = client.run_and_stream(
         agent=cve_agent,
         context_variables={
-            "requisitos": requisitos,
-            "archivos": archivos
+            "project_name": project_name,
+            "project_description": project_description,
+            "project_criteria": project_criteria,
+            "files": files
         },
         messages=[
             *history,
@@ -175,11 +133,11 @@ def get_cve_agent_response(message: str, requisitos: str, history: list[ChatMess
     return Response(stream_with_context(generate(stream, project_uuid)), mimetype='text/event-stream')
 
 
-def get_mermaid_response(archivos: list[File], project_uuid: Optional[str]):
+def get_mermaid_response(files: list[File], project_uuid: Optional[str]):
     docker_compose_content = ""
-    for archivo in archivos:
-        if archivo["name"] == "docker-compose.yml":
-            docker_compose_content = archivo["content"]
+    for file in files:
+        if file["name"] == "docker-compose.yml":
+            docker_compose_content = file["content"]
             break
 
     if not docker_compose_content:
@@ -188,7 +146,7 @@ def get_mermaid_response(archivos: list[File], project_uuid: Optional[str]):
     stream = client.run_and_stream(
         agent=mermaid_agent,
         context_variables={
-            "archivos": archivos
+            "files": files
         },
         messages=[
             {

@@ -53,7 +53,6 @@ def create_project():
         uuid=str(uuid4()),
         name=request.json['name'],
         description=request.json.get('description', ''),
-        vulnerability_level=request.json.get('vulnerability_level', ''),
         total_vulnerabilities_criteria=request.json.get('total_vulnerabilities_criteria'),
         solvability_criteria=request.json.get('solvability_criteria'),
         max_vulnerability_level=request.json.get('max_vulnerability_level'),
@@ -101,8 +100,6 @@ def update_project(uuid):
         project.name = data['name']
     if 'description' in data:
         project.description = data['description']
-    if 'vulnerability_level' in data:
-        project.vulnerability_level = data['vulnerability_level']
     if 'total_vulnerabilities_criteria' in data:
         project.total_vulnerabilities_criteria = data['total_vulnerabilities_criteria']
     if 'solvability_criteria' in data:

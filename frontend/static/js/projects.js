@@ -241,7 +241,7 @@ function showEditProjectModal(project) {
     projectDescriptionInput.value = project.description || '';
     
     // Load existing vulnerability level
-    const existingVulnerability = project.vulnerability_level || '';
+    const existingVulnerability = project.max_vulnerability_level || '';
     if (existingVulnerability && vulnerabilityDropdown) {
         const predefinedValues = {
             'critical': 'Grado de vulnerabilidad crítico (8-10)',
@@ -419,7 +419,7 @@ async function saveProject() {
         
         // Only include vulnerability level if it's set
         if (vulnerabilityLevel) {
-            requestBody.vulnerability_level = vulnerabilityLevel;
+            requestBody.max_vulnerability_level = vulnerabilityLevel;
         }
         
         // Include total vulnerabilities criteria if set
