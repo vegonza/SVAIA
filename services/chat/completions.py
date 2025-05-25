@@ -16,7 +16,7 @@ from .types import ChatMessage, File
 
 load_dotenv(find_dotenv())
 
-client = Swarm(OpenAI(base_url="https://generativelanguage.googleapis.com/v1beta/openai/",
+client = Swarm(OpenAI(base_url="https://openrouter.ai/api/v1",
                api_key=os.environ["AI_API_KEY"]))
 
 sbom = {
@@ -91,15 +91,14 @@ def get_response(message: str, requisitos: str, history: list[ChatMessage], arch
             content = chunk.get('content')
             error = chunk.get('error')
             if error:
-                data = {'type': 'error', 'content': error}
-                collected_content += data
-                data = f"data: {json.dumps(data)}\n\n"
+                data = f"data: {json.dumps({'type': 'error', 'content': error})}\n\n"
+                yield data
 
             if content:
                 already_calling = False
-                data = {'type': 'text', 'content': content}
-                collected_content += data
-                data = f"data: {json.dumps(data)}\n\n"
+                data = f"data: {json.dumps({'type': 'text', 'content': content})}\n\n"
+                collected_content += content
+                yield data
 
             tools = chunk.get('tool_calls')
             if tools:
@@ -107,10 +106,9 @@ def get_response(message: str, requisitos: str, history: list[ChatMessage], arch
                     function = tool.get('function', {})
                     if name := function.get("name"):
                         if not already_calling:
-                            data = {'type': 'tool_call', 'tool_name': name}
-                            collected_content += data
-                            data = f"data: {json.dumps(data)}\n\n"
                             already_calling = True
+                            data = f"data: {json.dumps({'type': 'tool_call', 'tool_name': name})}\n\n"
+                            yield data
 
         if project_uuid:
             ai_message = Message(

@@ -45,31 +45,31 @@ function initializeDropdown() {
     const dropdownOptions = dropdownContent.querySelectorAll('a[data-value]');
     const customVulnerabilityContainer = document.getElementById('customVulnerabilityContainer');
     const dropdown = document.querySelector('.dropdown');
-    
+
     // Toggle dropdown on button click
-    vulnerabilityDropdown.addEventListener('click', function(e) {
+    vulnerabilityDropdown.addEventListener('click', function (e) {
         e.preventDefault();
         e.stopPropagation();
         dropdown.classList.toggle('show');
     });
-    
+
     // Close dropdown when clicking outside
-    document.addEventListener('click', function(e) {
+    document.addEventListener('click', function (e) {
         if (!dropdown.contains(e.target)) {
             dropdown.classList.remove('show');
         }
     });
-    
+
     dropdownOptions.forEach(option => {
-        option.addEventListener('click', function(e) {
+        option.addEventListener('click', function (e) {
             e.preventDefault();
             e.stopPropagation();
-            
+
             const value = this.getAttribute('data-value');
             const text = this.textContent.trim();
-            
+
             vulnerabilityDropdown.textContent = text;
-            
+
             if (value === 'custom') {
                 // Show custom input and clear the hidden field
                 customVulnerabilityContainer.style.display = 'block';
@@ -82,12 +82,12 @@ function initializeDropdown() {
                 selectedVulnerabilityInput.value = value;
                 customVulnerabilityInput.value = '';
             }
-            
+
             dropdown.classList.remove('show');
         });
     });
-    
-    customVulnerabilityInput.addEventListener('input', function() {
+
+    customVulnerabilityInput.addEventListener('input', function () {
         if (this.value.trim()) {
             selectedVulnerabilityInput.value = this.value.trim();
         } else {
@@ -99,17 +99,17 @@ function initializeDropdown() {
 function validateForm() {
     const name = projectNameInput.value.trim();
     const vulnerabilityLevel = selectedVulnerabilityInput.value.trim() || customVulnerabilityInput.value.trim();
-    
+
     if (!name) {
         alert('El nombre del proyecto es obligatorio');
         return false;
     }
-    
+
     if (!vulnerabilityLevel) {
         alert('Debe seleccionar un grado de vulnerabilidad');
         return false;
     }
-    
+
     return true;
 }
 
@@ -121,51 +121,51 @@ async function uploadFiles(projectUuid) {
             for (let file of dockerfilesInput.files) {
                 dockerfileFormData.append('dockerfiles', file);
             }
-            
+
             const dockerfileResponse = await fetch(`/sql/projects/upload/dockerfiles/${projectUuid}`, {
                 method: 'POST',
                 body: dockerfileFormData
             });
-            
+
             if (!dockerfileResponse.ok) {
                 throw new Error('Error al subir Dockerfiles');
             }
         }
-        
+
         // Upload Docker Compose files
         if (dockerComposeFilesInput.files.length > 0) {
             const composeFormData = new FormData();
             for (let file of dockerComposeFilesInput.files) {
                 composeFormData.append('docker_compose_files', file);
             }
-            
+
             const composeResponse = await fetch(`/sql/projects/upload/docker-compose-files/${projectUuid}`, {
                 method: 'POST',
                 body: composeFormData
             });
-            
+
             if (!composeResponse.ok) {
                 throw new Error('Error al subir archivos Docker Compose');
             }
         }
-        
+
         // Upload Docker images
         if (dockerImagesInput.files.length > 0) {
             const imagesFormData = new FormData();
             for (let file of dockerImagesInput.files) {
                 imagesFormData.append('images', file);
             }
-            
+
             const imagesResponse = await fetch(`/sql/projects/upload/docker-image/${projectUuid}`, {
                 method: 'POST',
                 body: imagesFormData
             });
-            
+
             if (!imagesResponse.ok) {
                 throw new Error('Error al subir imágenes Docker');
             }
         }
-        
+
         return true;
     } catch (error) {
         console.error('Error uploading files:', error);
@@ -297,6 +297,7 @@ async function send_message() {
         const reader = response.body.getReader();
         const decoder = new TextDecoder();
         let full_content = '';
+        let is_in_tool_call = false;
 
         while (true) {
             const { value, done } = await reader.read();
@@ -309,10 +310,15 @@ async function send_message() {
                 if (line.startsWith('data: ')) {
                     try {
                         const data = JSON.parse(line.substring(6));
+                        const content_div = document.getElementById(`content-${response_id}`);
 
                         if (data.done) {
-                            const content_div = document.getElementById(`content-${response_id}`);
                             if (content_div) {
+                                // Remove all tool call indicators
+                                const toolIndicators = content_div.querySelectorAll('.tool-call-indicator');
+                                toolIndicators.forEach(indicator => indicator.remove());
+
+                                // Clean the full content and render final markdown
                                 try {
                                     if (window.marked) {
                                         marked.setOptions({
@@ -320,22 +326,22 @@ async function send_message() {
                                             tables: true,
                                             smartLists: true,
                                         });
-                                        content_div.innerHTML = marked.parse(data.full_content);
+                                        content_div.innerHTML = marked.parse(full_content);
                                     } else {
-                                        content_div.textContent = data.full_content;
+                                        content_div.textContent = full_content;
                                     }
                                 } catch (error) {
                                     console.error('Error parsing markdown:', error);
-                                    content_div.textContent = data.full_content;
+                                    content_div.textContent = full_content;
                                 }
                             }
                             break;
                         }
 
-                        if (data.chunk) {
-                            full_content += data.chunk;
+                        if (data.type === 'text' && data.content) {
+                            full_content += data.content;
+                            is_in_tool_call = false;
 
-                            const content_div = document.getElementById(`content-${response_id}`);
                             if (content_div) {
                                 try {
                                     if (window.marked) {
@@ -346,16 +352,59 @@ async function send_message() {
                                         });
                                         content_div.innerHTML = marked.parse(full_content) + "<span class='typing-cursor'>▋</span>";
                                     } else {
-                                        content_div.textContent = full_content;
+                                        content_div.textContent = full_content + "▋";
                                     }
                                 } catch (error) {
                                     console.error('Error parsing markdown:', error);
-                                    content_div.textContent = full_content;
+                                    content_div.textContent = full_content + "▋";
                                 }
 
                                 chat.scrollTop = chat.scrollHeight;
                             }
                         }
+
+                        if (data.type === 'tool_call' && data.tool_name) {
+                            if (!is_in_tool_call) {
+                                is_in_tool_call = true;
+
+                                if (content_div) {
+                                    // Create tool call indicator
+                                    const tool_indicator = document.createElement('div');
+                                    tool_indicator.className = 'tool-call-indicator mb-2 p-2 rounded';
+                                    tool_indicator.style.cssText = `
+                                        background: rgba(255, 193, 7, 0.1);
+                                        border: 1px solid rgba(255, 193, 7, 0.3);
+                                        color: #856404;
+                                        font-size: 0.9em;
+                                        display: flex;
+                                        align-items: center;
+                                        gap: 8px;
+                                    `;
+
+                                    tool_indicator.innerHTML = `
+                                        <i class="bi bi-tools" style="color: #ffc107;"></i>
+                                        <span>Ejecutando herramienta: <strong>${data.tool_name}</strong></span>
+                                        <div class="spinner-border spinner-border-sm text-warning" role="status" style="width: 16px; height: 16px;">
+                                            <span class="visually-hidden">Loading...</span>
+                                        </div>
+                                    `;
+
+                                    content_div.appendChild(tool_indicator);
+                                    chat.scrollTop = chat.scrollHeight;
+                                }
+                            }
+                        }
+
+                        if (data.type === 'error' && data.content) {
+                            if (content_div) {
+                                const error_div = document.createElement('div');
+                                error_div.className = 'alert alert-danger mt-2';
+                                error_div.innerHTML = `<i class="bi bi-exclamation-triangle"></i> Error: ${data.content}`;
+                                content_div.appendChild(error_div);
+                                chat.scrollTop = chat.scrollHeight;
+                            }
+                        }
+
                     } catch (e) {
                         console.error('Error parsing SSE data:', e, line);
                     }
@@ -433,7 +482,7 @@ async function get_projects() {
             const mobile_clone = mobile_project_template.content.cloneNode(true);
             const mobile_option = mobile_clone.querySelector(".project-option");
             mobile_option.value = project.uuid;
-            
+
             // Apply alternating styles to option text
             if (index % 2 !== 0) {
                 mobile_option.textContent = `🔹 ${project.name}`;
@@ -468,7 +517,7 @@ async function get_projects() {
                 load_project(selected_uuid);
                 // Show action buttons when a project is selected
                 mobileProjectActions.style.display = 'flex';
-                
+
                 // Update current project reference
                 currentProject = projects.find(p => p.uuid === selected_uuid);
             } else {
@@ -511,24 +560,24 @@ function showCreateProjectModal() {
     projectUuidInput.value = '';
     projectNameInput.value = '';
     projectDescriptionInput.value = '';
-    
+
     // Reset dropdown and custom vulnerability
     vulnerabilityDropdown.textContent = 'Elegir';
     selectedVulnerabilityInput.value = '';
     customVulnerabilityInput.value = '';
     document.getElementById('customVulnerabilityContainer').style.display = 'none';
-    
+
     // Reset file inputs
     dockerfilesInput.value = '';
     dockerComposeFilesInput.value = '';
     dockerImagesInput.value = '';
-    
+
     fileUploadSection.style.display = 'block';
-    
+
     dockerfilesInput.required = false;
     dockerComposeFilesInput.required = false;
     dockerImagesInput.required = false;
-    
+
     projectModal.show();
 }
 
@@ -538,7 +587,7 @@ function showEditProjectModal(project) {
     projectUuidInput.value = project.uuid;
     projectNameInput.value = project.name;
     projectDescriptionInput.value = project.description || '';
-    
+
     const existingVulnerability = project.vulnerability_level || '';
     if (existingVulnerability) {
         const predefinedValues = {
@@ -546,7 +595,7 @@ function showEditProjectModal(project) {
             'severe': 'Grado de vulnerabilidad severa (6-7)',
             'mild': 'Grado de vulnerabilidad leve o medio (1-5)'
         };
-        
+
         if (predefinedValues[existingVulnerability]) {
             vulnerabilityDropdown.textContent = predefinedValues[existingVulnerability];
             selectedVulnerabilityInput.value = existingVulnerability;
@@ -564,17 +613,17 @@ function showEditProjectModal(project) {
         customVulnerabilityInput.value = '';
         document.getElementById('customVulnerabilityContainer').style.display = 'none';
     }
-    
+
     dockerfilesInput.value = '';
     dockerComposeFilesInput.value = '';
     dockerImagesInput.value = '';
-    
+
     fileUploadSection.style.display = 'block';
-    
+
     dockerfilesInput.required = false;
     dockerComposeFilesInput.required = false;
     dockerImagesInput.required = false;
-    
+
     projectModal.show();
 }
 
@@ -582,9 +631,9 @@ async function saveProject() {
     if (!validateForm()) {
         return;
     }
-    
+
     setSaveButtonLoading(true);
-    
+
     const name = projectNameInput.value.trim();
     const description = projectDescriptionInput.value.trim();
     const vulnerabilityLevel = selectedVulnerabilityInput.value.trim() || customVulnerabilityInput.value.trim();
@@ -627,39 +676,39 @@ async function saveProject() {
         }
 
         data = await response.json();
-        
+
         // Upload files if any are selected (for both create and edit modes)
-        const hasFiles = dockerfilesInput.files.length > 0 || 
-                         dockerComposeFilesInput.files.length > 0 || 
-                         dockerImagesInput.files.length > 0;
-        
+        const hasFiles = dockerfilesInput.files.length > 0 ||
+            dockerComposeFilesInput.files.length > 0 ||
+            dockerImagesInput.files.length > 0;
+
         if (hasFiles) {
             try {
                 const projectUuid = isEditMode ? uuid : data.uuid;
                 await uploadFiles(projectUuid);
             } catch (uploadError) {
-                const message = isEditMode ? 
+                const message = isEditMode ?
                     'Proyecto actualizado, pero hubo un error al subir algunos archivos: ' + uploadError.message :
                     'Proyecto creado, pero hubo un error al subir algunos archivos: ' + uploadError.message;
-                
+
                 show_warning(message + ' Puedes intentar subir los archivos editando el proyecto.');
                 projectModal.hide();
                 await get_projects();
-                
+
                 if (!isEditMode) {
                     load_project(data.uuid);
                 }
                 return;
             }
         }
-        
+
         projectModal.hide();
         await get_projects();
-        
+
         if (!isEditMode) {
             load_project(data.uuid);
         }
-        
+
     } catch (error) {
         console.error('Error saving project:', error);
         show_warning("Error al guardar el proyecto: " + error.message);
