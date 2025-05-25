@@ -40,13 +40,20 @@
 
 .chat-input {
     margin-top: auto;
-    position: sticky;
+    position: relative;
     bottom: 0;
+    flex-shrink: 0;
 }
 
 .input-container {
     background-color: whitesmoke;
     border: 1px solid lightgray;
+    box-sizing: border-box;
+    min-height: fit-content;
+    margin: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    flex-shrink: 0;
 }
 
 /* Project actions styling */
