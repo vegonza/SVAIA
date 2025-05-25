@@ -44,24 +44,135 @@ let current_project_uuid = null;
 let isEditMode = false;
 let mobile_project_list = document.getElementById("mobile-project-list");
 
-// Initialize mermaid with more robust configuration
+// Initialize mermaid with beautiful configuration
 if (window.mermaid) {
     mermaid.initialize({
         startOnLoad: false,
-        theme: 'default',
+        theme: 'base',
         securityLevel: 'loose',
-        fontFamily: 'trebuchet ms, verdana, arial, sans-serif',
+        fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
         logLevel: 'error',
+        themeVariables: {
+            // Enhanced color palette
+            primaryColor: '#4f46e5',
+            primaryTextColor: '#1f2937',
+            primaryBorderColor: '#6366f1',
+            lineColor: '#6b7280',
+            secondaryColor: '#f3f4f6',
+            tertiaryColor: '#e5e7eb',
+            background: '#ffffff',
+            mainBkg: '#ffffff',
+            secondBkg: '#f8fafc',
+            tertiaryBkg: '#f1f5f9'
+        },
         flowchart: {
             htmlLabels: true,
-            curve: 'linear',
+            curve: 'basis',
             useMaxWidth: false,
-            diagramPadding: 8
+            diagramPadding: 20,
+            nodeSpacing: 50,
+            rankSpacing: 80,
+            padding: 15
         },
         er: { useMaxWidth: false },
         sequence: { useMaxWidth: false, wrap: true, diagramMarginX: 50, diagramMarginY: 10 },
         gantt: { useMaxWidth: false }
     });
+}
+
+// Add beautiful CSS animations for mermaid diagrams
+function addMermaidAnimations() {
+    if (document.getElementById('mermaid-animations')) return;
+
+    const style = document.createElement('style');
+    style.id = 'mermaid-animations';
+    style.textContent = `
+        @keyframes fadeInScale {
+            0% {
+                opacity: 0;
+                transform: scale(0.9) translateY(10px);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .beautiful-mermaid {
+            margin: 20px 0;
+            border-radius: 16px;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .mermaid-diagram svg {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .mermaid-diagram:hover svg {
+            cursor: pointer;
+        }
+
+        /* Enhanced subgraph styling */
+        .beautiful-mermaid svg g.cluster rect {
+            fill: rgba(248, 250, 252, 0.8) !important;
+            stroke: #e2e8f0 !important;
+            stroke-width: 2px !important;
+            rx: 8 !important;
+            ry: 8 !important;
+            filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.05)) !important;
+        }
+
+        .beautiful-mermaid svg g.cluster text {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+            font-weight: 700 !important;
+            font-size: 16px !important;
+            fill: #374151 !important;
+        }
+
+        /* Modal animations */
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        @keyframes fadeOut {
+            0% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        @keyframes modalSlideIn {
+            0% { 
+                opacity: 0;
+                transform: scale(0.8) translateY(50px);
+            }
+            100% { 
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        @keyframes modalSlideOut {
+            0% { 
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+            100% { 
+                opacity: 0;
+                transform: scale(0.8) translateY(50px);
+            }
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .beautiful-mermaid svg {
+                max-width: 100%;
+                height: auto;
+            }
+        }
+    `;
+    document.head.appendChild(style);
 }
 
 // Initialize dropdown functionality
@@ -314,6 +425,292 @@ function fixMermaidSyntax(content) {
     return fixed;
 }
 
+/**
+ * Enhances the rendered mermaid diagram with beautiful styling
+ */
+function enhanceMermaidDiagram(container) {
+    const svg = container.querySelector('svg');
+    if (!svg) return;
+
+    // Add beautiful styling to the SVG
+    svg.style.cssText += `
+        border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1), 0 6px 10px rgba(0, 0, 0, 0.05);
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        border: 1px solid #e2e8f0;
+        padding: 20px;
+        margin: 20px 0;
+        max-width: 100%;
+        transition: all 0.3s ease;
+    `;
+
+    // Add hover effect
+    svg.addEventListener('mouseenter', () => {
+        svg.style.transform = 'scale(1.02)';
+        svg.style.boxShadow = '0 20px 40px rgba(0, 0, 0, 0.15), 0 10px 20px rgba(0, 0, 0, 0.1)';
+    });
+
+    svg.addEventListener('mouseleave', () => {
+        svg.style.transform = 'scale(1)';
+        svg.style.boxShadow = '0 10px 25px rgba(0, 0, 0, 0.1), 0 6px 10px rgba(0, 0, 0, 0.05)';
+    });
+
+    // Enhanced node styling based on classes
+    const nodes = svg.querySelectorAll('g.node');
+    nodes.forEach(node => {
+        const rect = node.querySelector('rect, polygon, circle, ellipse');
+        if (rect) {
+            // Add gradient backgrounds and better borders
+            const classList = node.getAttribute('class') || '';
+
+            if (classList.includes('exposed_port')) {
+                rect.style.fill = 'url(#portGradient)';
+                rect.style.stroke = '#8b5cf6';
+                rect.style.strokeWidth = '2px';
+                rect.style.filter = 'drop-shadow(0 2px 4px rgba(139, 92, 246, 0.2))';
+            } else if (classList.includes('network')) {
+                rect.style.fill = 'url(#networkGradient)';
+                rect.style.stroke = '#f59e0b';
+                rect.style.strokeWidth = '2px';
+                rect.style.filter = 'drop-shadow(0 2px 4px rgba(245, 158, 11, 0.2))';
+            } else {
+                // Default service styling
+                rect.style.fill = 'url(#serviceGradient)';
+                rect.style.stroke = '#3b82f6';
+                rect.style.strokeWidth = '2px';
+                rect.style.filter = 'drop-shadow(0 2px 4px rgba(59, 130, 246, 0.2))';
+            }
+        }
+
+        // Enhanced text styling
+        const text = node.querySelector('text');
+        if (text) {
+            text.style.fontFamily = 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+            text.style.fontWeight = '600';
+            text.style.fontSize = '14px';
+        }
+    });
+
+    // Add beautiful gradients
+    addGradientDefinitions(svg);
+
+    // Enhanced edge styling
+    const edges = svg.querySelectorAll('g.edgePath path');
+    edges.forEach(edge => {
+        edge.style.stroke = '#6b7280';
+        edge.style.strokeWidth = '2px';
+        edge.style.filter = 'drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1))';
+    });
+
+    // Enhanced arrowheads
+    const markers = svg.querySelectorAll('marker polygon');
+    markers.forEach(marker => {
+        marker.style.fill = '#6b7280';
+        marker.style.filter = 'drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1))';
+    });
+
+    // Add subtle animation to the entire diagram
+    svg.style.animation = 'fadeInScale 0.6s ease-out';
+
+    // Add click functionality to expand/view diagram
+    container.addEventListener('click', (e) => {
+        e.preventDefault();
+        openMermaidModal(svg, container);
+    });
+
+    // Add visual feedback for clickability
+    container.style.cursor = 'pointer';
+    container.title = 'Click to view diagram in full screen';
+}
+
+/**
+ * Opens a modal to display the mermaid diagram in full screen
+ */
+function openMermaidModal(svg, container) {
+    // Create modal overlay
+    const modal = document.createElement('div');
+    modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(8px);
+        z-index: 10000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        box-sizing: border-box;
+        animation: fadeIn 0.3s ease-out;
+    `;
+
+    // Create modal content container
+    const modalContent = document.createElement('div');
+    modalContent.style.cssText = `
+        background: white;
+        border-radius: 16px;
+        padding: 30px;
+        max-width: 95vw;
+        max-height: 95vh;
+        overflow: auto;
+        position: relative;
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+        animation: modalSlideIn 0.3s ease-out;
+    `;
+
+    // Create close button
+    const closeButton = document.createElement('button');
+    closeButton.innerHTML = '✕';
+    closeButton.style.cssText = `
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: #f3f4f6;
+        border: none;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+        font-weight: bold;
+        cursor: pointer;
+        color: #6b7280;
+        transition: all 0.2s ease;
+        z-index: 1;
+    `;
+
+    closeButton.addEventListener('mouseenter', () => {
+        closeButton.style.background = '#ef4444';
+        closeButton.style.color = 'white';
+        closeButton.style.transform = 'scale(1.1)';
+    });
+
+    closeButton.addEventListener('mouseleave', () => {
+        closeButton.style.background = '#f3f4f6';
+        closeButton.style.color = '#6b7280';
+        closeButton.style.transform = 'scale(1)';
+    });
+
+    // Clone the SVG for the modal
+    const clonedSvg = svg.cloneNode(true);
+    clonedSvg.style.cssText = `
+        max-width: 100%;
+        max-height: calc(95vh - 100px);
+        width: auto;
+        height: auto;
+        border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        border: 1px solid #e2e8f0;
+    `;
+
+    // Add title
+    const title = document.createElement('h3');
+    title.textContent = 'Docker Architecture Diagram';
+    title.style.cssText = `
+        margin: 0 0 20px 0;
+        color: #1f2937;
+        font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        font-size: 24px;
+        font-weight: 700;
+        text-align: center;
+        padding-right: 50px;
+    `;
+
+    // Assemble modal
+    modalContent.appendChild(closeButton);
+    modalContent.appendChild(title);
+    modalContent.appendChild(clonedSvg);
+    modal.appendChild(modalContent);
+
+    // Close modal functionality
+    const closeModal = () => {
+        modal.style.animation = 'fadeOut 0.3s ease-out';
+        modalContent.style.animation = 'modalSlideOut 0.3s ease-out';
+        setTimeout(() => {
+            if (modal.parentNode) {
+                modal.parentNode.removeChild(modal);
+            }
+        }, 300);
+    };
+
+    closeButton.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            closeModal();
+        }
+    });
+
+    // Close on Escape key
+    const handleEscape = (e) => {
+        if (e.key === 'Escape') {
+            closeModal();
+            document.removeEventListener('keydown', handleEscape);
+        }
+    };
+    document.addEventListener('keydown', handleEscape);
+
+    // Add modal to page
+    document.body.appendChild(modal);
+}
+
+/**
+ * Adds gradient definitions to the SVG for beautiful backgrounds
+ */
+function addGradientDefinitions(svg) {
+    let defs = svg.querySelector('defs');
+    if (!defs) {
+        defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+        svg.insertBefore(defs, svg.firstChild);
+    }
+
+    const gradients = [
+        {
+            id: 'serviceGradient',
+            colors: [
+                { offset: '0%', color: '#dbeafe', opacity: '1' },
+                { offset: '100%', color: '#bfdbfe', opacity: '1' }
+            ]
+        },
+        {
+            id: 'portGradient',
+            colors: [
+                { offset: '0%', color: '#f3e8ff', opacity: '1' },
+                { offset: '100%', color: '#e9d5ff', opacity: '1' }
+            ]
+        },
+        {
+            id: 'networkGradient',
+            colors: [
+                { offset: '0%', color: '#fef3c7', opacity: '1' },
+                { offset: '100%', color: '#fde68a', opacity: '1' }
+            ]
+        }
+    ];
+
+    gradients.forEach(gradientData => {
+        if (!svg.querySelector(`#${gradientData.id}`)) {
+            const gradient = document.createElementNS('http://www.w3.org/2000/svg', 'linearGradient');
+            gradient.setAttribute('id', gradientData.id);
+            gradient.setAttribute('x1', '0%');
+            gradient.setAttribute('y1', '0%');
+            gradient.setAttribute('x2', '100%');
+            gradient.setAttribute('y2', '100%');
+
+            gradientData.colors.forEach(colorData => {
+                const stop = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+                stop.setAttribute('offset', colorData.offset);
+                stop.setAttribute('stop-color', colorData.color);
+                stop.setAttribute('stop-opacity', colorData.opacity);
+                gradient.appendChild(stop);
+            });
+
+            defs.appendChild(gradient);
+        }
+    });
+}
+
 function render_mermaid_diagrams(container) {
     if (!window.mermaid) return;
 
@@ -338,7 +735,7 @@ function render_mermaid_diagrams(container) {
                 // Create container for the mermaid diagram
                 const diagramDiv = document.createElement('div');
                 diagramDiv.id = diagramId;
-                diagramDiv.className = 'mermaid-diagram';
+                diagramDiv.className = 'mermaid-diagram beautiful-mermaid';
 
                 // Replace the code block with the diagram
                 const preElement = codeBlock.closest('pre');
@@ -389,6 +786,7 @@ function render_mermaid_diagrams(container) {
                                 mermaid.render(diagramId + '-svg', contentToRender)
                                     .then(({ svg }) => {
                                         diagramDiv.innerHTML = svg;
+                                        enhanceMermaidDiagram(diagramDiv);
                                         console.log('Successfully rendered mermaid diagram');
                                         resolveRender();
                                     })
@@ -869,7 +1267,7 @@ function showEditProjectModal(project) {
     projectNameInput.value = project.name;
     projectDescriptionInput.value = project.description || '';
 
-    const existingVulnerability = project.vulnerability_level || '';
+    const existingVulnerability = project.max_vulnerability_level || '';
     if (existingVulnerability) {
         const predefinedValues = {
             'critical': 'Grado de vulnerabilidad crítico (8-10)',
@@ -1276,6 +1674,7 @@ new_chat_btn.addEventListener("click", () => {
 saveProjectBtn.addEventListener('click', saveProject);
 
 document.addEventListener("DOMContentLoaded", function () {
+    addMermaidAnimations();
     initializeDropdown();
     get_projects();
     check_url_for_project();
