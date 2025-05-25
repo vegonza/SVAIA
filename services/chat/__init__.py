@@ -42,4 +42,10 @@ def completion():
 
     db.session.commit()
 
-    return get_response(message, [], [], [], project_uuid)
+    history = Message.query.filter_by(project_uuid=project_uuid).order_by(Message.timestamp).all()
+   
+    history_dicts = [{"role": "user" if msg.is_user else "assistant", "content": msg.content} for msg in history]
+
+    
+    return get_response(message, "", history_dicts, [], project_uuid)
+
