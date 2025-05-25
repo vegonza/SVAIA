@@ -1267,9 +1267,9 @@ function showEditProjectModal(project) {
     const existingVulnerability = project.max_vulnerability_level || '';
     if (existingVulnerability) {
         const predefinedValues = {
-            'critical': 'Grado de vulnerabilidad crítico (8-10)',
-            'severe': 'Grado de vulnerabilidad severa (6-7)',
-            'mild': 'Grado de vulnerabilidad leve o medio (1-5)'
+            'critical': 'Grado de vulnerabilidad crítico',
+            'severe': 'Grado de vulnerabilidad severa',
+            'mild': 'Grado de vulnerabilidad leve o medio'
         };
 
         if (predefinedValues[existingVulnerability]) {
