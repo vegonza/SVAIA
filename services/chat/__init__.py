@@ -61,7 +61,7 @@ def init_project():
             content=sbom.content
         ))
 
-    return get_mermaid_response(archivos, project_uuid, error_info)
+    return get_mermaid_response(archivos, project_uuid)
 
 
 @chat_bp.route("/completion", methods=["POST"])
