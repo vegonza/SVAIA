@@ -54,6 +54,9 @@ def create_project():
         name=request.json['name'],
         description=request.json.get('description', ''),
         vulnerability_level=request.json.get('vulnerability_level', ''),
+        total_vulnerabilities_criteria=request.json.get('total_vulnerabilities_criteria'),
+        solvability_criteria=request.json.get('solvability_criteria'),
+        max_vulnerability_level=request.json.get('max_vulnerability_level'),
         user_id=current_user.id
     )
     db.session.add(project)
@@ -100,6 +103,12 @@ def update_project(uuid):
         project.description = data['description']
     if 'vulnerability_level' in data:
         project.vulnerability_level = data['vulnerability_level']
+    if 'total_vulnerabilities_criteria' in data:
+        project.total_vulnerabilities_criteria = data['total_vulnerabilities_criteria']
+    if 'solvability_criteria' in data:
+        project.solvability_criteria = data['solvability_criteria']
+    if 'max_vulnerability_level' in data:
+        project.max_vulnerability_level = data['max_vulnerability_level']
 
     project.updated_at = datetime.utcnow()
     db.session.commit()

@@ -70,14 +70,53 @@ sbom = {
 }
 
 
-def get_response(message: str, requisitos: str, history: list[ChatMessage], archivos: list[File], project_uuid: Optional[str]):
+def get_response(message: str, user_name: str, history: list[ChatMessage], archivos: list[File], project_uuid: Optional[str], project_name: str, project_description: str, requisitos: str):
     archivos_str = FilesFormat(archivos)
+    
+    # Extraer criterios de aceptabilidad de requisitos
+    criteria_lines = requisitos.split('\n')
+    solvability_criteria = ""
+    max_vulnerability_level = ""
+    total_vulnerabilities_criteria = ""
+    
+    for line in criteria_lines:
+        if line.startswith("project_solvability_criteria:"):
+            solvability_criteria = line.replace("project_solvability_criteria:", "").strip()
+        elif line.startswith("project_max_vulnerability_level:"):
+            max_vulnerability_level = line.replace("project_max_vulnerability_level:", "").strip()
+        elif line.startswith("project_total_vulnerabilities_criteria:"):
+            total_vulnerabilities_criteria = line.replace("project_total_vulnerabilities_criteria:", "").strip()
+    
+    # Manejar valores nulos o vacíos con mensajes amigables
+    if not solvability_criteria or solvability_criteria == "None":
+        solvability_criteria = "No especificado"
+    if not max_vulnerability_level or max_vulnerability_level == "None":
+        max_vulnerability_level = "No especificado"
+    if not total_vulnerabilities_criteria or total_vulnerabilities_criteria == "None":
+        total_vulnerabilities_criteria = "No especificado"
+    
+    # Traducir los criterios de solvability a textos más descriptivos
+    if solvability_criteria == "solvable":
+        solvability_criteria = "Solo vulnerabilidades solucionables"
+    elif solvability_criteria == "non_solvable":
+        solvability_criteria = "Permitir vulnerabilidades no solucionables"
+    elif solvability_criteria == "any":
+        solvability_criteria = "Sin restricciones de solucionabilidad"
+    
     stream = client.run_and_stream(
         agent=cve_agent,
         messages=[
             {
                 "role": "system",
-                "content": SYSTEM_MESSAGE.format(requisitos=requisitos, archivos=archivos_str)
+                "content": SYSTEM_MESSAGE.format(
+                    project_name=project_name,
+                    project_description=project_description,
+                    max_vulnerability_level=max_vulnerability_level,
+                    total_vulnerabilities_criteria=total_vulnerabilities_criteria,
+                    solvability_criteria=solvability_criteria,
+                    requisitos=requisitos,
+                    archivos=archivos_str
+                )
             },
             *history,
             {

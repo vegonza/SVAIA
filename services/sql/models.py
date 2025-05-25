@@ -12,6 +12,9 @@ class Project(db.Model):
     name: Mapped[str] = mapped_column(db.String(50), nullable=False)
     description: Mapped[str] = mapped_column(db.Text, nullable=True)
     vulnerability_level: Mapped[str] = mapped_column(db.Text, nullable=True)
+    total_vulnerabilities_criteria: Mapped[int] = mapped_column(db.Integer, nullable=True)
+    solvability_criteria: Mapped[str] = mapped_column(db.String(20), nullable=True)
+    max_vulnerability_level: Mapped[str] = mapped_column(db.Text, nullable=True)
     user_id: Mapped[int] = mapped_column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     created_at: Mapped[datetime] = mapped_column(db.DateTime, default=datetime.utcnow)
     updated_at: Mapped[datetime] = mapped_column(db.DateTime, default=datetime.utcnow)
@@ -26,6 +29,9 @@ class Project(db.Model):
             'name': self.name,
             'description': self.description,
             'vulnerability_level': self.vulnerability_level,
+            'total_vulnerabilities_criteria': self.total_vulnerabilities_criteria,
+            'solvability_criteria': self.solvability_criteria,
+            'max_vulnerability_level': self.max_vulnerability_level,
             'user_id': self.user_id,
             'created_at': self.created_at.isoformat(),
             'updated_at': self.updated_at.isoformat()

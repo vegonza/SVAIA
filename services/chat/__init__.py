@@ -46,6 +46,16 @@ def completion():
    
     history_dicts = [{"role": "user" if msg.is_user else "assistant", "content": msg.content} for msg in history]
 
-    
-    return get_response(message, "", history_dicts, [], project_uuid)
+    requirements = f"project_solvability_criteria: {project.solvability_criteria}\nproject_max_vulnerability_level: {project.max_vulnerability_level}\nproject_total_vulnerabilities_criteria: {project.total_vulnerabilities_criteria}"
+
+    return get_response(
+        message=message,
+        user_name="",
+        history=history_dicts,
+        archivos=[],
+        project_uuid=project_uuid,
+        project_name=project.name,
+        project_description=project.description,
+        requisitos=requirements
+    )
 

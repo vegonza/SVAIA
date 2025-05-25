@@ -22,76 +22,119 @@ const vulnerabilityDropdown = document.getElementById('vulnerabilityDropdown');
 const selectedVulnerabilityInput = document.getElementById('selectedVulnerability');
 const customVulnerabilityInput = document.getElementById('customVulnerability');
 
+const totalVulnerabilitiesInput = document.getElementById('totalVulnerabilities');
+const solvabilityDropdown = document.getElementById('solvabilityDropdown');
+const selectedSolvabilityInput = document.getElementById('selectedSolvability');
+
 const fileUploadSection = document.getElementById('fileUploadSection');
 
 function initializeDropdown() {
-    if (!vulnerabilityDropdown) return;
-    
-    const dropdownContent = document.querySelector('.dropdown-content');
-    if (!dropdownContent) return;
-    
-    const dropdownOptions = dropdownContent.querySelectorAll('a[data-value]');
-    const customVulnerabilityContainer = document.getElementById('customVulnerabilityContainer');
-    const dropdown = document.querySelector('.dropdown');
-    
-    vulnerabilityDropdown.addEventListener('click', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        if (dropdown) {
-            dropdown.classList.toggle('show');
-        }
-    });
-    
-    document.addEventListener('click', function(e) {
-        if (dropdown && !dropdown.contains(e.target)) {
-            dropdown.classList.remove('show');
-        }
-    });
-    
-    dropdownOptions.forEach(option => {
-        option.addEventListener('click', function(e) {
+    // Initialize vulnerability dropdown
+    if (vulnerabilityDropdown) {
+        const vulnerabilityDropdownContent = document.querySelector('#vulnerabilityLevelSection .dropdown-content');
+        if (!vulnerabilityDropdownContent) return;
+        
+        const vulnerabilityDropdownOptions = vulnerabilityDropdownContent.querySelectorAll('a[data-value]');
+        const customVulnerabilityContainer = document.getElementById('customVulnerabilityContainer');
+        const vulnerabilityDropdownContainer = document.querySelector('#vulnerabilityLevelSection .dropdown');
+        
+        vulnerabilityDropdown.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
-            
-            const value = this.getAttribute('data-value');
-            const text = this.textContent.trim();
-            
-            vulnerabilityDropdown.textContent = text;
-            
-            if (value === 'custom') {
-                if (customVulnerabilityContainer) {
-                    customVulnerabilityContainer.style.display = 'block';
-                }
-                selectedVulnerabilityInput.value = '';
-                if (customVulnerabilityInput) {
-                    customVulnerabilityInput.value = '';
-                    customVulnerabilityInput.focus();
-                }
-            } else {
-                if (customVulnerabilityContainer) {
-                    customVulnerabilityContainer.style.display = 'none';
-                }
-                selectedVulnerabilityInput.value = value;
-                if (customVulnerabilityInput) {
-                    customVulnerabilityInput.value = '';
-                }
+            if (vulnerabilityDropdownContainer) {
+                vulnerabilityDropdownContainer.classList.toggle('show');
             }
-            
-            if (dropdown) {
+        });
+        
+        vulnerabilityDropdownOptions.forEach(option => {
+            option.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const value = this.getAttribute('data-value');
+                const text = this.textContent.trim();
+                
+                vulnerabilityDropdown.textContent = text;
+                
+                if (value === 'custom') {
+                    if (customVulnerabilityContainer) {
+                        customVulnerabilityContainer.style.display = 'block';
+                    }
+                    selectedVulnerabilityInput.value = '';
+                    if (customVulnerabilityInput) {
+                        customVulnerabilityInput.value = '';
+                        customVulnerabilityInput.focus();
+                    }
+                } else {
+                    if (customVulnerabilityContainer) {
+                        customVulnerabilityContainer.style.display = 'none';
+                    }
+                    selectedVulnerabilityInput.value = value;
+                    if (customVulnerabilityInput) {
+                        customVulnerabilityInput.value = '';
+                    }
+                }
+                
+                if (vulnerabilityDropdownContainer) {
+                    vulnerabilityDropdownContainer.classList.remove('show');
+                }
+            });
+        });
+        
+        if (customVulnerabilityInput) {
+            customVulnerabilityInput.addEventListener('input', function() {
+                if (this.value.trim()) {
+                    selectedVulnerabilityInput.value = this.value.trim();
+                } else {
+                    selectedVulnerabilityInput.value = '';
+                }
+            });
+        }
+    }
+    
+    // Initialize solvability dropdown
+    if (solvabilityDropdown) {
+        const solvabilityDropdownContent = document.querySelector('#solvabilityCriteriaSection .dropdown-content');
+        if (!solvabilityDropdownContent) return;
+        
+        const solvabilityDropdownOptions = solvabilityDropdownContent.querySelectorAll('a[data-value]');
+        const solvabilityDropdownContainer = document.querySelector('#solvabilityCriteriaSection .dropdown');
+        
+        solvabilityDropdown.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            if (solvabilityDropdownContainer) {
+                solvabilityDropdownContainer.classList.toggle('show');
+            }
+        });
+        
+        solvabilityDropdownOptions.forEach(option => {
+            option.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const value = this.getAttribute('data-value');
+                const text = this.textContent.trim();
+                
+                solvabilityDropdown.textContent = text;
+                selectedSolvabilityInput.value = value;
+                
+                if (solvabilityDropdownContainer) {
+                    solvabilityDropdownContainer.classList.remove('show');
+                }
+            });
+        });
+    }
+    
+    // Close all dropdowns when clicking outside
+    document.addEventListener('click', function(e) {
+        const dropdowns = document.querySelectorAll('.dropdown');
+        dropdowns.forEach(dropdown => {
+            if (!dropdown.contains(e.target)) {
                 dropdown.classList.remove('show');
             }
         });
     });
-    
-    if (customVulnerabilityInput) {
-        customVulnerabilityInput.addEventListener('input', function() {
-            if (this.value.trim()) {
-                selectedVulnerabilityInput.value = this.value.trim();
-            } else {
-                selectedVulnerabilityInput.value = '';
-            }
-        });
-    }
 }
 
 function createAlert(message, category = 'danger') {
@@ -241,6 +284,34 @@ function showEditProjectModal(project) {
         }
     }
     
+    // Load total vulnerabilities criteria
+    if (totalVulnerabilitiesInput) {
+        totalVulnerabilitiesInput.value = project.total_vulnerabilities_criteria || '';
+    }
+    
+    // Load solvability criteria
+    const existingSolvability = project.solvability_criteria || '';
+    if (existingSolvability && solvabilityDropdown) {
+        const solvabilityValues = {
+            'solvable': 'Solo vulnerabilidades solucionables',
+            'non_solvable': 'Permitir vulnerabilidades no solucionables',
+            'any': 'Sin restricciones'
+        };
+        
+        if (solvabilityValues[existingSolvability]) {
+            solvabilityDropdown.textContent = solvabilityValues[existingSolvability];
+            selectedSolvabilityInput.value = existingSolvability;
+        } else {
+            solvabilityDropdown.textContent = 'Elegir';
+            selectedSolvabilityInput.value = '';
+        }
+    } else {
+        if (solvabilityDropdown) {
+            solvabilityDropdown.textContent = 'Elegir';
+            selectedSolvabilityInput.value = '';
+        }
+    }
+    
     const dockerfilesInput = document.getElementById('dockerfiles');
     const dockerComposeFilesInput = document.getElementById('dockerComposeFiles');
     const dockerImagesInput = document.getElementById('dockerImages');
@@ -332,6 +403,13 @@ async function saveProject() {
 
     const description = projectDescriptionInput.value.trim();
     const uuid = projectUuidInput.value;
+    
+    // Get the total vulnerabilities value
+    const totalVulnerabilities = totalVulnerabilitiesInput && totalVulnerabilitiesInput.value.trim() ? 
+        parseInt(totalVulnerabilitiesInput.value.trim()) : null;
+    
+    // Get the solvability criteria
+    const solvabilityCriteria = selectedSolvabilityInput ? selectedSolvabilityInput.value.trim() : '';
 
     try {
         const requestBody = {
@@ -342,6 +420,16 @@ async function saveProject() {
         // Only include vulnerability level if it's set
         if (vulnerabilityLevel) {
             requestBody.vulnerability_level = vulnerabilityLevel;
+        }
+        
+        // Include total vulnerabilities criteria if set
+        if (totalVulnerabilities !== null) {
+            requestBody.total_vulnerabilities_criteria = totalVulnerabilities;
+        }
+        
+        // Include solvability criteria if set
+        if (solvabilityCriteria) {
+            requestBody.solvability_criteria = solvabilityCriteria;
         }
         
         const response = await fetch(`/sql/projects/${uuid}`, {

@@ -16,9 +16,12 @@
                         <label for="projectDescription" class="form-label">Descripción</label>
                         <textarea class="form-control" id="projectDescription" rows="3"></textarea>
                     </div>
+                    
+                    <h6 class="mb-3">Criterios de Aceptabilidad</h6>
+                    
                     <div class="mb-3">
-                        <label for="projectStartDate" class="form-label">Grado de vulnerabilidad máximo permitido <span class="text-danger">*</span></label>
-                        <div class="dropdown-contenedor">
+                        <label for="vulnerabilityLevelSection" class="form-label">Nivel máximo de vulnerabilidad permitido <span class="text-danger">*</span></label>
+                        <div class="dropdown-contenedor" id="vulnerabilityLevelSection">
                             <div class="dropdown">
                             <button type="button" class="dropdown-button" id="vulnerabilityDropdown">Elegir</button>
                                 <div class="dropdown-content">
@@ -33,6 +36,31 @@
                             <input type="text" class="form-control" id="customVulnerability" placeholder="Especifica tu propio nivel de vulnerabilidad">
                         </div>
                         <input type="hidden" id="selectedVulnerability" name="vulnerabilityLevel">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="totalVulnerabilitiesSection" class="form-label">Número total máximo de vulnerabilidades</label>
+                        <div class="input-group">
+                            <input type="number" class="form-control" id="totalVulnerabilities" min="0" placeholder="Introduce un número">
+                            <div class="input-group-append">
+                                <span class="input-group-text">vulnerabilidades</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="solvabilityCriteriaSection" class="form-label">Criterio de solucionabilidad</label>
+                        <div class="dropdown-contenedor" id="solvabilityCriteriaSection">
+                            <div class="dropdown">
+                                <button type="button" class="dropdown-button" id="solvabilityDropdown">Elegir</button>
+                                <div class="dropdown-content">
+                                    <a href="#" data-value="solvable">Solo vulnerabilidades solucionables</a>
+                                    <a href="#" data-value="non_solvable">Permitir vulnerabilidades no solucionables</a>
+                                    <a href="#" data-value="any">Sin restricciones</a>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" id="selectedSolvability" name="solvabilityCriteria">
                     </div>
                     
                     <!-- File Upload Section -->
