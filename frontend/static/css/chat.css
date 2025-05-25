@@ -70,6 +70,31 @@
     color: white !important;
 }
 
+/* Mermaid diagram styles */
+.mermaid-diagram {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    margin: 15px 0;
+    border: 1px solid #e0e0e0;
+    overflow-x: auto;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.mermaid-diagram svg {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+
+/* Ensure mermaid diagrams work well in dark message backgrounds */
+.bg-secondary .mermaid-diagram {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+}
+
 /* Markdown styles for chat messages */
 .message-content {
     line-height: 1.5;

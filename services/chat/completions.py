@@ -10,8 +10,7 @@ from swarm import Swarm
 
 from services.sql.models import Message, Project, db
 
-from .agent_manager import cve_agent
-from .prompts import SYSTEM_MESSAGE, FilesFormat
+from .agent_manager import cve_agent, mermaid_agent
 from .types import ChatMessage, File
 
 load_dotenv(find_dotenv())
@@ -70,15 +69,55 @@ sbom = {
 }
 
 
+def generate(stream, project_uuid: Optional[str]):
+    collected_content = ""
+    already_calling = False
+    for chunk in stream:
+        content = chunk.get('content')
+        error = chunk.get('error')
+        if error:
+            data = f"data: {json.dumps({'type': 'error', 'content': error})}\n\n"
+            yield data
+
+        if content:
+            already_calling = False
+            data = f"data: {json.dumps({'type': 'text', 'content': content})}\n\n"
+            collected_content += content
+            yield data
+
+        tools = chunk.get('tool_calls')
+        if tools:
+            for tool in tools:
+                function = tool.get('function', {})
+                if name := function.get("name"):
+                    if not already_calling:
+                        already_calling = True
+                        data = f"data: {json.dumps({'type': 'tool_call', 'tool_name': name})}\n\n"
+                        yield data
+
+    if project_uuid:
+        ai_message = Message(
+            content=collected_content,
+            is_user=False,
+            project_uuid=project_uuid
+        )
+        db.session.add(ai_message)
+
+        project: Project = Project.query.filter_by(uuid=project_uuid).first()
+        if project:
+            project.updated_at = datetime.utcnow()
+
+        db.session.commit()
+
+    yield f"data: {json.dumps({'done': True, 'full_content': collected_content})}\n\n"
+
+
 def get_response(message: str, user_name: str, history: list[ChatMessage], archivos: list[File], project_uuid: Optional[str], project_name: str, project_description: str, requisitos: str):
-    archivos_str = FilesFormat(archivos)
-    
-    # Extraer criterios de aceptabilidad de requisitos
     criteria_lines = requisitos.split('\n')
     solvability_criteria = ""
     max_vulnerability_level = ""
     total_vulnerabilities_criteria = ""
-    
+
     for line in criteria_lines:
         if line.startswith("project_solvability_criteria:"):
             solvability_criteria = line.replace("project_solvability_criteria:", "").strip()
@@ -86,7 +125,7 @@ def get_response(message: str, user_name: str, history: list[ChatMessage], archi
             max_vulnerability_level = line.replace("project_max_vulnerability_level:", "").strip()
         elif line.startswith("project_total_vulnerabilities_criteria:"):
             total_vulnerabilities_criteria = line.replace("project_total_vulnerabilities_criteria:", "").strip()
-    
+
     # Manejar valores nulos o vacíos con mensajes amigables
     if not solvability_criteria or solvability_criteria == "None":
         solvability_criteria = "No especificado"
@@ -94,7 +133,7 @@ def get_response(message: str, user_name: str, history: list[ChatMessage], archi
         max_vulnerability_level = "No especificado"
     if not total_vulnerabilities_criteria or total_vulnerabilities_criteria == "None":
         total_vulnerabilities_criteria = "No especificado"
-    
+
     # Traducir los criterios de solvability a textos más descriptivos
     if solvability_criteria == "solvable":
         solvability_criteria = "Solo vulnerabilidades solucionables"
@@ -102,22 +141,10 @@ def get_response(message: str, user_name: str, history: list[ChatMessage], archi
         solvability_criteria = "Permitir vulnerabilidades no solucionables"
     elif solvability_criteria == "any":
         solvability_criteria = "Sin restricciones de solucionabilidad"
-    
+
     stream = client.run_and_stream(
         agent=cve_agent,
         messages=[
-            {
-                "role": "system",
-                "content": SYSTEM_MESSAGE.format(
-                    project_name=project_name,
-                    project_description=project_description,
-                    max_vulnerability_level=max_vulnerability_level,
-                    total_vulnerabilities_criteria=total_vulnerabilities_criteria,
-                    solvability_criteria=solvability_criteria,
-                    requisitos=requisitos,
-                    archivos=archivos_str
-                )
-            },
             *history,
             {
                 "role": "user",
@@ -126,47 +153,49 @@ def get_response(message: str, user_name: str, history: list[ChatMessage], archi
         ],
     )
 
-    def generate():
-        collected_content = ""
+    return Response(stream_with_context(generate(stream, project_uuid)), mimetype='text/event-stream')
 
-        already_calling = False
-        for chunk in stream:
-            content = chunk.get('content')
-            error = chunk.get('error')
-            if error:
-                data = f"data: {json.dumps({'type': 'error', 'content': error})}\n\n"
-                yield data
 
-            if content:
-                already_calling = False
-                data = f"data: {json.dumps({'type': 'text', 'content': content})}\n\n"
-                collected_content += content
-                yield data
+def get_cve_agent_response(message: str, requisitos: str, history: list[ChatMessage], archivos: list[File], project_uuid: Optional[str]):
+    stream = client.run_and_stream(
+        agent=cve_agent,
+        context_variables={
+            "requisitos": requisitos,
+            "archivos": archivos
+        },
+        messages=[
+            *history,
+            {
+                "role": "user",
+                "content": message
+            }
+        ],
+    )
 
-            tools = chunk.get('tool_calls')
-            if tools:
-                for tool in tools:
-                    function = tool.get('function', {})
-                    if name := function.get("name"):
-                        if not already_calling:
-                            already_calling = True
-                            data = f"data: {json.dumps({'type': 'tool_call', 'tool_name': name})}\n\n"
-                            yield data
+    return Response(stream_with_context(generate(stream, project_uuid)), mimetype='text/event-stream')
 
-        if project_uuid:
-            ai_message = Message(
-                content=collected_content,
-                is_user=False,
-                project_uuid=project_uuid
-            )
-            db.session.add(ai_message)
 
-            project: Project = Project.query.filter_by(uuid=project_uuid).first()
-            if project:
-                project.updated_at = datetime.utcnow()
+def get_mermaid_response(archivos: list[File], project_uuid: Optional[str]):
+    docker_compose_content = ""
+    for archivo in archivos:
+        if archivo["name"] == "docker-compose.yml":
+            docker_compose_content = archivo["content"]
+            break
 
-            db.session.commit()
+    if not docker_compose_content:
+        docker_compose_content = "No docker-compose.yml file found in the project."
 
-        yield f"data: {json.dumps({'done': True, 'full_content': collected_content})}\n\n"
+    stream = client.run_and_stream(
+        agent=mermaid_agent,
+        context_variables={
+            "archivos": archivos
+        },
+        messages=[
+            {
+                "role": "user",
+                "content": "Analiza el contenido de mis archivos y genera un diagrama"
+            }
+        ],
+    )
 
-    return Response(stream_with_context(generate()), mimetype='text/event-stream')
+    return Response(stream_with_context(generate(stream, project_uuid)), mimetype='text/event-stream')
