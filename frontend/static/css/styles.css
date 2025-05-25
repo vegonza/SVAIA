@@ -5,6 +5,14 @@
     font-style: normal;
 }
 
+/* Fix for container overflow */
+html, body {
+    overflow-x: hidden;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
 .svaia-text {
     font-family: 'AllertaCustom', sans-serif;
     line-height: 1;
@@ -14,10 +22,50 @@
     background: #bdc3c7;
     background: -webkit-linear-gradient(to bottom right, #fcfdfc, #798696);
     background: linear-gradient(to bottom right, #fcfdfc, #798696);
+    width: 100%;
+    max-width: 100vw;
 }
 
 .background-ellipse {
     clip-path: ellipse(2500px 100% at 50% 0%);
     padding-bottom: 40px;
+    width: 100%;
+}
 
+/* Responsive container adjustments */
+.container-fluid {
+    width: 100%;
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+    overflow-x: hidden;
+}
+
+/* Responsive text adjustments */
+@media (max-width: 576px) {
+    .svaia-text {
+        font-size: 4rem !important;
+    }
+    
+    .fs-4 {
+        font-size: 1rem !important;
+    }
+}
+
+/* Fix for footer columns on mobile */
+@media (max-width: 768px) {
+    footer .col-3 {
+        width: 100%;
+        max-width: 100%;
+    }
+    
+    footer .card {
+        max-width: 100% !important;
+    }
+    
+    .map-container {
+        margin-left: 0 !important;
+        width: 100% !important;
+    }
 }
