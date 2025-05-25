@@ -97,11 +97,8 @@ def completion():
 
     return get_cve_agent_response(
         message=message,
-        user_name="",
         history=history_dicts,
         archivos=[],
         project_uuid=project_uuid,
-        project_name=project.name,
-        project_description=project.description,
         requisitos=requirements
     )
