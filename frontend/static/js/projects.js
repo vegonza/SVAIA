@@ -240,6 +240,12 @@ function showEditProjectModal(project) {
     projectNameInput.value = project.name;
     projectDescriptionInput.value = project.description || '';
     
+    // Hide required indicator for docker compose (not required for updates)
+    const dockerComposeRequired = document.getElementById('dockerComposeRequired');
+    const dockerComposeRequiredText = document.getElementById('dockerComposeRequiredText');
+    if (dockerComposeRequired) dockerComposeRequired.style.display = 'none';
+    if (dockerComposeRequiredText) dockerComposeRequiredText.style.display = 'none';
+    
     // Load existing vulnerability level
     const existingVulnerability = project.max_vulnerability_level || '';
     if (existingVulnerability && vulnerabilityDropdown) {
@@ -327,68 +333,56 @@ function showEditProjectModal(project) {
     projectModal.show();
 }
 
-async function uploadFiles(projectUuid) {
-    try {
-        const dockerfilesInput = document.getElementById('dockerfiles');
-        const dockerComposeFilesInput = document.getElementById('dockerComposeFiles');
-        const dockerImagesInput = document.getElementById('dockerImages');
-        
-        // Upload Dockerfiles
-        if (dockerfilesInput && dockerfilesInput.files.length > 0) {
-            const dockerfileFormData = new FormData();
-            for (let file of dockerfilesInput.files) {
-                dockerfileFormData.append('dockerfiles', file);
-            }
-            
-            const dockerfileResponse = await fetch(`/sql/projects/upload/dockerfiles/${projectUuid}`, {
-                method: 'POST',
-                body: dockerfileFormData
-            });
-            
-            if (!dockerfileResponse.ok) {
-                throw new Error('Error al subir Dockerfiles');
-            }
-        }
-        
-        // Upload Docker Compose files
-        if (dockerComposeFilesInput && dockerComposeFilesInput.files.length > 0) {
-            const composeFormData = new FormData();
-            for (let file of dockerComposeFilesInput.files) {
-                composeFormData.append('docker_compose_files', file);
-            }
-            
-            const composeResponse = await fetch(`/sql/projects/upload/docker-compose-files/${projectUuid}`, {
-                method: 'POST',
-                body: composeFormData
-            });
-            
-            if (!composeResponse.ok) {
-                throw new Error('Error al subir archivos Docker Compose');
-            }
-        }
-        
-        // Upload Docker images
-        if (dockerImagesInput && dockerImagesInput.files.length > 0) {
-            const imagesFormData = new FormData();
-            for (let file of dockerImagesInput.files) {
-                imagesFormData.append('images', file);
-            }
-            
-            const imagesResponse = await fetch(`/sql/projects/upload/docker-image/${projectUuid}`, {
-                method: 'POST',
-                body: imagesFormData
-            });
-            
-            if (!imagesResponse.ok) {
-                throw new Error('Error al subir imágenes Docker');
-            }
-        }
-        
-        return true;
-    } catch (error) {
-        console.error('Error uploading files:', error);
-        throw error;
+function showNewProjectModal() {
+    projectModalLabel.textContent = 'Crear Nuevo Proyecto';
+    projectUuidInput.value = ''; // Empty UUID indicates new project
+    projectNameInput.value = '';
+    projectDescriptionInput.value = '';
+    
+    // Show required indicator for docker compose (required for creation)
+    const dockerComposeRequired = document.getElementById('dockerComposeRequired');
+    const dockerComposeRequiredText = document.getElementById('dockerComposeRequiredText');
+    if (dockerComposeRequired) dockerComposeRequired.style.display = 'inline';
+    if (dockerComposeRequiredText) dockerComposeRequiredText.style.display = 'inline';
+    
+    // Reset vulnerability level dropdown
+    if (vulnerabilityDropdown) {
+        vulnerabilityDropdown.textContent = 'Elegir';
+        selectedVulnerabilityInput.value = '';
     }
+    if (customVulnerabilityInput) {
+        customVulnerabilityInput.value = '';
+    }
+    const customVulnerabilityContainer = document.getElementById('customVulnerabilityContainer');
+    if (customVulnerabilityContainer) {
+        customVulnerabilityContainer.style.display = 'none';
+    }
+    
+    // Reset total vulnerabilities
+    if (totalVulnerabilitiesInput) {
+        totalVulnerabilitiesInput.value = '';
+    }
+    
+    // Reset solvability dropdown
+    if (solvabilityDropdown) {
+        solvabilityDropdown.textContent = 'Elegir';
+        selectedSolvabilityInput.value = '';
+    }
+    
+    // Clear file inputs
+    const dockerfilesInput = document.getElementById('dockerfiles');
+    const dockerComposeFilesInput = document.getElementById('dockerComposeFiles');
+    const dockerImagesInput = document.getElementById('dockerImages');
+    
+    if (dockerfilesInput) dockerfilesInput.value = '';
+    if (dockerComposeFilesInput) dockerComposeFilesInput.value = '';
+    if (dockerImagesInput) dockerImagesInput.value = '';
+    
+    if (fileUploadSection) {
+        fileUploadSection.style.display = 'block';
+    }
+    
+    projectModal.show();
 }
 
 async function saveProject() {
@@ -400,7 +394,6 @@ async function saveProject() {
     
     const vulnerabilityLevel = selectedVulnerabilityInput ? 
         (selectedVulnerabilityInput.value.trim() || customVulnerabilityInput?.value.trim()) : '';
-
     const description = projectDescriptionInput.value.trim();
     const uuid = projectUuidInput.value;
     
@@ -411,69 +404,90 @@ async function saveProject() {
     // Get the solvability criteria
     const solvabilityCriteria = selectedSolvabilityInput ? selectedSolvabilityInput.value.trim() : '';
 
+    // Get file inputs
+    const dockerfilesInput = document.getElementById('dockerfiles');
+    const dockerComposeFilesInput = document.getElementById('dockerComposeFiles');
+    const dockerImagesInput = document.getElementById('dockerImages');
+    
+    const isCreating = !uuid; // If no UUID, we're creating a new project
+    
+    // For creation, docker compose files are mandatory
+    if (isCreating && (!dockerComposeFilesInput || dockerComposeFilesInput.files.length === 0)) {
+        alert('Al menos un archivo Docker Compose es obligatorio para crear un proyecto');
+        return;
+    }
+
     try {
-        const requestBody = {
-            name: name,
-            description: description
-        };
+        // Create FormData with all form fields and files
+        const formData = new FormData();
         
-        // Only include vulnerability level if it's set
+        // Add form fields
+        formData.append('name', name);
+        formData.append('description', description);
+        
         if (vulnerabilityLevel) {
-            requestBody.max_vulnerability_level = vulnerabilityLevel;
+            formData.append('max_vulnerability_level', vulnerabilityLevel);
         }
         
-        // Include total vulnerabilities criteria if set
         if (totalVulnerabilities !== null) {
-            requestBody.total_vulnerabilities_criteria = totalVulnerabilities;
+            formData.append('total_vulnerabilities_criteria', totalVulnerabilities);
         }
         
-        // Include solvability criteria if set
         if (solvabilityCriteria) {
-            requestBody.solvability_criteria = solvabilityCriteria;
+            formData.append('solvability_criteria', solvabilityCriteria);
         }
         
-        const response = await fetch(`/sql/projects/${uuid}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(requestBody)
+        // Add files
+        if (dockerfilesInput && dockerfilesInput.files.length > 0) {
+            for (let file of dockerfilesInput.files) {
+                formData.append('dockerfiles', file);
+            }
+        }
+        
+        if (dockerComposeFilesInput && dockerComposeFilesInput.files.length > 0) {
+            for (let file of dockerComposeFilesInput.files) {
+                formData.append('docker_compose_files', file);
+            }
+        }
+        
+        if (dockerImagesInput && dockerImagesInput.files.length > 0) {
+            for (let file of dockerImagesInput.files) {
+                formData.append('images', file);
+            }
+        }
+        
+        // Determine endpoint and method based on whether we're creating or updating
+        const url = isCreating ? '/sql/projects/' : `/sql/projects/${uuid}`;
+        const method = isCreating ? 'POST' : 'PUT';
+        
+        const response = await fetch(url, {
+            method: method,
+            body: formData
         });
 
         if (!response.ok) {
-            const errorData = await response.json().catch(() => ({ message: 'Error desconocido' }));
-            throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+            const errorData = await response.json().catch(() => ({ error: 'Error desconocido' }));
+            throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
         }
 
-        const updatedProject = await response.json();
+        const project = await response.json();
         
-        // Upload files if any are selected
-        const dockerfilesInput = document.getElementById('dockerfiles');
-        const dockerComposeFilesInput = document.getElementById('dockerComposeFiles');
-        const dockerImagesInput = document.getElementById('dockerImages');
+        const successMessage = isCreating ? 
+            'Proyecto creado con éxito.' : 
+            'Proyecto actualizado con éxito.';
         
-        const hasFiles = (dockerfilesInput && dockerfilesInput.files.length > 0) || 
-                         (dockerComposeFilesInput && dockerComposeFilesInput.files.length > 0) || 
-                         (dockerImagesInput && dockerImagesInput.files.length > 0);
-        
-        if (hasFiles) {
-            try {
-                await uploadFiles(uuid);
-                createAlert('Proyecto y archivos actualizados con éxito.', 'success');
-            } catch (uploadError) {
-                createAlert('Proyecto actualizado, pero hubo un error al subir algunos archivos: ' + uploadError.message, 'warning');
-            }
-        } else {
-            createAlert('Proyecto actualizado con éxito.', 'success');
-        }
+        createAlert(successMessage, 'success');
         
         projectModal.hide();
         // Reload the projects list
         loadUserProjects();
 
     } catch (error) {
-        console.error('Error updating project:', error);
-        createAlert(`Error al actualizar el proyecto: ${error.message}`, 'danger');
+        console.error('Error saving project:', error);
+        const errorMessage = isCreating ? 
+            `Error al crear el proyecto: ${error.message}` : 
+            `Error al actualizar el proyecto: ${error.message}`;
+        createAlert(errorMessage, 'danger');
     }
 }
 
@@ -515,6 +529,9 @@ async function deleteProject(projectUuid, button) {
 
 // Event listeners
 saveProjectBtn.addEventListener('click', saveProject);
+
+// Make functions available globally
+window.showNewProjectModal = showNewProjectModal;
 
 document.addEventListener('DOMContentLoaded', function() {
     initializeDropdown();

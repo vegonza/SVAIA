@@ -23,9 +23,14 @@
         <div class="row mb-4">
             <div class="col-12 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
                 <h1 class="text-primary page-title mb-0">Proyectos de <span id="name-display">Usuario</span></h1>
-                <a href="{{ url_for('admin.index') }}" class="btn btn-secondary px-3 py-2">
-                    <i class="bi bi-arrow-left"></i> Volver
-                </a>
+                <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-primary px-3 py-2" onclick="showNewProjectModal()">
+                        <i class="bi bi-plus-circle"></i> Crear Nuevo Proyecto
+                    </button>
+                    <a href="{{ url_for('admin.index') }}" class="btn btn-secondary px-3 py-2">
+                        <i class="bi bi-arrow-left"></i> Volver
+                    </a>
+                </div>
             </div>
         </div>
 

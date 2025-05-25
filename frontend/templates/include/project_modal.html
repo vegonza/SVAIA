@@ -76,9 +76,15 @@
                         </div>
                         
                         <div class="mb-3">
-                            <label for="dockerComposeFiles" class="form-label">Archivos Docker Compose</label>
+                            <label for="dockerComposeFiles" class="form-label">
+                                Archivos Docker Compose 
+                                <span class="text-danger" id="dockerComposeRequired" style="display: none;">*</span>
+                            </label>
                             <input type="file" class="form-control" id="dockerComposeFiles" name="docker_compose_files" multiple accept=".yml,.yaml">
-                            <div class="form-text">Sube uno o más archivos docker-compose. Formatos aceptados: .yml, .yaml</div>
+                            <div class="form-text" id="dockerComposeHelp">
+                                Sube uno o más archivos docker-compose. Formatos aceptados: .yml, .yaml
+                                <span id="dockerComposeRequiredText" style="display: none;"><br><strong>Requerido para crear un nuevo proyecto.</strong></span>
+                            </div>
                         </div>
                         
                         <div class="mb-3">

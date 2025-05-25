@@ -284,66 +284,6 @@ function validateForm() {
     return true;
 }
 
-async function uploadFiles(projectUuid) {
-    try {
-        // Upload Dockerfiles
-        if (dockerfilesInput.files.length > 0) {
-            const dockerfileFormData = new FormData();
-            for (let file of dockerfilesInput.files) {
-                dockerfileFormData.append('dockerfiles', file);
-            }
-
-            const dockerfileResponse = await fetch(`/sql/projects/upload/dockerfiles/${projectUuid}`, {
-                method: 'POST',
-                body: dockerfileFormData
-            });
-
-            if (!dockerfileResponse.ok) {
-                throw new Error('Error al subir Dockerfiles');
-            }
-        }
-
-        // Upload Docker Compose files
-        if (dockerComposeFilesInput.files.length > 0) {
-            const composeFormData = new FormData();
-            for (let file of dockerComposeFilesInput.files) {
-                composeFormData.append('docker_compose_files', file);
-            }
-
-            const composeResponse = await fetch(`/sql/projects/upload/docker-compose-files/${projectUuid}`, {
-                method: 'POST',
-                body: composeFormData
-            });
-
-            if (!composeResponse.ok) {
-                throw new Error('Error al subir archivos Docker Compose');
-            }
-        }
-
-        // Upload Docker images
-        if (dockerImagesInput.files.length > 0) {
-            const imagesFormData = new FormData();
-            for (let file of dockerImagesInput.files) {
-                imagesFormData.append('images', file);
-            }
-
-            const imagesResponse = await fetch(`/sql/projects/upload/docker-image/${projectUuid}`, {
-                method: 'POST',
-                body: imagesFormData
-            });
-
-            if (!imagesResponse.ok) {
-                throw new Error('Error al subir imágenes Docker');
-            }
-        }
-
-        return true;
-    } catch (error) {
-        console.error('Error uploading files:', error);
-        throw error;
-    }
-}
-
 function setSaveButtonLoading(loading) {
     if (loading) {
         saveButtonText.textContent = 'Guardando...';
@@ -1334,74 +1274,100 @@ async function saveProject() {
         let data;
 
         if (isEditMode) {
-            // Update existing project
+            // Update existing project using FormData
+            const formData = new FormData();
+            formData.append('name', name);
+            formData.append('description', description);
+            formData.append('max_vulnerability_level', vulnerabilityLevel);
+            
+            if (totalVulnerabilities !== null) {
+                formData.append('total_vulnerabilities_criteria', totalVulnerabilities);
+            }
+            
+            if (solvabilityCriteria) {
+                formData.append('solvability_criteria', solvabilityCriteria);
+            }
+            
+            // Add files if any are selected
+            if (dockerfilesInput.files.length > 0) {
+                for (let file of dockerfilesInput.files) {
+                    formData.append('dockerfiles', file);
+                }
+            }
+            
+            if (dockerComposeFilesInput.files.length > 0) {
+                for (let file of dockerComposeFilesInput.files) {
+                    formData.append('docker_compose_files', file);
+                }
+            }
+            
+            if (dockerImagesInput.files.length > 0) {
+                for (let file of dockerImagesInput.files) {
+                    formData.append('images', file);
+                }
+            }
+
             response = await fetch(`/sql/projects/${uuid}`, {
                 method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    name: name,
-                    description: description,
-                    max_vulnerability_level: vulnerabilityLevel,
-                    total_vulnerabilities_criteria: totalVulnerabilities,
-                    solvability_criteria: solvabilityCriteria
-                })
+                body: formData
             });
         } else {
-            // Create new project
+            // Create new project using FormData
+            const formData = new FormData();
+            formData.append('name', name);
+            formData.append('description', description);
+            formData.append('max_vulnerability_level', vulnerabilityLevel);
+            
+            if (totalVulnerabilities !== null) {
+                formData.append('total_vulnerabilities_criteria', totalVulnerabilities);
+            }
+            
+            if (solvabilityCriteria) {
+                formData.append('solvability_criteria', solvabilityCriteria);
+            }
+            
+            // Add files if any are selected
+            if (dockerfilesInput.files.length > 0) {
+                for (let file of dockerfilesInput.files) {
+                    formData.append('dockerfiles', file);
+                }
+            }
+            
+            if (dockerComposeFilesInput.files.length > 0) {
+                for (let file of dockerComposeFilesInput.files) {
+                    formData.append('docker_compose_files', file);
+                }
+            }
+            
+            if (dockerImagesInput.files.length > 0) {
+                for (let file of dockerImagesInput.files) {
+                    formData.append('images', file);
+                }
+            }
+
             response = await fetch("/sql/projects", {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    name: name,
-                    description: description,
-                    max_vulnerability_level: vulnerabilityLevel,
-                    total_vulnerabilities_criteria: totalVulnerabilities,
-                    solvability_criteria: solvabilityCriteria
-                })
+                body: formData
             });
         }
 
         if (!response.ok) {
-            throw new Error('Error al guardar el proyecto: ' + response.statusText);
+            const errorData = await response.json().catch(() => ({ error: 'Error desconocido' }));
+            throw new Error(errorData.error || `Error al guardar el proyecto: ${response.status}`);
         }
 
         data = await response.json();
-
-        // Upload files if any are selected (for both create and edit modes)
-        const hasFiles = dockerfilesInput.files.length > 0 ||
-            dockerComposeFilesInput.files.length > 0 ||
-            dockerImagesInput.files.length > 0;
-
-        if (hasFiles) {
-            try {
-                const projectUuid = isEditMode ? uuid : data.uuid;
-                await uploadFiles(projectUuid);
-            } catch (uploadError) {
-                const message = isEditMode ?
-                    'Proyecto actualizado, pero hubo un error al subir algunos archivos: ' + uploadError.message :
-                    'Proyecto creado, pero hubo un error al subir algunos archivos: ' + uploadError.message;
-
-                show_warning(message + ' Puedes intentar subir los archivos editando el proyecto.');
-                projectModal.hide();
-                await get_projects();
-
-                if (!isEditMode) {
-                    load_project(data.uuid);
-                }
-                return;
-            }
-        }
 
         projectModal.hide();
         await get_projects();
 
         if (!isEditMode) {
             load_project(data.uuid);
-            // If files were uploaded, initialize project analysis
+            // Initialize project analysis if files were uploaded
+            const hasFiles = dockerfilesInput.files.length > 0 ||
+                dockerComposeFilesInput.files.length > 0 ||
+                dockerImagesInput.files.length > 0;
+            
             if (hasFiles) {
                 setTimeout(() => {
                     init_project_analysis(data.uuid);
