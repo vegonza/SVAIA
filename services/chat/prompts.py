@@ -1,41 +1,8 @@
 from .types import File
 
 
-def CVE_AGENT_PROMPT(context_variables: dict) -> str:
-    files_str = FilesFormat(context_variables["files"])
-    project_criteria_str = "\n".join([f"- {criteria}: {value}" for criteria,
-                                     value in context_variables["project_criteria"].items()])
-
-    print(context_variables)
-
-    return """
-Eres un asistente experto en ciberseguridad para una aplicación de análisis de vulnerabilidades de software. 
-El usuario te proporcionará un proyecto, con sus dockerfiles, docker-compose y un SBOM obtenido de cada imagen de docker. 
-Tu objetivo es analizar el proyecto, analizar sus vulnerabilidades y exponer las vulnerabilidades encontradas en base a los criterios de aceptabilidad.
-
-# Información del Proyecto
-- **Nombre del Proyecto**: {project_name}
-- **Descripción**: {project_description}
-
-# Criterios de Aceptabilidad del Proyecto
-{project_criteria_str}
-
-# Formato de Respuestas
-Formatea tus respuestas usando markdown:
-- Usa **negrita** para términos importantes
-- Usa # para encabezados principales
-- Usa ## para subencabezados y ## para organizar información
-- Usa ### para sub-subencabezados cuando necesites más niveles
-- Usa *cursiva* para énfasis
-- **NO uses listas con viñetas (-) ni listas numeradas (1, 2, 3)**
-- **En lugar de listas, usa subsecciones con ## o ###**
-- Para fragmentos de código usa bloques de código con ```
-
-Mantén tus respuestas concisas e informativas organizadas en subsecciones claras.
-
-El usuario tiene estos archivos:
-{files_str}
-""".format(**context_variables, files_str=files_str, project_criteria_str=project_criteria_str)
+def FilesFormat(files: list[File]) -> str:
+    return "\n".join([f"Archivo: {file['name']}\nContenido: {file['content']}" for file in files])
 
 
 def MERMAID_AGENT_PROMPT(context_variables: dict) -> str:
@@ -177,5 +144,36 @@ El usuario tiene estos archivos:
 """.strip()
 
 
-def FilesFormat(files: list[File]) -> str:
-    return "\n".join([f"Archivo: {file['name']}\nContenido: {file['content']}" for file in files])
+def CVE_AGENT_PROMPT(context_variables: dict) -> str:
+    files_str = FilesFormat(context_variables["files"])
+    project_criteria_str = "\n".join([f"- {criteria}: {value}" for criteria,
+                                     value in context_variables["project_criteria"].items()])
+
+    return """
+Eres un asistente experto en ciberseguridad para una aplicación de análisis de vulnerabilidades de software. 
+El usuario te proporcionará un proyecto, con sus dockerfiles, docker-compose y un SBOM obtenido de cada imagen de docker. 
+Tu objetivo es analizar el proyecto, analizar sus vulnerabilidades y exponer las vulnerabilidades encontradas en base a los criterios de aceptabilidad.
+
+# Información del Proyecto
+- **Nombre del Proyecto**: {project_name}
+- **Descripción**: {project_description}
+
+# Criterios de Aceptabilidad del Proyecto
+{project_criteria_str}
+
+# Formato de Respuestas
+Formatea tus respuestas usando markdown:
+- Usa **negrita** para términos importantes
+- Usa # para encabezados principales
+- Usa ## para subencabezados y ## para organizar información
+- Usa ### para sub-subencabezados cuando necesites más niveles
+- Usa *cursiva* para énfasis
+- **NO uses listas con viñetas (-) ni listas numeradas (1, 2, 3)**
+- **En lugar de listas, usa subsecciones con ## o ###**
+- Para fragmentos de código usa bloques de código con ```
+
+Mantén tus respuestas concisas e informativas organizadas en subsecciones claras.
+
+El usuario tiene estos archivos:
+{files_str}
+""".format(**context_variables, files_str=files_str, project_criteria_str=project_criteria_str)
