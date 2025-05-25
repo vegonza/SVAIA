@@ -33,6 +33,8 @@ def init_project():
     if not project:
         return jsonify({"error": "project not found"}), 404
 
+    Message.query.filter_by(project_uuid=project_uuid).delete()
+
     project.updated_at = datetime.utcnow()
     db.session.commit()
 
