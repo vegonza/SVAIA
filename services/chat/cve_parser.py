@@ -61,5 +61,5 @@ def search_cve(keywords: str, limit: int = 10, severity: Literal['LOW', 'MEDIUM'
         Lista de vulnerabilidades encontradas
     """
     results = searchCVE(keywordSearch=keywords, limit=limit, cvssV3Severity=severity)
-    print("callling cve parser")
+    print("calling cve parser")
     return format_cve(results)

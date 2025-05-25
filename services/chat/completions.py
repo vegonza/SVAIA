@@ -66,7 +66,7 @@ sbom = {
 }
 
 
-def get_response(message: str, requisitos: str, history: list[ChatMessage], archivos: list[File], project_uuid: Optional[str] = None):
+def get_response(message: str, requisitos: str, history: list[ChatMessage], archivos: list[File], project_uuid: Optional[str]):
     archivos_str = FilesFormat(archivos)
     stream = client.run_and_stream(
         agent=cve_agent,
