@@ -1,8 +1,7 @@
-from tide_swarm import Agent
-
 from .cve_parser import search_cve
 from .prompts import (ANALYSIS_AGENT_PROMPT, CVE_AGENT_PROMPT,
                       MERMAID_AGENT_PROMPT)
+from .tide_swarm import Agent
 
 cve_agent = Agent(
     name="cve_agent",

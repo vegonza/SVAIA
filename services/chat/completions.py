@@ -6,12 +6,12 @@ from typing import Optional
 from dotenv import find_dotenv, load_dotenv
 from flask import Response, stream_with_context
 from openai import OpenAI
-from tide_swarm import Swarm
 
 from services.sql.models import Message, Project, db
 
 from .agent_manager import analysis_agent, cve_agent, mermaid_agent
 from .prompts import FilesFormat
+from .tide_swarm import Swarm
 from .types import ChatMessage, File
 
 load_dotenv(find_dotenv())
