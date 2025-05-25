@@ -16,8 +16,12 @@ from .types import ChatMessage, File
 
 load_dotenv(find_dotenv())
 
-client = Swarm(OpenAI(base_url="https://openrouter.ai/api/v1",
-               api_key=os.environ["AI_API_KEY"]))
+client = Swarm(
+    OpenAI(
+        base_url="https://openrouter.ai/api/v1",
+        api_key=os.environ["AI_API_KEY"]
+    )
+)
 
 sbom = {
     "bomFormat": "CycloneDX",
