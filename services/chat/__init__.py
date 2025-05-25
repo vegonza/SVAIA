@@ -25,7 +25,6 @@ def index():
 def init_project():
     data: dict = request.json
     project_uuid = data.get("project_uuid")
-    error_info = data.get("error_info")
 
     if not project_uuid:
         return jsonify({"error": "missing project_uuid"}), 400

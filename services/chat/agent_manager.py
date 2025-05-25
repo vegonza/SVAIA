@@ -15,7 +15,7 @@ cve_agent = Agent(
 mermaid_agent = Agent(
     name="mermaid_agent",
     instructions=MERMAID_AGENT_PROMPT,
-    model="openai/gpt-4.1-mini",
+    model="google/gemini-2.5-flash-preview-05-20",
     tool_choice="none",
     parallel_tool_calls=False,
 )

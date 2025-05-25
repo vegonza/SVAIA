@@ -115,30 +115,30 @@ function initializeDropdown() {
             }
         });
     }
-    
+
     // Solvability dropdown initialization
     const solvabilityDropdownContent = document.querySelector('#solvabilityCriteriaSection .dropdown-content');
     if (solvabilityDropdownContent && solvabilityDropdown) {
         const solvabilityOptions = solvabilityDropdownContent.querySelectorAll('a[data-value]');
         const solvabilityDropdownContainer = document.querySelector('#solvabilityCriteriaSection .dropdown');
-        
-        solvabilityDropdown.addEventListener('click', function(e) {
+
+        solvabilityDropdown.addEventListener('click', function (e) {
             e.preventDefault();
             e.stopPropagation();
             solvabilityDropdownContainer.classList.toggle('show');
         });
-        
+
         solvabilityOptions.forEach(option => {
-            option.addEventListener('click', function(e) {
+            option.addEventListener('click', function (e) {
                 e.preventDefault();
                 e.stopPropagation();
-                
+
                 const value = this.getAttribute('data-value');
                 const text = this.textContent.trim();
-                
+
                 solvabilityDropdown.textContent = text;
                 selectedSolvabilityInput.value = value;
-                
+
                 solvabilityDropdownContainer.classList.remove('show');
             });
         });
@@ -259,7 +259,11 @@ function fixMermaidSyntax(content) {
 
     let fixed = content
         // Fix connection issues: ensure proper arrow syntax
+        .replace(/-->-/g, '---') // Fix invalid -->- syntax (should be --- for port connections)
+        // Protect --- temporarily, fix --, then restore ---
+        .replace(/---/g, '___TRIPLE_DASH___') // Temporarily protect triple dashes
         .replace(/--(?!\>)/g, '-->') // Replace -- with --> when not followed by >
+        .replace(/___TRIPLE_DASH___/g, '---') // Restore protected triple dashes
         .replace(/\s+--\>/g, '-->') // Remove spaces before -->
         .replace(/--\>\s+/g, '-->') // Remove spaces after -->
 
@@ -895,7 +899,7 @@ function showEditProjectModal(project) {
     if (totalVulnerabilitiesInput) {
         totalVulnerabilitiesInput.value = project.total_vulnerabilities_criteria || '';
     }
-    
+
     // Set solvability criteria
     const existingSolvability = project.solvability_criteria || '';
     if (existingSolvability && solvabilityDropdown) {
@@ -904,7 +908,7 @@ function showEditProjectModal(project) {
             'non_solvable': 'Permitir vulnerabilidades no solucionables',
             'any': 'Sin restricciones'
         };
-        
+
         if (solvabilityValues[existingSolvability]) {
             solvabilityDropdown.textContent = solvabilityValues[existingSolvability];
             selectedSolvabilityInput.value = existingSolvability;
@@ -941,11 +945,11 @@ async function saveProject() {
     const description = projectDescriptionInput.value.trim();
     const vulnerabilityLevel = selectedVulnerabilityInput.value.trim() || customVulnerabilityInput.value.trim();
     const uuid = projectUuidInput.value;
-    
+
     // Get total vulnerabilities value
-    const totalVulnerabilities = totalVulnerabilitiesInput && totalVulnerabilitiesInput.value.trim() ? 
+    const totalVulnerabilities = totalVulnerabilitiesInput && totalVulnerabilitiesInput.value.trim() ?
         parseInt(totalVulnerabilitiesInput.value.trim()) : null;
-    
+
     // Get solvability criteria
     const solvabilityCriteria = selectedSolvabilityInput ? selectedSolvabilityInput.value.trim() : '';
 
@@ -1056,7 +1060,7 @@ async function load_project(uuid) {
     }
 }
 
-async function init_project_analysis(uuid, retryCount = 0, errorInfo = null) {
+async function init_project_analysis(uuid, retryCount = 0) {
     if (!uuid) return;
 
     // Max retries for mermaid rendering
@@ -1101,14 +1105,10 @@ async function init_project_analysis(uuid, retryCount = 0, errorInfo = null) {
         chat.appendChild(loadingMessage);
         chat.scrollTop = chat.scrollHeight;
 
-        // Build request body with error information if available
+        // Build request body
         const requestBody = {
             project_uuid: uuid
         };
-
-        if (errorInfo) {
-            requestBody.error_info = errorInfo;
-        }
 
         const response = await fetch('/chat/init-project', {
             method: 'POST',
@@ -1210,21 +1210,11 @@ async function init_project_analysis(uuid, retryCount = 0, errorInfo = null) {
                 // Remove the message that failed rendering
                 chat.removeChild(messageElement);
 
-                // Prepare detailed error information for the backend
-                const errorInfo = {
-                    message: mermaidError.message || 'Unknown error',
-                    content: mermaidError.content || '',
-                    fixedContent: mermaidError.fixedContent || '',
-                    retry_count: retryCount + 1,
-                    syntax_details: mermaidError.syntax_details || 'Invalid syntax',
-                    error_line: mermaidError.error_line || 0
-                };
-
                 console.log(`Retrying mermaid rendering (${retryCount + 1}/${MAX_RETRIES})...`);
 
                 // Wait a short delay before retrying
                 setTimeout(() => {
-                    init_project_analysis(uuid, retryCount + 1, errorInfo);
+                    init_project_analysis(uuid, retryCount + 1);
                 }, 1000);
             } else {
                 console.error(`Failed to render mermaid diagram after ${MAX_RETRIES} attempts`);
