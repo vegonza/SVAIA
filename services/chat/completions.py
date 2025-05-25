@@ -6,7 +6,7 @@ from typing import Optional
 from dotenv import find_dotenv, load_dotenv
 from flask import Response, stream_with_context
 from openai import OpenAI
-from swarm import Swarm
+from tide_swarm import Swarm
 
 from services.sql.models import Message, Project, db
 
