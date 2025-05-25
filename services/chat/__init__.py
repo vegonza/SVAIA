@@ -98,6 +98,7 @@ def completion():
 
     history = Message.query.filter_by(project_uuid=project_uuid).order_by(Message.timestamp).all()
     history_dicts = [{"role": "user" if msg.is_user else "assistant", "content": msg.content} for msg in history]
+    print(history_dicts)
 
     return get_cve_agent_response(
         message=message,

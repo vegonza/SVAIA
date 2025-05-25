@@ -991,30 +991,13 @@ async function send_message() {
                                 const toolIndicators = content_div.querySelectorAll('.tool-call-indicator');
                                 toolIndicators.forEach(indicator => indicator.remove());
 
-                                // Clean the full content and render final markdown
-                                try {
-                                    if (window.marked) {
-                                        marked.setOptions({
-                                            breaks: true,
-                                            tables: true,
-                                            smartLists: true,
-                                            highlight: function (code, lang) {
-                                                if (lang === 'mermaid') {
-                                                    return code;
-                                                }
-                                                return code;
-                                            }
-                                        });
-                                        content_div.innerHTML = marked.parse(full_content);
-                                        // Render mermaid diagrams in the final content
-                                        render_mermaid_diagrams(content_div);
-                                    } else {
-                                        content_div.textContent = full_content;
-                                    }
-                                } catch (error) {
-                                    console.error('Error parsing markdown:', error);
-                                    content_div.textContent = full_content;
-                                }
+                                // Parse final markdown without cursor and render mermaid diagrams
+                                parseMarkdownIncremental(full_content, content_div, false);
+
+                                // Render mermaid diagrams in the final content
+                                render_mermaid_diagrams(content_div).catch(mermaidError => {
+                                    console.error('Error rendering mermaid diagrams:', mermaidError);
+                                });
                             }
                             break;
                         }
@@ -1024,10 +1007,8 @@ async function send_message() {
                             is_in_tool_call = false;
 
                             if (content_div) {
-                                // During streaming, show raw text to avoid markdown parsing issues
-                                // We'll parse the complete markdown only when done
-                                const displayContent = full_content.replace(/\n/g, '<br>');
-                                content_div.innerHTML = displayContent + "<span class='typing-cursor'>▋</span>";
+                                // Parse markdown incrementally as content arrives
+                                parseMarkdownIncremental(full_content, content_div, true);
                                 chat.scrollTop = chat.scrollHeight;
                             }
                         }
@@ -1481,7 +1462,7 @@ async function init_project_analysis(uuid, retryCount = 0) {
     } catch (error) {
         console.error('Error during project analysis:', error);
 
-        // Show a comprehensive error message with retry option
+        // Show error message without retry option
         const errorMessageDiv = document.createElement("div");
         errorMessageDiv.innerHTML = `
             <li class="d-flex align-items-start mb-3 container-fluid pe-0">
@@ -1490,11 +1471,8 @@ async function init_project_analysis(uuid, retryCount = 0) {
                     <h6><i class="bi bi-exclamation-triangle"></i> Error en el Análisis del Proyecto</h6>
                     <p><strong>Error:</strong> ${error.message}</p>
                     <div class="mt-3">
-                        <button class="btn btn-light btn-sm me-2" onclick="init_project_analysis('${uuid}')">
-                            <i class="bi bi-arrow-clockwise"></i> Reintentar Análisis
-                        </button>
-                        <small class="text-light d-block mt-2">
-                            El análisis automático falló. Puedes reintentarlo o enviar mensajes manualmente para continuar.
+                        <small class="text-light d-block">
+                            El análisis automático falló. Puedes enviar mensajes manualmente para continuar interactuando con el proyecto.
                         </small>
                     </div>
                 </div>
@@ -1750,30 +1728,13 @@ async function execute_analyze_project_phase(uuid) {
                             const toolIndicators = content_div.querySelectorAll('.tool-call-indicator');
                             toolIndicators.forEach(indicator => indicator.remove());
 
-                            // Clean the full content and render final markdown
-                            try {
-                                if (window.marked) {
-                                    marked.setOptions({
-                                        breaks: true,
-                                        tables: true,
-                                        smartLists: true,
-                                        highlight: function (code, lang) {
-                                            if (lang === 'mermaid') {
-                                                return code;
-                                            }
-                                            return code;
-                                        }
-                                    });
-                                    content_div.innerHTML = marked.parse(full_content);
-                                    // Render mermaid diagrams in the final content
-                                    render_mermaid_diagrams(content_div);
-                                } else {
-                                    content_div.textContent = full_content;
-                                }
-                            } catch (error) {
-                                console.error('Error parsing markdown:', error);
-                                content_div.textContent = full_content;
-                            }
+                            // Parse final markdown without cursor and render mermaid diagrams
+                            parseMarkdownIncremental(full_content, content_div, false);
+
+                            // Render mermaid diagrams in the final content
+                            render_mermaid_diagrams(content_div).catch(mermaidError => {
+                                console.error('Error rendering mermaid diagrams:', mermaidError);
+                            });
                         }
                         break;
                     }
@@ -1783,10 +1744,8 @@ async function execute_analyze_project_phase(uuid) {
                         is_in_tool_call = false;
 
                         if (content_div) {
-                            // During streaming, show raw text to avoid markdown parsing issues
-                            // We'll parse the complete markdown only when done
-                            const displayContent = full_content.replace(/\n/g, '<br>');
-                            content_div.innerHTML = displayContent + "<span class='typing-cursor'>▋</span>";
+                            // Parse markdown incrementally as content arrives
+                            parseMarkdownIncremental(full_content, content_div, true);
                             chat.scrollTop = chat.scrollHeight;
                         }
                     }
@@ -1884,7 +1843,7 @@ async function delete_project(uuid) {
     }
 }
 
-// Helper function to safely parse markdown
+// Helper function to safely parse markdown incrementally
 function parseMarkdownSafely(content, contentDiv) {
     try {
         if (window.marked && content.trim()) {
@@ -1920,6 +1879,45 @@ function parseMarkdownSafely(content, contentDiv) {
         console.error('Error parsing markdown:', error);
         // Fallback to simple text with line breaks
         contentDiv.innerHTML = content.replace(/\n/g, '<br>');
+    }
+}
+
+// Helper function for incremental markdown parsing during streaming
+function parseMarkdownIncremental(content, contentDiv, showCursor = true) {
+    try {
+        if (window.marked && content.trim()) {
+            marked.setOptions({
+                breaks: true,
+                tables: true,
+                smartLists: true,
+                sanitize: false,
+                gfm: true,
+                highlight: function (code, lang) {
+                    if (lang === 'mermaid') {
+                        return code;
+                    }
+                    return code;
+                }
+            });
+
+            // Clean up the content before parsing
+            const cleanContent = content
+                .replace(/\r\n/g, '\n')
+                .replace(/\r/g, '\n');
+
+            // Try to parse as markdown
+            const parsedContent = marked.parse(cleanContent);
+            contentDiv.innerHTML = parsedContent + (showCursor ? "<span class='typing-cursor'>▋</span>" : "");
+        } else {
+            // Fallback to simple text replacement
+            const displayContent = content.replace(/\n/g, '<br>');
+            contentDiv.innerHTML = displayContent + (showCursor ? "<span class='typing-cursor'>▋</span>" : "");
+        }
+    } catch (error) {
+        // If markdown parsing fails, fall back to simple text replacement
+        console.warn('Incremental markdown parsing failed, using fallback:', error);
+        const displayContent = content.replace(/\n/g, '<br>');
+        contentDiv.innerHTML = displayContent + (showCursor ? "<span class='typing-cursor'>▋</span>" : "");
     }
 }
 
