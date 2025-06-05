@@ -5,3 +5,4 @@ venv
 instance/
 *.txt
 logs/
+sonar-scanner-7.0.2.4839-macosx-x64/
