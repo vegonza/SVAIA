@@ -55,6 +55,7 @@ def _urlparse(url, scheme='', allow_fragments=True):
     result = ParseResult(scheme, netloc, url, params, query, fragment)
     return _coerce_result(result)
 
+
 def _url_has_allowed_host_and_scheme(url, allowed_hosts, require_https=False):
     # Chrome considers any URL with more than two slashes to be absolute, but
     # urlparse is not so flexible. Treat any url with three slashes as unsafe.
@@ -82,6 +83,7 @@ def _url_has_allowed_host_and_scheme(url, allowed_hosts, require_https=False):
     valid_schemes = ['https'] if require_https else ['http', 'https']
     return ((not url_info.netloc or url_info.netloc in allowed_hosts) and
             (not scheme or scheme in valid_schemes))
+
 
 def url_has_allowed_host_and_scheme(url, allowed_hosts, require_https=False):
     """

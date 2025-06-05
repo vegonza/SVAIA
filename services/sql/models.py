@@ -1,8 +1,10 @@
 from datetime import datetime
+from typing import Any, Optional
 
 from flask_login import UserMixin
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import Mapped, mapped_column
+from typeguard import typechecked
 
 db = SQLAlchemy()
 
@@ -10,10 +12,10 @@ db = SQLAlchemy()
 class Project(db.Model):
     uuid: Mapped[str] = mapped_column(db.String(36), primary_key=True, nullable=False)
     name: Mapped[str] = mapped_column(db.String(50), nullable=False)
-    description: Mapped[str] = mapped_column(db.Text, nullable=True)
-    total_vulnerabilities_criteria: Mapped[int] = mapped_column(db.Integer, nullable=True)
-    solvability_criteria: Mapped[str] = mapped_column(db.String(20), nullable=True)
-    max_vulnerability_level: Mapped[str] = mapped_column(db.Text, nullable=True)
+    description: Mapped[Optional[str]] = mapped_column(db.Text, nullable=True)
+    total_vulnerabilities_criteria: Mapped[Optional[int]] = mapped_column(db.Integer, nullable=True)
+    solvability_criteria: Mapped[Optional[str]] = mapped_column(db.String(20), nullable=True)
+    max_vulnerability_level: Mapped[Optional[str]] = mapped_column(db.Text, nullable=True)
     user_id: Mapped[int] = mapped_column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     created_at: Mapped[datetime] = mapped_column(db.DateTime, default=datetime.utcnow)
     updated_at: Mapped[datetime] = mapped_column(db.DateTime, default=datetime.utcnow)
@@ -22,7 +24,8 @@ class Project(db.Model):
     docker_composes = db.relationship('DockerCompose', backref='project', lazy=True, cascade="all, delete-orphan")
     sboms = db.relationship('SoftwareBillOfMaterials', backref='project', lazy=True, cascade="all, delete-orphan")
 
-    def to_dict(self):
+    @typechecked
+    def to_dict(self) -> dict[str, Any]:
         return {
             'uuid': self.uuid,
             'name': self.name,
@@ -41,7 +44,8 @@ class Dockerfile(db.Model):
     content: Mapped[str] = mapped_column(db.Text, nullable=False)
     project_uuid: Mapped[str] = mapped_column(db.String(36), db.ForeignKey('project.uuid'), nullable=False)
 
-    def to_dict(self):
+    @typechecked
+    def to_dict(self) -> dict[str, Any]:
         return {
             'id': self.id,
             'content': self.content,
@@ -54,7 +58,8 @@ class DockerCompose(db.Model):
     content: Mapped[str] = mapped_column(db.Text, nullable=False)
     project_uuid: Mapped[str] = mapped_column(db.String(36), db.ForeignKey('project.uuid'), nullable=False)
 
-    def to_dict(self):
+    @typechecked
+    def to_dict(self) -> dict[str, Any]:
         return {
             'id': self.id,
             'content': self.content,
@@ -67,7 +72,8 @@ class SoftwareBillOfMaterials(db.Model):
     content: Mapped[str] = mapped_column(db.Text, nullable=False)
     project_uuid: Mapped[str] = mapped_column(db.String(36), db.ForeignKey('project.uuid'), nullable=False)
 
-    def to_dict(self):
+    @typechecked
+    def to_dict(self) -> dict[str, Any]:
         return {
             'id': self.id,
             'content': self.content,
@@ -82,7 +88,8 @@ class Message(db.Model):
     timestamp: Mapped[datetime] = mapped_column(db.DateTime, default=datetime.utcnow)
     project_uuid: Mapped[str] = mapped_column(db.String(36), db.ForeignKey('project.uuid'), nullable=False)
 
-    def to_dict(self):
+    @typechecked
+    def to_dict(self) -> dict[str, Any]:
         return {
             'id': self.id,
             'content': self.content,
@@ -100,7 +107,8 @@ class User(UserMixin, db.Model):
     password: Mapped[str] = mapped_column(db.String(255), nullable=False)
     is_admin: Mapped[bool] = mapped_column(db.Boolean, default=False)
 
-    def to_dict(self):
+    @typechecked
+    def to_dict(self) -> dict[str, Any]:
         return {
             'id': self.id,
             'name': self.name,

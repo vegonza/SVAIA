@@ -42,7 +42,7 @@ def set_context_variables():
 
 
 @login_manager.user_loader
-def load_user(user_id: str):
+def load_user(user_id: str) -> Optional[User]:
     user: Optional[User] = User.query.filter_by(id=user_id).first()
     if user:
         return user
@@ -54,9 +54,14 @@ def home():
     return render_template("index.html")
 
 
+@app.route('/static/<path:filename>')
+def static_files(filename: str):
+    return send_from_directory(app.static_folder, filename)
+
+
 @app.route('/favicon.ico')
 def favicon():
-    return send_from_directory(os.path.join(app.static_folder, "images"), "tidelock_sin_fondo.png")
+    return send_from_directory(app.static_folder, 'favicon.ico')
 
 
 # ---------------- register blueprints ---------------- #
@@ -66,4 +71,4 @@ app.register_blueprint(sql_bp, url_prefix="/sql")
 app.register_blueprint(admin_bp, url_prefix="/admin")
 
 if __name__ == '__main__':
-    app.run(debug=False, port=5000)
+    app.run(debug=True, port=5000)

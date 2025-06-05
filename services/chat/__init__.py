@@ -3,6 +3,7 @@ from datetime import datetime
 from flask import Blueprint, jsonify, render_template, request
 from flask_login import login_required
 
+from libs.logging_utils import log_manager
 from services.sql.models import Message, Project, db
 
 from .completions import (get_analysis_response, get_cve_agent_response,
@@ -98,8 +99,14 @@ def completion():
 
     history = Message.query.filter_by(project_uuid=project_uuid).order_by(Message.timestamp).all()
     history_dicts = [{"role": "user" if msg.is_user else "assistant", "content": msg.content} for msg in history]
-    print(history_dicts)
 
+    log_manager.add_log(
+        log_level="debug",
+        user="system",
+        function="completion",
+        argument=f"message={message}, history={history_dicts}, files={collect_project_files(project)}, project_uuid={project_uuid}, project_name={project.name}, project_description={project.description}, project_criteria={get_project_criteria(project)}",
+        log_string="Completion request received"
+    )
     return get_cve_agent_response(
         message=message,
         history=history_dicts,

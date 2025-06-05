@@ -1,5 +1,6 @@
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 from flask_login import current_user
+from typing import Any
 
 from libs.logging_utils import log_manager
 from services.auth.password_utils import hash
@@ -49,7 +50,7 @@ def create_user():
 
 @users_bp.route('/edit/<int:user_id>', methods=['GET', 'POST'])
 @admin_required
-def edit_user(user_id):
+def edit_user(user_id: int):
     user = User.query.get_or_404(user_id)
 
     if request.method == 'POST':
@@ -90,7 +91,7 @@ def edit_user(user_id):
 
 @users_bp.route('/delete/<int:user_id>', methods=['POST'])
 @admin_required
-def delete_user(user_id):
+def delete_user(user_id: int):
     user: User = User.query.get_or_404(user_id)
 
     if user.id == current_user.id:
@@ -107,6 +108,6 @@ def delete_user(user_id):
 
 @users_bp.route('/all', methods=['GET'])
 @admin_required
-def get_all_users():
+def get_all_users() -> list[dict[str, Any]]:
     users = User.query.all()
     return [user.to_dict() for user in users]

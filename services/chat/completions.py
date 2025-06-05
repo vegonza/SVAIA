@@ -1,11 +1,12 @@
 import json
 import os
 from datetime import datetime
-from typing import Optional
+from typing import Optional, Iterator, Any
 
 from dotenv import find_dotenv, load_dotenv
 from flask import Response, stream_with_context
 from openai import OpenAI
+from typeguard import typechecked
 
 from services.sql.models import Message, Project, db
 
@@ -70,7 +71,8 @@ sbom = {
 }
 
 
-def generate(stream, project_uuid: Optional[str]):
+@typechecked
+def generate(stream: Iterator[dict[str, Any]], project_uuid: Optional[str]) -> Iterator[str]:
     collected_content = ""
     already_calling = False
     for chunk in stream:
@@ -114,7 +116,8 @@ def generate(stream, project_uuid: Optional[str]):
 
 
 # ---------------- generator wrappers ---------------- #
-def get_cve_agent_response(message: str, history: list[ChatMessage], files: list[File], project_uuid: Optional[str], project_name: str, project_description: str, project_criteria: dict):
+@typechecked
+def get_cve_agent_response(message: str, history: list[ChatMessage], files: list[File], project_uuid: Optional[str], project_name: str, project_description: str, project_criteria: dict) -> Response:
     stream = client.run_and_stream(
         agent=cve_agent,
         context_variables={
@@ -135,7 +138,8 @@ def get_cve_agent_response(message: str, history: list[ChatMessage], files: list
     return Response(stream_with_context(generate(stream, project_uuid)), mimetype='text/event-stream')
 
 
-def get_mermaid_response(files: list[File], project_uuid: Optional[str]):
+@typechecked
+def get_mermaid_response(files: list[File], project_uuid: Optional[str]) -> Response:
     docker_compose_content = ""
     for file in files:
         if file["name"] == "docker-compose.yml":
@@ -161,7 +165,8 @@ def get_mermaid_response(files: list[File], project_uuid: Optional[str]):
     return Response(stream_with_context(generate(stream, project_uuid)), mimetype='text/event-stream')
 
 
-def get_analysis_response(files: list[File], project_uuid: Optional[str], project_name: str, project_description: str, project_criteria: dict):
+@typechecked
+def get_analysis_response(files: list[File], project_uuid: Optional[str], project_name: str, project_description: str, project_criteria: dict) -> Response:
     stream = client.run_and_stream(
         agent=analysis_agent,
         context_variables={

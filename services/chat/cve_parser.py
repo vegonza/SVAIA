@@ -1,11 +1,14 @@
 from textwrap import fill
-from typing import Literal
+from typing import Literal, Optional
+from typeguard import typechecked
 
 from nvdlib import searchCVE
 from nvdlib.classes import CVE
+from libs.logging_utils import log_manager
 
 
-def format_cve(cve_objects: list[CVE]):
+@typechecked
+def format_cve(cve_objects: list[CVE]) -> str:
     output = ""
     for cve in cve_objects:
         output += f"CVE ID:{cve.id}\n"
@@ -47,8 +50,11 @@ def format_cve(cve_objects: list[CVE]):
 
         output += "---"
 
+    return output
 
-def search_cve(keywords: str, limit: int = 10, severity: Literal['LOW', 'MEDIUM', 'HIGH', 'CRITICAL'] = None):
+
+@typechecked
+def search_cve(keywords: str, limit: int = 10, severity: Optional[Literal['LOW', 'MEDIUM', 'HIGH', 'CRITICAL']] = None) -> str:
     """
     Busca vulnerabilidades en base a keywords y severity
 
@@ -61,5 +67,11 @@ def search_cve(keywords: str, limit: int = 10, severity: Literal['LOW', 'MEDIUM'
         Lista de vulnerabilidades encontradas
     """
     results = searchCVE(keywordSearch=keywords, limit=limit, cvssV3Severity=severity)
-    print("calling cve parser")
+    log_manager.add_log(
+        log_level="debug",
+        user="system",
+        function="search_cve",
+        argument=f"keywords={keywords}, limit={limit}, severity={severity}",
+        log_string=f"CVE search completed, found {len(results)} results"
+    )
     return format_cve(results)

@@ -1,8 +1,11 @@
 import inspect
 from datetime import datetime
+from typing import Any, Callable
+from typeguard import typechecked
 
 
-def debug_print(debug: bool, *args: str) -> None:
+@typechecked
+def debug_print(debug: bool, *args: Any) -> None:
     if not debug:
         return
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -10,7 +13,8 @@ def debug_print(debug: bool, *args: str) -> None:
     print(f"\033[97m[\033[90m{timestamp}\033[97m]\033[90m {message}\033[0m")
 
 
-def merge_fields(target, source):
+@typechecked
+def merge_fields(target: dict, source: dict) -> None:
     for key, value in source.items():
         if isinstance(value, str):
             target[key] += value
@@ -18,6 +22,7 @@ def merge_fields(target, source):
             merge_fields(target[key], value)
 
 
+@typechecked
 def merge_chunk(final_response: dict, delta: dict) -> None:
     delta.pop("role", None)
     merge_fields(final_response, delta)
@@ -28,7 +33,8 @@ def merge_chunk(final_response: dict, delta: dict) -> None:
         merge_fields(final_response["tool_calls"][index], tool_calls[0])
 
 
-def function_to_json(func) -> dict:
+@typechecked
+def function_to_json(func: Callable) -> dict[str, Any]:
     """
     Converts a Python function into a JSON-serializable dictionary
     that describes the function's signature, including its name,

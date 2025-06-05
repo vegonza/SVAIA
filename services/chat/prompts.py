@@ -1,10 +1,14 @@
+from typeguard import typechecked
+
 from .types import File
 
 
+@typechecked
 def FilesFormat(files: list[File]) -> str:
     return "\n".join([f"Archivo: {file['name']}\nContenido: {file['content']}" for file in files])
 
 
+@typechecked
 def MERMAID_AGENT_PROMPT(context_variables: dict) -> str:
     files_str = FilesFormat(context_variables["files"])
 
@@ -78,6 +82,7 @@ El usuario tiene estos archivos:
 """.strip()
 
 
+@typechecked
 def ANALYSIS_AGENT_PROMPT(context_variables: dict) -> str:
     files_str = FilesFormat(context_variables["files"])
     project_criteria_str = "\n".join([f"- {criteria}: {value}" for criteria,
@@ -144,6 +149,7 @@ El usuario tiene estos archivos:
 """.strip()
 
 
+@typechecked
 def CVE_AGENT_PROMPT(context_variables: dict) -> str:
     files_str = FilesFormat(context_variables["files"])
     project_criteria_str = "\n".join([f"- {criteria}: {value}" for criteria,

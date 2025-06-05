@@ -2,10 +2,11 @@
 import copy
 import json
 from collections import defaultdict
-from typing import List, Callable, Union
+from typing import Any, Iterator, Optional, Union
 
 # Package/library imports
 from openai import OpenAI
+from typeguard import typechecked
 
 
 # Local imports
@@ -24,20 +25,22 @@ __CTX_VARS_NAME__ = "context_variables"
 
 
 class Swarm:
-    def __init__(self, client=None):
+    @typechecked
+    def __init__(self, client: Optional[OpenAI] = None) -> None:
         if not client:
             client = OpenAI()
         self.client = client
 
+    @typechecked
     def get_chat_completion(
         self,
         agent: Agent,
-        history: List,
+        history: list,
         context_variables: dict,
-        model_override: str,
+        model_override: Optional[str],
         stream: bool,
         debug: bool,
-    ) -> ChatCompletionMessage:
+    ) -> Union[ChatCompletionMessage, Any]:
         context_variables = defaultdict(str, context_variables)
         instructions = (
             agent.instructions(context_variables)
@@ -68,7 +71,8 @@ class Swarm:
 
         return self.client.chat.completions.create(**create_params)
 
-    def handle_function_result(self, result, debug) -> Result:
+    @typechecked
+    def handle_function_result(self, result: Any, debug: bool) -> Result:
         match result:
             case Result() as result:
                 return result
@@ -86,10 +90,11 @@ class Swarm:
                     debug_print(debug, error_message)
                     raise TypeError(error_message)
 
+    @typechecked
     def handle_tool_calls(
         self,
-        tool_calls: List[ChatCompletionMessageToolCall],
-        functions: List[AgentFunction],
+        tool_calls: list[ChatCompletionMessageToolCall],
+        functions: list[AgentFunction],
         context_variables: dict,
         debug: bool,
     ) -> Response:
@@ -136,26 +141,26 @@ class Swarm:
 
         return partial_response
 
+    @typechecked
     def run_and_stream(
         self,
         agent: Agent,
-        messages: List,
+        messages: list,
         context_variables: dict = {},
-        model_override: str = None,
+        model_override: Optional[str] = None,
         debug: bool = False,
-        max_turns: int = float("inf"),
+        max_turns: Union[int, float] = float("inf"),
         execute_tools: bool = True,
-    ):
+    ) -> Iterator[dict[str, Any]]:
         active_agent = agent
         context_variables = copy.deepcopy(context_variables)
         history = copy.deepcopy(messages)
         init_len = len(messages)
 
         while len(history) - init_len < max_turns:
-
             message = {
                 "content": "",
-                "sender": agent.name,
+                "sender": active_agent.name,
                 "role": "assistant",
                 "function_call": None,
                 "tool_calls": defaultdict(
@@ -228,15 +233,16 @@ class Swarm:
             )
         }
 
+    @typechecked
     def run(
         self,
         agent: Agent,
-        messages: List,
+        messages: list,
         context_variables: dict = {},
-        model_override: str = None,
+        model_override: Optional[str] = None,
         stream: bool = False,
         debug: bool = False,
-        max_turns: int = float("inf"),
+        max_turns: Union[int, float] = float("inf"),
         execute_tools: bool = True,
     ) -> Response:
         if stream:

@@ -1,4 +1,5 @@
 from flask import Blueprint, Flask
+from typeguard import typechecked
 
 from .models import User, db
 from .projects import projects_bp
@@ -13,6 +14,7 @@ sql_bp.register_blueprint(projects_bp, url_prefix="/projects")
 sql_bp.register_blueprint(users_bp, url_prefix="/users")
 
 
+@typechecked
 def init_sql(app: Flask):
     db.init_app(app)
     with app.app_context():

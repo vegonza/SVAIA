@@ -33,4 +33,4 @@ def login():
 def logout():
     log_manager.add_log(log_level="info", user=current_user.name, function=logout.__name__, argument="", log_string="Logout")
     logout_user()
-    return redirect(url_for('auth.login'))
+    return redirect(url_for('home'))

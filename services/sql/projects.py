@@ -4,9 +4,11 @@ import subprocess
 import json
 import tempfile
 import os
+from typing import Any
 
 from flask import Blueprint, request
 from flask_login import current_user, login_required
+from typeguard import typechecked
 
 from libs.logging_utils import log_manager
 from services.decorators import admin_required
@@ -16,7 +18,8 @@ from .models import Dockerfile, DockerCompose, SoftwareBillOfMaterials, Message,
 projects_bp = Blueprint('projects', __name__)
 
 
-def generate_sbom(tar_image_path: str) -> dict:
+@typechecked
+def generate_sbom(tar_image_path: str) -> dict[str, Any]:
     result = subprocess.run(
         ["syft", tar_image_path, "-o", "cyclonedx-json"],
         stdout=subprocess.PIPE,
@@ -29,7 +32,7 @@ def generate_sbom(tar_image_path: str) -> dict:
 
 @projects_bp.route('/<string:uuid>', methods=['GET'])
 @login_required
-def load_project(uuid):
+def load_project(uuid: str):
     project = Project.query.filter_by(uuid=uuid).first()
     if not project:
         return {"error": "Project not found"}, 404
@@ -52,7 +55,7 @@ def get_user_projects():
 
 @projects_bp.route('/user/<int:user_id>', methods=['GET'])
 @admin_required
-def get_projects_by_user(user_id):
+def get_projects_by_user(user_id: int):
     projects = Project.query.filter_by(user_id=user_id).all()
     return [project.to_dict() for project in projects]
 
@@ -122,7 +125,7 @@ def create_project():
 
 @projects_bp.route('/<string:uuid>', methods=['DELETE'])
 @login_required
-def delete_project(uuid):
+def delete_project(uuid: str):
     project = Project.query.filter_by(uuid=uuid).first()
     if not project:
         log_manager.add_log(log_level="warning", user=current_user.name, function=delete_project.__name__, argument=str(uuid), log_string="Project not found")
@@ -143,14 +146,14 @@ def get_all_projects():
 
 @projects_bp.route('/<string:uuid>', methods=['PUT'])
 @login_required
-def update_project(uuid):
+def update_project(uuid: str):
     project: Project = Project.query.filter_by(uuid=uuid).first()
     if not project:
         return {"error": "Project not found"}, 404
 
     if not current_user.is_admin and project.user_id != current_user.id:
         return {"error": "Unauthorized"}, 403
-    
+
     if 'name' in request.form:
         project.name = request.form['name']
     if 'description' in request.form:

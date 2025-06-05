@@ -4,32 +4,48 @@ import os
 from hashlib import sha256
 import logging
 import functools
+from typing import Callable, Any, Optional
+from typeguard import typechecked
+
+from colorama import Fore, Style, init
+
+init(autoreset=True)
+
 
 class ColoredFormatter(logging.Formatter):
-    COLORS = {
-        logging.DEBUG: "\033[34m",     # blue
-        logging.INFO: "\033[32m",      # green
-        logging.WARNING: "\033[33m",   # yellow
-        logging.ERROR: "\033[31m",     # red
-    }
+    """Colored log formatter."""
 
-    RESET = "\033[0m"
+    def __init__(self, *args, **kwargs):
+        logging.Formatter.__init__(self, *args, **kwargs)
 
-    def format(self, record):
-        color = self.COLORS.get(record.levelno, self.RESET)
-        # Format the message using the parent formatter
-        message = super().format(record)
-        # Apply color to each line of the message
-        colored_lines = [f"{color}{line}{self.RESET}" for line in message.splitlines()]
-        return "\n".join(colored_lines)
+    @typechecked
+    def format(self, record: logging.LogRecord) -> str:
+        """Format the record with colors."""
+        color = ""
+        if record.levelno >= logging.ERROR:
+            color = Fore.RED
+        elif record.levelno >= logging.WARNING:
+            color = Fore.YELLOW
+        elif record.levelno >= logging.INFO:
+            color = Fore.GREEN
+        elif record.levelno >= logging.DEBUG:
+            color = Fore.CYAN
+        else:
+            color = Fore.WHITE
+
+        record.levelname = color + record.levelname + Style.RESET_ALL
+        return logging.Formatter.format(self, record)
+
 
 class SecureLogManager:
-    def __init__(self, log_file: str):
+    @typechecked
+    def __init__(self, log_file: str) -> None:
         self.log_file = log_file
         self.logger = self._setup_logger(log_file.split(".")[0], log_file)
         self._init_log_file()
 
-    def _setup_logger(self, logger_name, log_file, level=logging.INFO) -> logging.Logger:
+    @typechecked
+    def _setup_logger(self, logger_name: str, log_file: str, level: int = logging.DEBUG) -> logging.Logger:
         logger = logging.getLogger(logger_name)
         log_formatter = logging.Formatter(
             fmt="%(timestamp)s: %(levelname)-8s | %(user)s | '%(hash)s': Llamada a la función %(function)s con parámetros: %(argument)s -> Resultado: %(log_string)s |",
@@ -42,6 +58,7 @@ class SecureLogManager:
         fileHandler = logging.FileHandler(log_file, mode='a')
         fileHandler.setFormatter(log_formatter)
         streamHandler = logging.StreamHandler()
+        streamHandler.setLevel(level)
         streamHandler.setFormatter(colored_formatter)
 
         logger.setLevel(level)
@@ -50,7 +67,8 @@ class SecureLogManager:
 
         return logger
 
-    def _init_log_file(self):
+    @typechecked
+    def _init_log_file(self) -> None:
         """
         Initializes the log file
         """
@@ -63,7 +81,8 @@ class SecureLogManager:
                 argument=""
             )
 
-    def _get_timestamp(self):
+    @typechecked
+    def _get_timestamp(self) -> str:
         """
         Returns the current time in a readable format
         """
@@ -74,31 +93,36 @@ class SecureLogManager:
         timestamp = timestamp.strftime("%Y-%m-%d %H:%M:%S %Z")
         return timestamp
 
+    @typechecked
     def _hash_string(self, string: str) -> str:
         """
         Returns the hash of a string
         """
         return sha256(string.encode()).hexdigest()
 
-    def _file_exists(self, file_path):
+    @typechecked
+    def _file_exists(self, file_path: str) -> bool:
         """
         Returns True if the file exists, False otherwise
         """
         return os.path.exists(file_path)
 
-    def _file_empty(self, file_path):
+    @typechecked
+    def _file_empty(self, file_path: str) -> bool:
         """
         Returns True if the file is empty, False otherwise
         """
         return os.path.getsize(file_path) == 0
 
+    @typechecked
     def _get_hash_from_line(self, line: str) -> str:
         """
         Returns the hash of a line
         """
         return line.split("|")[2].split(":")[0].strip("' ")
 
-    def _get_last_hash(self, log_file) -> str | None:
+    @typechecked
+    def _get_last_hash(self, log_file: str) -> Optional[str]:
         """
         Reads the last line of the log file and extracts the data after the date and log type.
 
@@ -113,13 +137,15 @@ class SecureLogManager:
         with open(log_file, 'r') as file:
             return self._get_hash_from_line(file.readlines()[-1])
 
+    @typechecked
     def _get_log_string_from_line(self, line: str) -> str:
         """
         Returns the log string from a line
         """
         return line.split("|")[2].split(":")[-1].strip()
 
-    def add_log(self, log_level: str, log_string: str, user: str, function: str = "", argument: str = ""):
+    @typechecked
+    def add_log(self, log_level: str, log_string: str, user: str, function: str = "", argument: str = "") -> None:
         """
         Adds a log to the log file
 
@@ -153,7 +179,8 @@ class SecureLogManager:
             'argument': argument
         })
 
-    def verify_hash_chain(self):
+    @typechecked
+    def verify_hash_chain(self) -> bool:
         """
         Verify that the hash chain in the log file is correct.
 
@@ -171,13 +198,17 @@ class SecureLogManager:
 
 
 class FunctionMonitor:
-    def __init__(self, log_manager: SecureLogManager):
+    @typechecked
+    def __init__(self, log_manager: SecureLogManager) -> None:
         self.log_manager = log_manager
 
-    def __call__(self, user: str, log_level: str):
-        def decorator(func):
+    @typechecked
+    def __call__(self, user: str, log_level: str) -> Callable:
+        @typechecked
+        def decorator(func: Callable) -> Callable:
             @functools.wraps(func)
-            def wrapper(*args, **kwargs):
+            @typechecked
+            def wrapper(*args: Any, **kwargs: Any) -> Any:
                 func_name = func.__name__
                 args_str = ", ".join([repr(arg) for arg in args])
                 kwargs_str = ", ".join([f"{k}={repr(v)}" for k, v in kwargs.items()])

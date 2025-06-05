@@ -8,7 +8,7 @@ from typing import List, Callable, Union, Optional
 # Third-party imports
 from pydantic import BaseModel
 
-AgentFunction = Callable[[], Union[str, "Agent", dict]]
+AgentFunction = Callable[..., Union[str, "Agent", dict]]
 
 
 class Agent(BaseModel):
@@ -16,7 +16,7 @@ class Agent(BaseModel):
     model: str = "gpt-4o"
     instructions: Union[str, Callable[[], str]] = "You are a helpful agent."
     functions: List[AgentFunction] = []
-    tool_choice: str = None
+    tool_choice: Optional[str] = None
     parallel_tool_calls: bool = True
 
 

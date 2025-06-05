@@ -16,11 +16,11 @@ def index():
 
 @admin_bp.route("/user-projects/<int:user_id>")
 @admin_required
-def user_projects(user_id):
+def user_projects(user_id: int):
     return render_template("admin/projects.html", user_id=user_id)
 
 
 @admin_bp.route("/project-messages/<string:project_uuid>")
 @admin_required
-def project_messages(project_uuid):
+def project_messages(project_uuid: str):
     return render_template("admin/project_messages.html", project_uuid=project_uuid)

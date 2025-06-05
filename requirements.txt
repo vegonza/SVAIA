@@ -7,3 +7,5 @@ Flask-SQLAlchemy
 Flask-Login
 pymysql
 nvdlib
+typeguard
+colorama

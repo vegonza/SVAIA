@@ -1,8 +1,10 @@
 from services.sql.models import Project
+from typeguard import typechecked
 
 from .types import File
 
 
+@typechecked
 def collect_project_files(project: Project) -> list[File]:
     files = []
 
@@ -30,6 +32,7 @@ def collect_project_files(project: Project) -> list[File]:
     return files
 
 
+@typechecked
 def get_project_criteria(project: Project) -> dict:
     return {
         "solvability_criteria": project.solvability_criteria,
