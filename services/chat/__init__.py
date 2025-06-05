@@ -37,7 +37,7 @@ def init_project():
 
     Message.query.filter_by(project_uuid=project_uuid).delete()
 
-    project.updated_at = datetime.utcnow()
+    project.updated_at = datetime.now(datetime.UTC)
     db.session.commit()
 
     files = collect_project_files(project)
@@ -57,7 +57,7 @@ def analyze_project():
     if not project:
         return jsonify({"error": "project not found"}), 404
 
-    project.updated_at = datetime.utcnow()
+    project.updated_at = datetime.now(datetime.UTC)
     db.session.commit()
 
     files = collect_project_files(project)
@@ -94,7 +94,7 @@ def completion():
     if not project:
         return jsonify({"error": "project not found"}), 404
 
-    project.updated_at = datetime.utcnow()
+    project.updated_at = datetime.now(datetime.UTC)
     db.session.commit()
 
     history = Message.query.filter_by(project_uuid=project_uuid).order_by(Message.timestamp).all()
