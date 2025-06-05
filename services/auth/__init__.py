@@ -21,7 +21,7 @@ def login():
                 log_manager.add_log(log_level="warning", user=user.name, function=login.__name__, argument=str(request.form), log_string="Invalid next URL")
                 return abort(400)
             log_manager.add_log(log_level="info", user=user.name, function=login.__name__, argument=str(request.form), log_string="Login successful")
-            return redirect(next)
+            return redirect(url_for(next))
         else:
             log_manager.add_log(log_level="warning", user=user.name, function=login.__name__, argument=str(request.form), log_string="Invalid credentials")
             flash('Nombre de usuario o contraseña incorrectos.', 'danger')
