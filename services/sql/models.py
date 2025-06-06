@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Optional
 
 from flask_login import UserMixin
@@ -17,8 +17,8 @@ class Project(db.Model):
     solvability_criteria: Mapped[Optional[str]] = mapped_column(db.String(20), nullable=True)
     max_vulnerability_level: Mapped[Optional[str]] = mapped_column(db.Text, nullable=True)
     user_id: Mapped[int] = mapped_column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    created_at: Mapped[datetime] = mapped_column(db.DateTime, default=lambda: datetime.now(datetime.UTC))
-    updated_at: Mapped[datetime] = mapped_column(db.DateTime, default=lambda: datetime.now(datetime.UTC))
+    created_at: Mapped[datetime] = mapped_column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at: Mapped[datetime] = mapped_column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     messages = db.relationship('Message', backref='project', lazy=True, cascade="all, delete-orphan")
     dockerfiles = db.relationship('Dockerfile', backref='project', lazy=True, cascade="all, delete-orphan")
     docker_composes = db.relationship('DockerCompose', backref='project', lazy=True, cascade="all, delete-orphan")
@@ -85,7 +85,7 @@ class Message(db.Model):
     id: Mapped[int] = mapped_column(db.Integer, primary_key=True, autoincrement=True)
     content: Mapped[str] = mapped_column(db.Text, nullable=False)
     is_user: Mapped[bool] = mapped_column(db.Boolean, default=False)
-    timestamp: Mapped[datetime] = mapped_column(db.DateTime, default=lambda: datetime.now(datetime.UTC))
+    timestamp: Mapped[datetime] = mapped_column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     project_uuid: Mapped[str] = mapped_column(db.String(36), db.ForeignKey('project.uuid'), nullable=False)
 
     @typechecked
